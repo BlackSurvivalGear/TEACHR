@@ -14,7 +14,6 @@ function send(res, status, data, type = 'application/json') {
   res.writeHead(status, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store' });
   res.end(type === 'application/json' ? JSON.stringify(data) : data);
 }
-
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -23,26 +22,18 @@ function readBody(req) {
     req.on('error', reject);
   });
 }
-
 async function generate(req, res) {
   if (!AI_API_KEY) return send(res, 503, { error: 'AI backend is not configured. Set AI_API_KEY on the server.' });
   const body = await readBody(req);
   if (typeof body.prompt !== 'string' || !body.prompt.trim()) return send(res, 400, { error: 'prompt is required' });
   if (body.prompt.length > 12000) return send(res, 400, { error: 'prompt is too long' });
-
   const upstream = await fetch(AI_BASE_URL, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${AI_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: AI_MODEL,
-      temperature: 0.4,
-      messages: [
-        { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.' },
-        { role: 'user', content: body.prompt }
-      ]
-    })
+    method: 'POST', headers: { 'Authorization': `Bearer ${AI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: AI_MODEL, temperature: 0.4, messages: [
+      { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.' },
+      { role: 'user', content: body.prompt }
+    ] })
   });
-
   const raw = await upstream.text();
   if (!upstream.ok) return send(res, upstream.status, { error: 'AI provider request failed', detail: raw.slice(0, 500) });
   let payload; try { payload = JSON.parse(raw); } catch { return send(res, 502, { error: 'AI provider returned invalid JSON' }); }
@@ -55,7 +46,6 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.method === 'POST' && req.url === '/api/generate') return await generate(req, res);
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error: 'Method not allowed' });
-
     const requested = decodeURIComponent((req.url || '/').split('?')[0]);
     const relative = requested === '/' ? 'index.html' : requested.replace(/^\/+/, '');
     const filePath = path.resolve(ROOT, relative);
@@ -63,10 +53,9 @@ const server = http.createServer(async (req, res) => {
     if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) return send(res, 404, { error: 'Not found' });
     const ext = path.extname(filePath).toLowerCase();
     const types = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.svg':'image/svg+xml', '.ico':'image/x-icon' };
-    res.writeHead(200, { 'Content-Type': `${types[ext] || 'application/octet-stream'}; charset=utf-8'` });
+    res.writeHead(200, { 'Content-Type': `${types[ext] || 'application/octet-stream'}; charset=utf-8`, 'Cache-Control': 'no-store' });
     if (req.method === 'HEAD') return res.end();
     fs.createReadStream(filePath).pipe(res);
   } catch (error) { send(res, 500, { error: error.message || 'Server error' }); }
 });
-
 server.listen(PORT, HOST, () => console.log(`TEACHR running at http://${HOST}:${PORT}`));
