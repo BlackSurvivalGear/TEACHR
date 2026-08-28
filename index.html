@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#071225">
-  <meta name="description" content="TEACHR — your AI teaching assistant. Plan lessons, create resources and assess learning.">
-  <title>TEACHR — Your AI Teaching Assistant</title>
+  <meta name="theme-color" content="#061022">
+  <meta name="description" content="TEACHR — your AI teaching assistant for planning, differentiation, resources and assessment.">
+  <title>TEACHR — AI Teaching Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,81 +14,67 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#home" aria-label="TEACHR home">
-        <img src="LOGO.png" alt="TEACHR logo">
-      </a>
+      <a class="brand" href="#home" aria-label="TEACHR home"><img src="LOGO.png" alt="TEACHR logo"></a>
       <nav class="topnav" aria-label="Primary navigation">
-        <a href="#home">Home</a>
-        <a href="#workspace">Workspace</a>
-        <a href="#library">Library</a>
+        <a href="#home">Home</a><a href="#workspace">Workspace</a><a href="#library">Library</a>
       </nav>
-      <button class="profile-chip" id="profileButton" type="button" aria-label="Open profile menu">
-        <span class="avatar">T</span><span>Teacher</span><span aria-hidden="true">⌄</span>
-      </button>
+      <button class="profile-chip" id="profileButton" type="button"><span class="avatar" id="avatar">T</span><span id="profileName">Teacher</span><span aria-hidden="true">⌄</span></button>
     </header>
 
     <main>
       <section id="home" class="hero section-pad">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="pulse"></span> V1 MVP · AI-READY TEACHING WORKSPACE</p>
+          <p class="eyebrow"><span class="pulse"></span> V1.1 · REAL AI TEACHING ENGINE</p>
           <h1>Teach smarter.<br><span>Create faster.</span></h1>
-          <p class="hero-text">TEACHR gives educators one focused workspace for lesson planning, differentiated resources, quizzes and reusable teaching materials.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#workspace">Open Workspace <span>→</span></a>
-            <button class="btn btn-ghost" id="demoButton" type="button">See a quick demo</button>
-          </div>
-          <div class="trust-row"><span>Lesson planning</span><span>Resources</span><span>Assessment</span><span>Teacher-first</span></div>
+          <p class="hero-text">TEACHR turns a teacher's brief into structured lessons, differentiated resources and assessments — with a reusable teacher profile and secure AI backend path.</p>
+          <div class="hero-actions"><a class="btn btn-primary" href="#workspace">Open Workspace <span>→</span></a><button class="btn btn-ghost" id="demoButton" type="button">Run AI demo</button></div>
+          <div class="trust-row"><span>Lesson planning</span><span>Differentiation</span><span>Assessment</span><span>Teacher-first</span></div>
         </div>
-        <div class="hero-card-wrap" aria-hidden="true">
-          <div class="orb orb-a"></div><div class="orb orb-b"></div>
-          <div class="hero-card glass">
-            <div class="mini-top"><span class="status-dot"></span> TEACHR ASSISTANT <span class="mini-time">READY</span></div>
-            <div class="lesson-preview">
-              <div class="lesson-icon">✦</div>
-              <div><span>LESSON PLAN</span><strong>Year 8 · Fractions</strong></div>
-            </div>
-            <div class="progress-line"><i></i></div>
-            <div class="preview-grid"><div><small>OBJECTIVES</small><b>3</b></div><div><small>ACTIVITIES</small><b>4</b></div><div><small>ASSESSMENT</small><b>8 Q</b></div></div>
-            <div class="ai-note"><span>AI</span><p>Ready to generate differentiated resources.</p></div>
-          </div>
-        </div>
+        <div class="hero-card-wrap" aria-hidden="true"><div class="orb orb-a"></div><div class="orb orb-b"></div><div class="hero-card glass">
+          <div class="mini-top"><span class="status-dot"></span> TEACHR ASSISTANT <span class="mini-time">AI READY</span></div>
+          <div class="lesson-preview"><div class="lesson-icon">✦</div><div><span>SMART LESSON</span><strong>Year 8 · Fractions</strong></div></div>
+          <div class="progress-line"><i></i></div>
+          <div class="preview-grid"><div><small>OBJECTIVES</small><b>3</b></div><div><small>LEVELS</small><b>3</b></div><div><small>ASSESSMENT</small><b>8 Q</b></div></div>
+          <div class="ai-note"><span>AI</span><p>Generate, differentiate and save in one workflow.</p></div>
+        </div></div>
       </section>
 
       <section id="workspace" class="workspace section-pad">
-        <div class="section-heading">
-          <div><p class="eyebrow">TEACHER WORKSPACE</p><h2>What are you creating today?</h2></div>
-          <span class="mvp-badge">V1 MVP</span>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow">TEACHER WORKSPACE</p><h2>What are you creating today?</h2></div><span class="mvp-badge">V1.1</span></div>
         <div class="tool-grid">
-          <button class="tool-card active" data-tool="lesson" type="button"><span class="tool-icon blue">✦</span><strong>Lesson Builder</strong><small>Build a structured lesson in seconds.</small><span class="tool-arrow">→</span></button>
-          <button class="tool-card" data-tool="worksheet" type="button"><span class="tool-icon purple">▤</span><strong>Worksheet</strong><small>Create printable student resources.</small><span class="tool-arrow">→</span></button>
-          <button class="tool-card" data-tool="quiz" type="button"><span class="tool-icon cyan">?</span><strong>Quiz Generator</strong><small>Generate questions and an answer key.</small><span class="tool-arrow">→</span></button>
-          <button class="tool-card" data-tool="library" type="button"><span class="tool-icon violet">▣</span><strong>Resource Library</strong><small>Keep your generated resources organised.</small><span class="tool-arrow">→</span></button>
+          <button class="tool-card active" data-tool="lesson" type="button"><span class="tool-icon blue">✦</span><strong>Lesson Builder</strong><small>AI-ready structured lesson planning.</small><span class="tool-arrow">→</span></button>
+          <button class="tool-card" data-tool="worksheet" type="button"><span class="tool-icon purple">▤</span><strong>Worksheet</strong><small>Student version, scaffold and challenge.</small><span class="tool-arrow">→</span></button>
+          <button class="tool-card" data-tool="quiz" type="button"><span class="tool-icon cyan">?</span><strong>Assessment</strong><small>Quizzes, answer keys and coverage.</small><span class="tool-arrow">→</span></button>
+          <button class="tool-card" data-tool="library" type="button"><span class="tool-icon violet">▣</span><strong>Resource Library</strong><small>Search, duplicate, edit and organise.</small><span class="tool-arrow">→</span></button>
         </div>
 
         <div class="builder glass" id="builderPanel">
-          <div class="builder-header"><div><p class="eyebrow">CREATE</p><h3 id="builderTitle">Lesson Builder</h3></div><span class="online"><i></i> Local workspace</span></div>
+          <div class="builder-header"><div><p class="eyebrow">CREATE</p><h3 id="builderTitle">Lesson Builder</h3></div><span class="online"><i></i> <span id="engineStatus">Demo engine</span></span></div>
           <form id="builderForm" class="builder-form">
             <div class="field"><label for="subject">Subject</label><input id="subject" name="subject" value="Mathematics" required></div>
             <div class="field"><label for="year">Year / Grade</label><input id="year" name="year" value="Year 8" required></div>
             <div class="field field-wide"><label for="topic">Topic</label><input id="topic" name="topic" value="Fractions" required></div>
             <div class="field"><label for="duration">Duration</label><select id="duration" name="duration"><option>30 minutes</option><option selected>60 minutes</option><option>90 minutes</option></select></div>
             <div class="field"><label for="level">Class profile</label><select id="level" name="level"><option>Support</option><option selected>Mixed ability</option><option>Advanced</option></select></div>
-            <div class="field field-wide"><label for="notes">Teacher notes <span>(optional)</span></label><textarea id="notes" name="notes" rows="3" placeholder="Add constraints, curriculum outcomes or teaching notes..."></textarea></div>
-            <div class="form-actions"><button class="btn btn-primary" type="submit"><span id="generateLabel">Generate lesson</span> <span>✦</span></button><button class="btn btn-ghost" type="button" id="clearButton">Clear</button></div>
+            <div class="field"><label for="curriculum">Curriculum</label><input id="curriculum" name="curriculum" value="UK National Curriculum"></div>
+            <div class="field"><label for="questionCount">Questions</label><select id="questionCount" name="questionCount"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+            <div class="field field-wide"><label for="notes">Teacher notes <span>(optional)</span></label><textarea id="notes" name="notes" rows="3" placeholder="Add constraints, outcomes, misconceptions or teaching notes..."></textarea></div>
+            <div class="form-actions"><button class="btn btn-primary" type="submit"><span id="generateLabel">Generate with AI</span><span>✦</span></button><button class="btn btn-ghost" type="button" id="clearButton">Clear</button></div>
           </form>
           <div class="result" id="result" hidden></div>
         </div>
       </section>
 
       <section id="library" class="library section-pad">
-        <div class="section-heading"><div><p class="eyebrow">MY RESOURCES</p><h2>Recent teaching materials</h2></div><button class="text-btn" id="clearLibrary" type="button">Clear library</button></div>
+        <div class="section-heading"><div><p class="eyebrow">MY RESOURCES</p><h2>Recent teaching materials</h2></div><div class="library-actions"><input id="librarySearch" aria-label="Search resources" placeholder="Search resources..."><button class="text-btn" id="clearLibrary" type="button">Clear</button></div></div>
         <div class="resource-list" id="resourceList"></div>
       </section>
     </main>
 
-    <footer><div><strong>TEACHR</strong><span>Your AI Teaching Assistant</span></div><span>V1 MVP · Built for educators</span></footer>
+    <footer><div><strong>TEACHR</strong><span>Your AI Teaching Assistant</span></div><span>V1.1 · AI-ready architecture</span></footer>
   </div>
+
+  <dialog id="profileDialog"><form method="dialog" class="profile-dialog glass"><div class="dialog-head"><div><p class="eyebrow">TEACHER PROFILE</p><h3>Your teaching preferences</h3></div><button class="icon-btn" value="cancel" aria-label="Close">×</button></div><div class="profile-grid"><div class="field"><label for="teacherName">Name</label><input id="teacherName" value="Teacher"></div><div class="field"><label for="profileSubject">Primary subject</label><input id="profileSubject" value="Mathematics"></div><div class="field"><label for="profileYear">Typical year / grade</label><input id="profileYear" value="Year 8"></div><div class="field"><label for="profileCurriculum">Curriculum</label><input id="profileCurriculum" value="UK National Curriculum"></div><div class="field field-wide"><label for="profileStyle">Teaching preferences</label><textarea id="profileStyle" rows="3" placeholder="e.g. practical examples, retrieval practice, clear scaffolding..."></textarea></div></div><div class="dialog-actions"><button class="btn btn-ghost" value="cancel">Cancel</button><button class="btn btn-primary" id="saveProfile" value="default">Save profile</button></div></form></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
