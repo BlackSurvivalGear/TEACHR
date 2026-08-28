@@ -11,14 +11,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Validate JavaScript
-        run: node --check app.js
+        run: |
+          node --check app.js
+          node --check server/index.js
+      - name: Validate package metadata
+        run: node -e "const p=require('./package.json'); if(p.version!=='1.1.0') process.exit(1); if(!p.scripts.start) process.exit(1)"
       - name: Validate required files
         run: |
           test -f index.html
           test -f styles.css
           test -f app.js
           test -f LOGO.png
+          test -f server/index.js
+          test -f server/.env.example
           grep -q "TEACHR" index.html
           grep -q "Lesson Builder" index.html
           grep -q "Worksheet" index.html
-          grep -q "Quiz Generator" index.html
+          grep -q "Assessment" index.html
+          grep -q "/api/generate" app.js
