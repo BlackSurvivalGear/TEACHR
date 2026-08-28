@@ -1,0 +1,13 @@
+{
+  "name": "teachr",
+  "private": true,
+  "version": "1.1.0",
+  "description": "TEACHR AI Teaching Assistant",
+  "scripts": {
+    "start": "node server/index.js",
+    "check": "node --check app.js && node --check server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
