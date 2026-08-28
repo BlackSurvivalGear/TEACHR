@@ -1,0 +1,24 @@
+name: TEACHR CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate JavaScript
+        run: node --check app.js
+      - name: Validate required files
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f app.js
+          test -f LOGO.png
+          grep -q "TEACHR" index.html
+          grep -q "Lesson Builder" index.html
+          grep -q "Worksheet" index.html
+          grep -q "Quiz Generator" index.html
