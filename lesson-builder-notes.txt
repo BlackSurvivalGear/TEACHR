@@ -1,0 +1,1 @@
+Lesson Builder smoke validation: lesson-builder.js passes Node syntax check. Static smoke checks are included in lesson-builder.test.js.
