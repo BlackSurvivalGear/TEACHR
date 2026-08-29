@@ -3,6 +3,20 @@
   const toolCards = document.querySelectorAll('.tool-card');
   if (!form) return;
 
+  const style = document.createElement('style');
+  style.textContent = `
+    .lesson-design-panel{grid-column:1/-1;margin-top:4px;padding:20px;border:1px solid rgba(83,170,255,.18);border-radius:18px;background:linear-gradient(145deg,rgba(22,50,88,.42),rgba(7,23,45,.38))}
+    .lesson-design-head{display:flex;justify-content:space-between;gap:20px;align-items:start;margin-bottom:16px}
+    .lesson-design-head strong{display:block;font-size:14px;color:#eef5ff;margin-bottom:3px}
+    .lesson-design-head span{display:block;font-size:11px;color:#7890ae}
+    .lesson-reset{border:1px solid rgba(155,190,255,.14);background:rgba(255,255,255,.04);color:#91b8df;border-radius:9px;padding:7px 10px;font-size:10px;font-weight:700}
+    .lesson-reset:hover{background:rgba(255,255,255,.08);color:#fff}
+    .lesson-design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .lesson-design-grid .field-wide{grid-column:1/-1}
+    @media(max-width:620px){.lesson-design-panel{grid-column:auto}.lesson-design-grid{grid-template-columns:1fr}.lesson-design-grid .field-wide{grid-column:auto}.lesson-design-head{flex-direction:column}}
+  `;
+  document.head.appendChild(style);
+
   const topic = document.getElementById('topic');
   const notes = document.getElementById('notes');
   const extra = document.getElementById('extraInstruction');
@@ -12,7 +26,7 @@
   panel.className = 'lesson-design-panel';
   panel.innerHTML = `
     <div class="lesson-design-head">
-      <div><p class="eyebrow">LESSON DESIGN</p><strong>Give TEACHR the teaching context</strong><span>These controls shape the lesson brief without needing a backend.</span></div>
+      <div><p class="eyebrow">LESSON DESIGN</p><strong>Give TEACHR the teaching context</strong><span>These controls shape the generation brief and help produce a lesson that fits your class.</span></div>
       <button type="button" class="lesson-reset" id="resetLessonDesign">Reset</button>
     </div>
     <div class="lesson-design-grid">
@@ -43,21 +57,16 @@
     extra.value = [baseExtra(), parts.length ? `[TEACHR LESSON DESIGN]\n${parts.join('\n')}` : ''].filter(Boolean).join('\n\n');
   }
 
-  ids.forEach(id => fields[id].addEventListener('input', syncBrief));
-  ids.forEach(id => fields[id].addEventListener('change', syncBrief));
-
+  ids.forEach(id => { fields[id].addEventListener('input', syncBrief); fields[id].addEventListener('change', syncBrief); });
   document.getElementById('resetLessonDesign').addEventListener('click', () => {
     ids.forEach(id => { if (fields[id].tagName === 'SELECT') fields[id].selectedIndex = 0; else fields[id].value = ''; });
     syncBrief();
   });
 
-  function setLessonDefaults() {
-    panel.style.display = 'block';
-  }
   function updateVisibility() {
     const active = document.querySelector('.tool-card.active')?.dataset.tool;
     panel.style.display = active === 'lesson' ? 'block' : 'none';
   }
   toolCards.forEach(card => card.addEventListener('click', () => setTimeout(updateVisibility, 0)));
-  setLessonDefaults();
+  updateVisibility();
 })();
