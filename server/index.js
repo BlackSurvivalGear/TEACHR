@@ -8,6 +8,7 @@ const AI_API_KEY = process.env.AI_API_KEY;
 const AI_MODEL = process.env.AI_MODEL || 'gpt-5.6-luna';
 const ROOT = path.resolve(__dirname, '..');
 const MAX_BODY = 100000;
+const UPSTREAM_TIMEOUT_MS = 15000;
 
 const PROVIDERS = {
   openai: {
@@ -42,6 +43,10 @@ function readBody(req) {
   });
 }
 
+async function fetchUpstream(url, options) {
+  return fetch(url, { ...options, signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
+}
+
 async function testProvider(req, res) {
   const body = await readBody(req);
   const provider = PROVIDERS[body.provider];
@@ -51,24 +56,44 @@ async function testProvider(req, res) {
   const apiKey = typeof body.apiKey === 'string' && body.apiKey.trim() ? body.apiKey.trim() : AI_API_KEY;
   if (!apiKey) return send(res, 400, { error: 'API key is required' });
 
-  const upstream = await fetch(provider.modelsUrl, {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${apiKey}` }
-  });
+  let upstream;
+  try {
+    upstream = await fetchUpstream(provider.modelsUrl, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+  } catch (error) {
+    const message = error?.name === 'TimeoutError'
+      ? 'OpenAI request timed out. Check your internet connection and try again.'
+      : 'Could not reach OpenAI. Check your internet connection and try again.';
+    return send(res, 502, { error: message });
+  }
+
   const raw = await upstream.text();
   if (!upstream.ok) {
-    return send(res, upstream.status, { error: 'OpenAI authentication or model request failed', detail: raw.slice(0, 300) });
+    return send(res, upstream.status, {
+      error: upstream.status === 401 || upstream.status === 403
+        ? 'OpenAI rejected the API key. Check that the key is valid and active.'
+        : 'OpenAI model request failed',
+      detail: raw.slice(0, 300)
+    });
   }
 
   let payload;
   try { payload = JSON.parse(raw); }
-  catch { return send(res, 502, { error: 'AI provider returned invalid JSON' }); }
+  catch { return send(res, 502, { error: 'OpenAI returned invalid JSON' }); }
 
   const models = Array.isArray(payload.data) ? payload.data.map(item => item.id).filter(Boolean) : [];
+  const availableModels = models
+    .filter(id => /^gpt-/i.test(id))
+    .sort((a, b) => a.localeCompare(b));
   const requestedModel = typeof body.model === 'string' ? body.model.trim() : '';
   const modelAvailable = !requestedModel || models.includes(requestedModel);
   if (requestedModel && !modelAvailable) {
-    return send(res, 400, { error: `Model ${requestedModel} is not available to this API key` });
+    return send(res, 400, {
+      error: `Model ${requestedModel} is not available to this API key`,
+      availableModels
+    });
   }
 
   return send(res, 200, {
@@ -76,7 +101,7 @@ async function testProvider(req, res) {
     provider: provider.name,
     model: requestedModel || null,
     modelAvailable,
-    availableModels: models.filter(id => /^gpt-/i.test(id)).slice(0, 100)
+    availableModels: availableModels.slice(0, 100)
   });
 }
 
@@ -89,18 +114,27 @@ async function generate(req, res) {
   if (!apiKey) return send(res, 503, { error: 'AI backend is not configured. Set AI_API_KEY on the server.' });
 
   const model = body.model || AI_MODEL;
-  const upstream = await fetch(PROVIDERS.openai.chatUrl, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      temperature: 0.4,
-      messages: [
-        { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.' },
-        { role: 'user', content: body.prompt }
-      ]
-    })
-  });
+  let upstream;
+  try {
+    upstream = await fetchUpstream(PROVIDERS.openai.chatUrl, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        temperature: 0.4,
+        messages: [
+          { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.' },
+          { role: 'user', content: body.prompt }
+        ]
+      })
+    });
+  } catch (error) {
+    const message = error?.name === 'TimeoutError'
+      ? 'AI provider request timed out. Try again.'
+      : 'Could not reach the AI provider. Check the server connection and try again.';
+    return send(res, 502, { error: message });
+  }
+
   const raw = await upstream.text();
   if (!upstream.ok) return send(res, upstream.status, { error: 'AI provider request failed', detail: raw.slice(0, 500) });
   let payload;
