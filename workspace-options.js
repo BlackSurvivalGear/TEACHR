@@ -2,23 +2,62 @@
   const form = document.getElementById('builderForm');
   if (!form) return;
 
-  const SUBJECTS = {
-    Mathematics: ['Number and place value', 'Fractions', 'Decimals and percentages', 'Ratio and proportion', 'Algebra', 'Geometry', 'Statistics', 'Probability', 'Graphs and coordinates', 'Problem solving'],
-    English: ['Reading comprehension', 'Creative writing', 'Descriptive writing', 'Persuasive writing', 'Poetry', 'Shakespeare', 'Grammar and punctuation', 'Vocabulary', 'Non-fiction', 'Speaking and listening'],
-    Science: ['Cells', 'Forces', 'Energy', 'Particles and matter', 'Chemical reactions', 'Electricity', 'Waves', 'Earth and space', 'Genetics and inheritance', 'Ecology'],
-    Biology: ['Cells', 'Organisation', 'Bioenergetics', 'Infection and response', 'Homeostasis', 'Inheritance', 'Ecology', 'Evolution', 'Human biology', 'Practical skills'],
-    Chemistry: ['Atomic structure', 'The periodic table', 'Bonding', 'Quantitative chemistry', 'Chemical changes', 'Energy changes', 'Organic chemistry', 'Rates of reaction', 'Chemical analysis', 'Practical skills'],
-    Physics: ['Energy', 'Electricity', 'Particle model', 'Atomic structure', 'Forces', 'Waves', 'Magnetism', 'Space physics', 'Motion', 'Practical skills'],
-    History: ['Medieval Britain', 'Tudors', 'Industrial Revolution', 'British Empire', 'World War I', 'World War II', 'Cold War', 'Civil rights', 'Ancient civilisations', 'Historical skills'],
-    Geography: ['Map skills', 'Rivers', 'Coasts', 'Weather and climate', 'Ecosystems', 'Population', 'Urbanisation', 'Development', 'Natural hazards', 'Climate change'],
-    Computing: ['Algorithms', 'Programming', 'Data representation', 'Computer systems', 'Networks', 'Cyber security', 'Databases', 'Artificial intelligence', 'Web development', 'Computational thinking'],
-    'Art & Design': ['Drawing', 'Painting', 'Sculpture', 'Photography', 'Printmaking', 'Mixed media', 'Artists and movements', 'Composition', 'Colour theory', 'Portfolio development'],
-    'Religious Education': ['Beliefs and values', 'Christianity', 'Islam', 'Judaism', 'Hinduism', 'Buddhism', 'Ethics', 'Philosophy', 'Religion and society', 'Religion and science'],
-    'Physical Education': ['Fitness', 'Athletics', 'Football', 'Basketball', 'Netball', 'Rugby', 'Badminton', 'Dance', 'Health and wellbeing', 'Sports leadership'],
-    'Modern Languages': ['Greetings and introductions', 'Family', 'School', 'Home and town', 'Food and drink', 'Holidays', 'Hobbies', 'Daily routine', 'Travel', 'Grammar and vocabulary'],
-    'PSHE / Citizenship': ['Relationships', 'Health and wellbeing', 'Online safety', 'Financial education', 'Careers', 'Democracy', 'Rights and responsibilities', 'Identity', 'Community', 'Life skills'],
-    Economics: ['Supply and demand', 'Markets', 'Inflation', 'Unemployment', 'Economic growth', 'Fiscal policy', 'Monetary policy', 'International trade', 'Globalisation', 'Market failure'],
-    'Business Studies': ['Business ownership', 'Entrepreneurship', 'Marketing', 'Finance', 'Operations', 'Human resources', 'Business strategy', 'Sales and revenue', 'Business growth', 'Global business']
+  // England National Curriculum structure: KS1 (Years 1–2), KS2 (Years 3–6),
+  // KS3 (Years 7–9) and KS4 (Years 10–11). The subject catalogue below follows
+  // the Department for Education subject names rather than generic AI categories.
+  const CURRICULUM = {
+    English: {
+      groups: ['core'],
+      topics: ['Spoken language', 'Word reading and phonics', 'Reading comprehension', 'Writing composition', 'Spelling', 'Grammar and punctuation', 'Vocabulary', 'English literature', 'Non-fiction', 'Shakespeare']
+    },
+    Mathematics: {
+      groups: ['core'],
+      topics: ['Number', 'Number and place value', 'Addition, subtraction, multiplication and division', 'Fractions, decimals and percentages', 'Ratio and proportion', 'Algebra', 'Geometry', 'Measurement', 'Statistics', 'Probability', 'Graphs and coordinates', 'Problem solving']
+    },
+    Science: {
+      groups: ['core'],
+      topics: ['Working scientifically', 'Plants', 'Animals including humans', 'Living things and their habitats', 'Materials and their properties', 'Rocks', 'Light', 'Forces', 'Electricity', 'Sound', 'States of matter', 'Earth and space', 'Evolution and inheritance', 'Ecology', 'Energy', 'Particle model', 'Chemical reactions', 'Waves', 'Magnetism and electromagnetism', 'Atomic structure']
+    },
+    'Art and design': {
+      groups: ['foundation'],
+      topics: ['Drawing', 'Painting', 'Sculpture', 'Printmaking', 'Photography', 'Mixed media', 'Collage', 'Digital art', 'Artists, craftspeople and designers', 'Composition', 'Colour and visual language', 'Portfolio development']
+    },
+    Citizenship: {
+      groups: ['foundation', 'ks3-4'],
+      topics: ['Democracy and government', 'The constitution and parliament', 'The justice system', 'Rights and responsibilities', 'Law and society', 'The economy and finance', 'Identity and diversity', 'Community and participation', 'Human rights', 'Media and digital citizenship']
+    },
+    Computing: {
+      groups: ['foundation'],
+      topics: ['Algorithms', 'Programming', 'Data representation', 'Computer systems', 'Networks', 'Cyber security', 'Databases', 'Data science', 'Artificial intelligence', 'Digital literacy', 'Computational thinking', 'Web development']
+    },
+    'Design and technology': {
+      groups: ['foundation'],
+      topics: ['Design process', 'Design briefs and specifications', 'Materials and their properties', 'Mechanisms', 'Structures', 'Electrical and electronic systems', 'Programming and control', 'Textiles', 'Food and nutrition', 'CAD and CAM', 'Making and evaluating']
+    },
+    Geography: {
+      groups: ['foundation'],
+      topics: ['Locational knowledge', 'Place knowledge', 'Map skills and fieldwork', 'Human geography', 'Physical geography', 'Rivers', 'Coasts', 'Weather and climate', 'Ecosystems', 'Population and migration', 'Urbanisation', 'Natural hazards', 'Climate change', 'Resources and sustainability']
+    },
+    History: {
+      groups: ['foundation'],
+      topics: ['Chronology and historical enquiry', 'Changes in Britain from the Stone Age to the Iron Age', 'Roman Britain', 'Anglo-Saxons and Scots', 'Vikings and Anglo-Saxons', 'Local history', 'Ancient civilisations', 'Medieval Britain', 'Tudors and Stuarts', 'Industrial Revolution', 'British Empire', 'World War I', 'World War II', 'Cold War', 'Civil rights', 'Historical interpretation and evidence']
+    },
+    Languages: {
+      groups: ['foundation'],
+      topics: ['Listening', 'Speaking', 'Reading', 'Writing', 'Phonics and pronunciation', 'Grammar', 'Vocabulary', 'Identity and culture', 'Local and global areas of interest', 'School and future study', 'Jobs and careers', 'Travel and holidays']
+    },
+    Music: {
+      groups: ['foundation'],
+      topics: ['Performing', 'Composing', 'Improvising', 'Listening and appraising', 'Musical elements', 'Notation', 'Keyboard and instrumental skills', 'Vocal music', 'Music technology', 'Musical traditions and cultures']
+    },
+    'Physical education': {
+      groups: ['foundation'],
+      topics: ['Physical literacy', 'Health, fitness and wellbeing', 'Athletics', 'Games', 'Football', 'Basketball', 'Netball', 'Rugby', 'Badminton', 'Dance', 'Gymnastics', 'Swimming', 'Outdoor and adventurous activities', 'Sports leadership']
+    },
+    'Religious education (RE)': {
+      groups: ['statutory-other'],
+      topics: ['Beliefs and values', 'Christianity', 'Islam', 'Judaism', 'Hinduism', 'Buddhism', 'Other religious and non-religious worldviews', 'Philosophy', 'Ethics', 'Religion and society', 'Religion and science', 'Religious literacy']
+    }
   };
 
   const YEARS = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6', 'Year 7', 'Year 8', 'Year 9', 'Year 10', 'Year 11', 'Year 12', 'Year 13'];
@@ -50,13 +89,13 @@
   const currentYear = yearInput.value || 'Year 8';
   const currentTopic = topicInput.value || 'Fractions';
 
-  const subject = replaceWithSelect(subjectInput, Object.keys(SUBJECTS), currentSubject, 'Select subject');
+  const subject = replaceWithSelect(subjectInput, Object.keys(CURRICULUM), currentSubject, 'Select National Curriculum subject');
   const year = replaceWithSelect(yearInput, YEARS, currentYear, 'Select year or grade');
   const topic = document.createElement('select');
   topic.id = 'topic';
   topic.name = 'topic';
   topic.required = true;
-  topic.setAttribute('aria-label', 'Select topic');
+  topic.setAttribute('aria-label', 'Select curriculum topic');
   topicInput.replaceWith(topic);
 
   const customWrap = document.createElement('div');
@@ -66,8 +105,28 @@
   form.insertBefore(customWrap, form.querySelector('.form-actions'));
   const customTopic = customWrap.querySelector('#customTopic');
 
+  function keyStageForYear(yearValue) {
+    const number = Number(String(yearValue).replace(/\D/g, ''));
+    if (number <= 2) return 'KS1';
+    if (number <= 6) return 'KS2';
+    if (number <= 9) return 'KS3';
+    if (number <= 11) return 'KS4';
+    return 'POST16';
+  }
+
+  function subjectLabel(subjectName) {
+    if (subjectName === 'Religious education (RE)') return 'Religious education (RE) — statutory, outside National Curriculum';
+    return subjectName;
+  }
+
+  function refreshSubjectLabels() {
+    Array.from(subject.options).forEach(option => {
+      option.textContent = subjectLabel(option.value);
+    });
+  }
+
   function populateTopics(preferred) {
-    const topics = SUBJECTS[subject.value] || FALLBACK_TOPICS;
+    const topics = CURRICULUM[subject.value]?.topics || FALLBACK_TOPICS;
     topic.innerHTML = '';
     topics.forEach(item => {
       const option = document.createElement('option');
@@ -79,7 +138,7 @@
     customOption.value = '__custom__';
     customOption.textContent = 'Other / custom topic…';
     topic.appendChild(customOption);
-    topic.value = topics.includes(preferred) ? preferred : (topics.includes('Fractions') && subject.value === 'Mathematics' ? 'Fractions' : topics[0]);
+    topic.value = topics.includes(preferred) ? preferred : (subject.value === 'Mathematics' && topics.includes('Fractions, decimals and percentages') ? 'Fractions, decimals and percentages' : topics[0]);
     customWrap.hidden = topic.value !== '__custom__';
     if (!customWrap.hidden && preferred && preferred !== '__custom__') customTopic.value = preferred;
   }
@@ -88,17 +147,25 @@
     const profile = (() => {
       try { return JSON.parse(localStorage.getItem('teachr-teacher-profile') || '{}'); } catch { return {}; }
     })();
-    subject.value = Object.keys(SUBJECTS).includes(profile.subject) ? profile.subject : 'Mathematics';
+    subject.value = Object.keys(CURRICULUM).includes(profile.subject) ? profile.subject : 'Mathematics';
     year.value = YEARS.includes(profile.year) ? profile.year : 'Year 8';
-    populateTopics(subject.value === 'Mathematics' ? 'Fractions' : undefined);
+    populateTopics(subject.value === 'Mathematics' ? 'Fractions, decimals and percentages' : undefined);
   }
 
+  refreshSubjectLabels();
   populateTopics(currentTopic);
   subject.addEventListener('change', () => populateTopics());
+  year.addEventListener('change', () => {
+    // Keep the selected year available to downstream generation while exposing
+    // the key stage for future curriculum-specific validation and UX.
+    form.dataset.keyStage = keyStageForYear(year.value);
+  });
   topic.addEventListener('change', () => {
     customWrap.hidden = topic.value !== '__custom__';
     if (!customWrap.hidden) customTopic.focus();
   });
+
+  form.dataset.keyStage = keyStageForYear(year.value);
 
   form.addEventListener('submit', event => {
     if (topic.value !== '__custom__') return;
