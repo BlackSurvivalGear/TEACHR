@@ -12,7 +12,7 @@
     },
     Mathematics: {
       groups: ['core'],
-      topics: ['Number', 'Number and place value', 'Addition, subtraction, multiplication and division', 'Fractions, decimals and percentages', 'Ratio and proportion', 'Algebra', 'Geometry', 'Measurement', 'Statistics', 'Probability', 'Graphs and coordinates', 'Problem solving']
+      topics: ['Number', 'Number and place value', 'Addition, subtraction, multiplication and division', 'Fractions', 'Decimals and percentages', 'Fractions, decimals and percentages', 'Ratio and proportion', 'Algebra', 'Geometry', 'Measurement', 'Statistics', 'Probability', 'Graphs and coordinates', 'Problem solving']
     },
     Science: {
       groups: ['core'],
@@ -138,7 +138,7 @@
     customOption.value = '__custom__';
     customOption.textContent = 'Other / custom topic…';
     topic.appendChild(customOption);
-    topic.value = topics.includes(preferred) ? preferred : (subject.value === 'Mathematics' && topics.includes('Fractions, decimals and percentages') ? 'Fractions, decimals and percentages' : topics[0]);
+    topic.value = topics.includes(preferred) ? preferred : (subject.value === 'Mathematics' && topics.includes('Fractions') ? 'Fractions' : topics[0]);
     customWrap.hidden = topic.value !== '__custom__';
     if (!customWrap.hidden && preferred && preferred !== '__custom__') customTopic.value = preferred;
   }
@@ -149,7 +149,7 @@
     })();
     subject.value = Object.keys(CURRICULUM).includes(profile.subject) ? profile.subject : 'Mathematics';
     year.value = YEARS.includes(profile.year) ? profile.year : 'Year 8';
-    populateTopics(subject.value === 'Mathematics' ? 'Fractions, decimals and percentages' : undefined);
+    populateTopics(subject.value === 'Mathematics' ? 'Fractions' : undefined);
   }
 
   refreshSubjectLabels();
