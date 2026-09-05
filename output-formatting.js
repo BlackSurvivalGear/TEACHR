@@ -146,23 +146,90 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .ai-result-body{font-size:13px;line-height:1.6;color:#dbe7f5}
-    .ai-result-body p{margin:0 0 8px;color:inherit}.ai-result-body p:last-child{margin-bottom:0}
-    .ai-result-body strong{font-weight:800;color:#f5f8ff}.ai-result-body em{font-style:italic;color:inherit}
-    .ai-result-body code{padding:2px 5px;border-radius:5px;background:rgba(255,255,255,.10);color:#f1f6ff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
-    .ai-result-body ul,.ai-result-body ol{margin:4px 0 10px 20px;padding:0}.ai-result-body li{margin:3px 0;padding-left:2px;color:inherit}
-    .ai-result-body h5{margin:8px 0 5px;font-size:13px;color:#f5f8ff}
-    .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#dbe7f5}
-    .ai-table th,.ai-table td{border:1px solid rgba(190,215,245,.20);padding:7px 8px;text-align:left;vertical-align:top}.ai-table th{font-weight:800;background:rgba(255,255,255,.10);color:#f5f8ff}
+    .ai-result-body{font-size:13px;line-height:1.65;color:#e7eef9}
+    .ai-result-body p{margin:0 0 8px;color:#dce7f5}.ai-result-body p:last-child{margin-bottom:0}
+    .ai-result-body strong{font-weight:800;color:#ffffff}.ai-result-body em{font-style:italic;color:#edf4ff}
+    .ai-result-body code{padding:2px 5px;border-radius:5px;background:rgba(121,184,255,.16);color:#f2f7ff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+    .ai-result-body ul,.ai-result-body ol{margin:4px 0 10px 20px;padding:0;color:#dce7f5}.ai-result-body li{margin:4px 0;padding-left:2px;color:#dce7f5}
+    .ai-result-body h5{margin:8px 0 5px;font-size:13px;color:#ffffff}
+    .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#e7eef9}
+    .ai-table th,.ai-table td{border:1px solid rgba(174,207,244,.25);padding:7px 8px;text-align:left;vertical-align:top;color:#e7eef9}.ai-table th{font-weight:800;color:#ffffff;background:rgba(121,168,220,.18)}
+
+    .theme-toggle{display:inline-flex;align-items:center;gap:8px;margin-right:18px;color:#dce7f5;font-size:11px;font-weight:700;white-space:nowrap}
+    .theme-toggle-label{opacity:.8}.theme-toggle-label.active{opacity:1;color:#fff}
+    .theme-switch{position:relative;width:42px;height:23px;border:1px solid rgba(155,190,255,.28);border-radius:999px;background:#17365a;padding:0;cursor:pointer;flex:0 0 auto}
+    .theme-switch::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .2s ease}
+    .theme-switch[aria-checked="true"]{background:#27aef2}.theme-switch[aria-checked="true"]::after{transform:translateX(19px)}
+    .theme-switch:focus-visible{outline:3px solid rgba(39,184,255,.35);outline-offset:2px}
+
+    html[data-theme="light"] body{background:#f4f7fb;color:#182334}
+    html[data-theme="light"] .topbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] .topnav a{color:#53657d}.topnav a:hover{color:#17263a}
+    html[data-theme="light"] .profile-chip{background:#fff;color:#26364b;border-color:rgba(31,54,82,.14)}
+    html[data-theme="light"] .glass{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(247,250,253,.98));border-color:rgba(31,54,82,.14);box-shadow:0 20px 55px rgba(36,54,78,.12)}
+    html[data-theme="light"] .hero-text,html[data-theme="light"] .section-sub,html[data-theme="light"] .builder-description{color:#53657d}
+    html[data-theme="light"] .tool-card{background:#fff;color:#17263a;border-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] .tool-card:hover,html[data-theme="light"] .tool-card.active{background:#f8fbff;border-color:rgba(39,145,220,.35)}
+    html[data-theme="light"] .tool-card small{color:#53657d}.tool-card strong{color:inherit}
+    html[data-theme="light"] .stat-card,html[data-theme="light"] .result-item,html[data-theme="light"] .resource-card,html[data-theme="light"] .feature-points span{background:#fff;border-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] .stat-card span,html[data-theme="light"] .stat-card small,html[data-theme="light"] .resource-date{color:#61738b}
+    html[data-theme="light"] .builder{background:#fff}.field input,.field select,.field textarea{background:#fff;color:#182334;border-color:rgba(31,54,82,.18)}
+    html[data-theme="light"] .field label{color:#52657d}.field label span{color:#71839a}
+    html[data-theme="light"] .btn-ghost{color:#26364b;background:#fff;border-color:rgba(31,54,82,.16)}
+    html[data-theme="light"] .result-sub,html[data-theme="light"] .online{color:#5e7189}
+    html[data-theme="light"] .result-item b{color:#18283a}
+    html[data-theme="light"] .ai-result-body{color:#24364c}.ai-result-body p{color:inherit}
+    html[data-theme="light"] .ai-result-body strong,html[data-theme="light"] .ai-result-body h5{color:#14253a}
+    html[data-theme="light"] .ai-result-body code{background:#e8f1fa;color:#16314e}
+    html[data-theme="light"] .ai-result-body ul,html[data-theme="light"] .ai-result-body ol,html[data-theme="light"] .ai-result-body li{color:#263b53}
+    html[data-theme="light"] .ai-table{background:#fff;color:#263b53}.ai-table th,.ai-table td{color:inherit;border-color:rgba(31,54,82,.18)}
+    html[data-theme="light"] .ai-table th{color:#162b43;background:#eaf1f7}
+    html[data-theme="light"] .theme-toggle{color:#26364b}.theme-toggle-label.active{color:inherit}
+    html[data-theme="light"] .filter{color:#52657d;background:#fff;border-color:rgba(31,54,82,.14)}
+    html[data-theme="light"] footer{color:#61738b;border-top-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] footer strong{color:#33485f}
+
     @media print{
-      .ai-result-body{color:#33445a}
-      .ai-result-body p,.ai-result-body li,.ai-result-body em{color:inherit}
-      .ai-result-body strong,.ai-result-body h5{color:#18283b}
-      .ai-result-body code{background:#eef2f7;color:#18283b}
-      .ai-table{background:#fff;color:#33445a}
-      .ai-table th{background:#eef2f7;color:#18283b}
-      .ai-table th,.ai-table td{border-color:#cbd5e1}
+      html[data-theme="light"] body,html[data-theme="dark"] body{background:#fff!important;color:#111!important}
+      .ai-result-body,.ai-result-body p,.ai-result-body li,.ai-result-body ul,.ai-result-body ol,.ai-result-body td,.ai-result-body th{color:#222!important}
+      .ai-result-body strong,.ai-result-body h5{color:#111!important}.ai-result-body code{color:#111!important;background:#eee!important}
+      .ai-table{background:#fff!important}.ai-table th{background:#eee!important;color:#111!important}.ai-table td,.ai-table th{border-color:#bbb!important}
+      .theme-toggle{display:none!important}
     }
   `;
   document.head.appendChild(style);
+
+  const installThemeToggle = () => {
+    const topbar = document.querySelector('.topbar');
+    const profile = document.getElementById('profileButton');
+    if (!topbar || !profile || document.getElementById('themeToggle')) return;
+
+    const stored = localStorage.getItem('teachr-theme');
+    const initial = stored === 'light' || stored === 'dark'
+      ? stored
+      : (window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = initial;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'theme-toggle';
+    wrap.innerHTML = '<span class="theme-toggle-label" data-theme-label="light">Light</span><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Switch between light and dark mode"></button><span class="theme-toggle-label" data-theme-label="dark">Dark</span>';
+    topbar.insertBefore(wrap, profile);
+
+    const button = document.getElementById('themeToggle');
+    const labels = wrap.querySelectorAll('[data-theme-label]');
+    const apply = theme => {
+      document.documentElement.dataset.theme = theme;
+      button.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
+      labels.forEach(label => label.classList.toggle('active', label.dataset.themeLabel === theme));
+      localStorage.setItem('teachr-theme', theme);
+    };
+    button.addEventListener('click', () => apply(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+    apply(initial);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installThemeToggle, { once: true });
+  } else {
+    installThemeToggle();
+  }
 })();
