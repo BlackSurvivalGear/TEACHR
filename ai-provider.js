@@ -21,7 +21,7 @@
   panel.id = 'aiProviderPanel';
   panel.innerHTML = `
     <div class="aip-head">
-      <div><p class="eyebrow">AI ENGINE</p><strong>Choose your AI provider</strong><span>Bring your own API key. TEACHR keeps it in this browser session and does not save it to the repository.</span></div>
+      <div><p class="eyebrow">AI ENGINE</p><strong>Choose your AI provider</strong><span>Temporary browser-direct proof-of-concept: your key is used only from this browser session and is not committed to the repository.</span></div>
       <span class="aip-status" id="aiProviderStatus">Not configured</span>
     </div>
     <div class="aip-grid">
@@ -46,7 +46,7 @@
         <div class="aip-key-wrap"><input id="aiApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your provider API key for this session"><button class="aip-toggle" id="aiKeyToggle" type="button">SHOW</button></div>
       </div>
     </div>
-    <div class="aip-actions"><button class="aip-test" id="testAiConnection" type="button">Test connection</button><span class="aip-note">The key is sent only when you test or use the AI service. It is not written to localStorage or committed to Git.</span></div>
+    <div class="aip-actions"><button class="aip-test" id="testAiConnection" type="button">Test connection</button><span class="aip-note">Temporary direct browser test. Do not commit or share the key; rotate it after this proof-of-concept if you are finished testing.</span></div>
   `;
 
   const actions = form.querySelector('.form-actions');
@@ -121,6 +121,13 @@
     testButton.disabled = true;
     setStatus('Testing…');
     try {
+      let result;
+      if (window.TEACHR_DIRECT_OPENAI_ENABLED && window.TEACHR_DIRECT_OPENAI) {
+        result = await window.TEACHR_DIRECT_OPENAI.test(key, model.value);
+        setModelOptions(result.availableModels);
+        setStatus(`Connected · ${result.model}`, 'ready');
+        return;
+      }
       const response = await fetch(`${apiBase}/api/ai/test`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -129,9 +136,7 @@
       const contentType = response.headers.get('content-type') || '';
       const payload = contentType.includes('application/json') ? await response.json().catch(() => ({})) : {};
       if (!response.ok) {
-        if (response.status === 404 || !contentType.includes('application/json')) {
-          throw new Error('TEACHR AI backend is not running. Start the local server with npm start.');
-        }
+        if (response.status === 404 || !contentType.includes('application/json')) throw new Error('TEACHR AI backend is not running. Start the local server with npm start.');
         throw new Error(payload.error || 'Connection test failed');
       }
       setModelOptions(payload.availableModels);
