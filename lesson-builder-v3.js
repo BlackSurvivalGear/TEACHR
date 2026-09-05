@@ -26,6 +26,7 @@
     ['Teacher-specified sequence',f(v.sequence,'Starter → explicit teaching/model → guided practice → independent practice → assessment/plenary.')]
   ]}; };
   form.addEventListener('submit', event => {
+    if (window.TEACHR_DIRECT_OPENAI_ENABLED) return;
     if (document.querySelector('.tool-card.active')?.dataset.tool !== 'lesson') return;
     event.preventDefault(); event.stopImmediatePropagation();
     const data=Object.fromEntries(new FormData(form).entries());
