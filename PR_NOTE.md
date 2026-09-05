@@ -1,0 +1,1 @@
+Curriculum selector implementation follows the four separate UK education systems.
