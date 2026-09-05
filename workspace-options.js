@@ -36,8 +36,7 @@
       item.textContent = option;
       select.appendChild(item);
     });
-    const selected = options.includes(currentValue) ? currentValue : options[0];
-    select.value = selected;
+    select.value = options.includes(currentValue) ? currentValue : options[0];
     input.replaceWith(select);
     return select;
   }
@@ -64,7 +63,7 @@
   customWrap.className = 'field field-wide';
   customWrap.hidden = true;
   customWrap.innerHTML = '<label for="customTopic">Custom topic</label><input id="customTopic" type="text" placeholder="Enter a custom topic">';
-  form.insertBefore(customWrap, form.querySelector('.field-wide:nth-of-type(4)') || form.querySelector('.form-actions'));
+  form.insertBefore(customWrap, form.querySelector('.form-actions'));
   const customTopic = customWrap.querySelector('#customTopic');
 
   function populateTopics(preferred) {
@@ -85,44 +84,36 @@
     if (!customWrap.hidden && preferred && preferred !== '__custom__') customTopic.value = preferred;
   }
 
-  populateTopics(currentTopic);
+  function resetWorkspaceSelectors() {
+    const profile = (() => {
+      try { return JSON.parse(localStorage.getItem('teachr-teacher-profile') || '{}'); } catch { return {}; }
+    })();
+    subject.value = Object.keys(SUBJECTS).includes(profile.subject) ? profile.subject : 'Mathematics';
+    year.value = YEARS.includes(profile.year) ? profile.year : 'Year 8';
+    populateTopics(subject.value === 'Mathematics' ? 'Fractions' : undefined);
+  }
 
+  populateTopics(currentTopic);
   subject.addEventListener('change', () => populateTopics());
   topic.addEventListener('change', () => {
     customWrap.hidden = topic.value !== '__custom__';
     if (!customWrap.hidden) customTopic.focus();
   });
 
-  customTopic.addEventListener('input', () => {
-    if (topic.value === '__custom__' && customTopic.value.trim()) {
-      topic.dataset.customValue = customTopic.value.trim();
-    }
-  });
-
-  // Keep FormData and existing TEACHR generation logic compatible with a custom topic.
   form.addEventListener('submit', event => {
-    if (topic.value === '__custom__') {
-      const value = customTopic.value.trim();
-      if (!value) {
-        event.preventDefault();
-        customTopic.focus();
-        return;
-      }
-      topic.value = value;
-      setTimeout(() => {
-        if (!Array.from(topic.options).some(option => option.value === value)) {
-          const option = document.createElement('option');
-          option.value = value;
-          option.textContent = value;
-          topic.appendChild(option);
-        }
-        topic.value = value;
-      }, 0);
+    if (topic.value !== '__custom__') return;
+    const value = customTopic.value.trim();
+    if (!value) {
+      event.preventDefault();
+      customTopic.focus();
+      return;
     }
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    topic.appendChild(option);
+    topic.value = value;
   }, true);
 
-  // Make the defaults visible and selectable immediately when the workspace opens.
-  subject.value = Object.keys(SUBJECTS).includes(currentSubject) ? currentSubject : 'Mathematics';
-  year.value = YEARS.includes(currentYear) ? currentYear : 'Year 8';
-  populateTopics(currentTopic);
+  document.getElementById('clearButton')?.addEventListener('click', () => setTimeout(resetWorkspaceSelectors, 0));
 })();
