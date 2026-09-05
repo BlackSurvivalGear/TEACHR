@@ -1,15 +1,15 @@
 (() => {
   const DIRECT_FLAG = 'TEACHR_DIRECT_OPENAI_TEST';
-  const isEnabled = window[DIRECT_FLAG] === true;
-  if (!isEnabled) return;
+  if (window[DIRECT_FLAG] !== true) return;
 
   const OPENAI_API = 'https://api.openai.com/v1';
+  const originalFetch = window.fetch.bind(window);
 
   async function openaiFetch(path, key, options = {}) {
     const headers = new Headers(options.headers || {});
     headers.set('Authorization', `Bearer ${key}`);
     headers.set('Content-Type', 'application/json');
-    return fetch(`${OPENAI_API}${path}`, { ...options, headers });
+    return originalFetch(`${OPENAI_API}${path}`, { ...options, headers });
   }
 
   async function test(key, model) {
@@ -44,4 +44,21 @@
 
   window.TEACHR_DIRECT_OPENAI = { test, generate };
   window.TEACHR_DIRECT_OPENAI_ENABLED = true;
+
+  window.fetch = async (input, init = {}) => {
+    const url = typeof input === 'string' ? input : input?.url || '';
+    if (!/\/api\/generate(?:\?|$)/.test(url) || (init.method || 'GET').toUpperCase() !== 'POST') {
+      return originalFetch(input, init);
+    }
+    try {
+      const body = JSON.parse(init.body || '{}');
+      const key = sessionStorage.getItem('teachr-ai-api-key') || '';
+      const model = sessionStorage.getItem('teachr-ai-model') || 'gpt-5.6-luna';
+      if (!key) throw new Error('Enter an OpenAI API key in AI ENGINE first');
+      const result = await generate({ key, model, prompt: body.prompt || '' });
+      return new Response(JSON.stringify(result), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error.message || 'Direct OpenAI request failed' }), { status: 502, headers: { 'Content-Type': 'application/json' } });
+    }
+  };
 })();
