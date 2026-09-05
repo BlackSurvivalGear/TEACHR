@@ -38,8 +38,12 @@
       <div class="field"><label for="resourcesNeeded">Resources needed</label><input id="resourcesNeeded" placeholder="e.g. slides, cards, practical equipment"></div>
       <div class="field field-wide"><label for="successCriteria">Success criteria</label><input id="successCriteria" placeholder="How will pupils know they have succeeded?"></div>
     </div>`;
+
   const actions = form.querySelector('.form-actions');
-  form.insertBefore(panel, actions);
+  const aiPanel = document.getElementById('aiProviderPanel');
+  if (aiPanel) form.insertBefore(panel, aiPanel);
+  else if (actions) form.insertBefore(panel, actions);
+  else form.appendChild(panel);
 
   const ids = ['lessonObjective','priorKnowledge','lessonStyle','assessmentMethod','supportNeeds','resourcesNeeded','successCriteria'];
   const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));

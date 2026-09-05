@@ -111,11 +111,20 @@
   customWrap.className = 'field field-wide';
   customWrap.hidden = true;
   customWrap.innerHTML = '<label for="customTopic">Custom topic</label><input id="customTopic" type="text" placeholder="Enter a custom topic">';
-  form.insertBefore(customWrap, form.querySelector('.form-actions'));
+  const topicField = topic.closest('.field');
+  if (topicField) topicField.insertAdjacentElement('afterend', customWrap);
+  else form.insertBefore(customWrap, form.querySelector('.form-actions'));
   const customTopic = customWrap.querySelector('#customTopic');
 
   function frameworkKey() {
     return curriculumKeyFromValue(curriculum.value);
+  }
+
+  function setCustomTopicVisibility() {
+    const isCustom = topic.value === '__custom__';
+    customWrap.hidden = !isCustom;
+    customTopic.required = isCustom;
+    if (isCustom) customTopic.focus();
   }
 
   function populateTopics(preferred) {
@@ -132,7 +141,7 @@
     customOption.textContent = 'Other / custom topic…';
     topic.appendChild(customOption);
     topic.value = topics.includes(preferred) ? preferred : (frameworkKey() === 'england' && subject.value === 'Mathematics' ? 'Fractions' : topics[0]);
-    customWrap.hidden = topic.value !== '__custom__';
+    setCustomTopicVisibility();
   }
 
   function updateFramework(preferredSubject, preferredStage, preferredTopic) {
@@ -168,10 +177,7 @@
 
   curriculum.addEventListener('change', () => updateFramework(undefined, undefined, undefined));
   subject.addEventListener('change', () => populateTopics());
-  topic.addEventListener('change', () => {
-    customWrap.hidden = topic.value !== '__custom__';
-    if (!customWrap.hidden) customTopic.focus();
-  });
+  topic.addEventListener('change', setCustomTopicVisibility);
 
   form.addEventListener('submit', event => {
     if (topic.value !== '__custom__') return;
