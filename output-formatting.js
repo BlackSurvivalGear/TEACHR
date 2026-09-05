@@ -155,28 +155,57 @@
     .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#e7eef9}
     .ai-table th,.ai-table td{border:1px solid rgba(174,207,244,.25);padding:7px 8px;text-align:left;vertical-align:top;color:#e7eef9}.ai-table th{font-weight:800;color:#ffffff;background:rgba(121,168,220,.18)}
 
-    .theme-toggle{display:inline-flex;align-items:center;gap:8px;margin-right:18px;color:#dce7f5;font-size:11px;font-weight:700;white-space:nowrap}
-    .theme-toggle-label{opacity:.8}.theme-toggle-label.active{opacity:1;color:#fff}
+    .theme-toggle{display:inline-flex;align-items:center;gap:8px;margin-right:18px;color:#cbd9eb;font-size:11px;font-weight:700;white-space:nowrap}
+    .theme-toggle-label{opacity:.82}.theme-toggle-label.active{opacity:1;color:#fff}
     .theme-switch{position:relative;width:42px;height:23px;border:1px solid rgba(155,190,255,.28);border-radius:999px;background:#17365a;padding:0;cursor:pointer;flex:0 0 auto}
     .theme-switch::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .2s ease}
     .theme-switch[aria-checked="true"]{background:#27aef2}.theme-switch[aria-checked="true"]::after{transform:translateX(19px)}
     .theme-switch:focus-visible{outline:3px solid rgba(39,184,255,.35);outline-offset:2px}
 
+    /* Refined dark mode: softer input surfaces, clearer labels and placeholders. */
+    html[data-theme="dark"] .builder.glass{background:linear-gradient(145deg,rgba(15,35,62,.94),rgba(7,23,44,.94));border-color:rgba(103,160,221,.22)}
+    html[data-theme="dark"] #aiProviderPanel{background:linear-gradient(145deg,rgba(17,43,73,.72),rgba(8,27,50,.76));border-color:rgba(83,170,255,.24)}
+    html[data-theme="dark"] .field input,html[data-theme="dark"] .field select,html[data-theme="dark"] .field textarea,
+    html[data-theme="dark"] .aip-key-wrap input{background:#132b48!important;color:#e8f1fb!important;border-color:rgba(116,164,211,.34)!important;color-scheme:dark}
+    html[data-theme="dark"] .field input:hover,html[data-theme="dark"] .field select:hover,html[data-theme="dark"] .field textarea:hover,
+    html[data-theme="dark"] .aip-key-wrap input:hover{border-color:rgba(116,184,229,.48)!important;background:#16304f!important}
+    html[data-theme="dark"] .field input:focus,html[data-theme="dark"] .field select:focus,html[data-theme="dark"] .field textarea:focus,
+    html[data-theme="dark"] .aip-key-wrap input:focus{background:#142f4e!important;border-color:rgba(74,190,255,.65)!important;box-shadow:0 0 0 3px rgba(39,184,255,.10)!important}
+    html[data-theme="dark"] .field input::placeholder,html[data-theme="dark"] .field textarea::placeholder,
+    html[data-theme="dark"] .aip-key-wrap input::placeholder{color:#9fb2c9!important;opacity:1}
+    html[data-theme="dark"] .field label{color:#b9c9dc!important}.field label span{color:#8398b2!important}
+    html[data-theme="dark"] .builder-description,html[data-theme="dark"] .aip-head span,html[data-theme="dark"] .aip-note{color:#8fa6c0!important}
+    html[data-theme="dark"] .aip-toggle{color:#a9bdd5}.aip-test{color:#dce9f8;background:rgba(49,112,167,.16)}
+    html[data-theme="dark"] .aip-test:hover{background:rgba(58,133,193,.24);color:#fff}
+
+    /* Refined light mode: stronger text hierarchy without harsh white panels. */
     html[data-theme="light"] body{background:#f4f7fb;color:#182334}
-    html[data-theme="light"] .topbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] .topbar{background:rgba(255,255,255,.96);border-bottom-color:rgba(31,54,82,.14)}
     html[data-theme="light"] .topnav a{color:#53657d}.topnav a:hover{color:#17263a}
     html[data-theme="light"] .profile-chip{background:#fff;color:#26364b;border-color:rgba(31,54,82,.14)}
-    html[data-theme="light"] .glass{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(247,250,253,.98));border-color:rgba(31,54,82,.14);box-shadow:0 20px 55px rgba(36,54,78,.12)}
-    html[data-theme="light"] .hero-text,html[data-theme="light"] .section-sub,html[data-theme="light"] .builder-description{color:#53657d}
-    html[data-theme="light"] .tool-card{background:#fff;color:#17263a;border-color:rgba(31,54,82,.12)}
+    html[data-theme="light"] .glass{background:linear-gradient(145deg,#ffffff,#f7faff);border-color:rgba(31,54,82,.16);box-shadow:0 20px 55px rgba(36,54,78,.10)}
+    html[data-theme="light"] .hero-text,html[data-theme="light"] .section-sub,html[data-theme="light"] .builder-description{color:#52677f}
+    html[data-theme="light"] .tool-card{background:#fff;color:#17263a;border-color:rgba(31,54,82,.14)}
     html[data-theme="light"] .tool-card:hover,html[data-theme="light"] .tool-card.active{background:#f8fbff;border-color:rgba(39,145,220,.35)}
-    html[data-theme="light"] .tool-card small{color:#53657d}.tool-card strong{color:inherit}
-    html[data-theme="light"] .stat-card,html[data-theme="light"] .result-item,html[data-theme="light"] .resource-card,html[data-theme="light"] .feature-points span{background:#fff;border-color:rgba(31,54,82,.12)}
-    html[data-theme="light"] .stat-card span,html[data-theme="light"] .stat-card small,html[data-theme="light"] .resource-date{color:#61738b}
-    html[data-theme="light"] .builder{background:#fff}.field input,.field select,.field textarea{background:#fff;color:#182334;border-color:rgba(31,54,82,.18)}
-    html[data-theme="light"] .field label{color:#52657d}.field label span{color:#71839a}
-    html[data-theme="light"] .btn-ghost{color:#26364b;background:#fff;border-color:rgba(31,54,82,.16)}
-    html[data-theme="light"] .result-sub,html[data-theme="light"] .online{color:#5e7189}
+    html[data-theme="light"] .tool-card small{color:#5d718a}.tool-card strong{color:inherit}
+    html[data-theme="light"] .stat-card,html[data-theme="light"] .result-item,html[data-theme="light"] .resource-card,html[data-theme="light"] .feature-points span{background:#fff;border-color:rgba(31,54,82,.14)}
+    html[data-theme="light"] .stat-card span,html[data-theme="light"] .stat-card small,html[data-theme="light"] .resource-date{color:#5d718a}
+    html[data-theme="light"] .builder{background:#fff}
+    html[data-theme="light"] .field input,html[data-theme="light"] .field select,html[data-theme="light"] .field textarea,
+    html[data-theme="light"] .aip-key-wrap input{background:#fff!important;color:#172b43!important;border-color:#c8d5e3!important;color-scheme:light}
+    html[data-theme="light"] .field input:hover,html[data-theme="light"] .field select:hover,html[data-theme="light"] .field textarea:hover,
+    html[data-theme="light"] .aip-key-wrap input:hover{border-color:#aebfd2!important}
+    html[data-theme="light"] .field input:focus,html[data-theme="light"] .field select:focus,html[data-theme="light"] .field textarea:focus,
+    html[data-theme="light"] .aip-key-wrap input:focus{border-color:#4a9fdb!important;box-shadow:0 0 0 3px rgba(39,184,255,.12)!important}
+    html[data-theme="light"] .field input::placeholder,html[data-theme="light"] .field textarea::placeholder,
+    html[data-theme="light"] .aip-key-wrap input::placeholder{color:#667b92!important;opacity:1}
+    html[data-theme="light"] .field label{color:#3c536d!important}.field label span{color:#667c94!important}
+    html[data-theme="light"] .aip-head strong{color:#172b43}.aip-head span{color:#667b92}
+    html[data-theme="light"] .aip-status{color:#5d7188}.aip-status.ready{color:#15985e}.aip-status.error{color:#c44747}
+    html[data-theme="light"] .aip-toggle{color:#54708e}.aip-test{color:#245a8a;background:#eef5fb;border-color:#c4d5e5}
+    html[data-theme="light"] .aip-test:hover{background:#e3eff9;color:#174b76}
+    html[data-theme="light"] .btn-ghost{color:#26364b;background:#fff;border-color:rgba(31,54,82,.18)}
+    html[data-theme="light"] .result-sub,html[data-theme="light"] .online{color:#5b7089}
     html[data-theme="light"] .result-item b{color:#18283a}
     html[data-theme="light"] .ai-result-body{color:#24364c}.ai-result-body p{color:inherit}
     html[data-theme="light"] .ai-result-body strong,html[data-theme="light"] .ai-result-body h5{color:#14253a}
