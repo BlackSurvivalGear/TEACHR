@@ -35,7 +35,11 @@
       </div>
       <div class="field">
         <label for="aiModel">Model</label>
-        <select id="aiModel" name="aiModel"><option value="gpt-5.6-luna" selected>GPT-5.6 Luna — cost-sensitive</option><option value="gpt-5.6-terra">GPT-5.6 Terra — balanced</option><option value="gpt-5.6-sol">GPT-5.6 Sol — frontier</option></select>
+        <select id="aiModel" name="aiModel">
+          <option value="gpt-5.6-luna" selected>GPT-5.6 Luna — cost-sensitive</option>
+          <option value="gpt-5.6-terra">GPT-5.6 Terra — balanced</option>
+          <option value="gpt-5.6-sol">GPT-5.6 Sol — frontier</option>
+        </select>
       </div>
       <div class="field aip-wide">
         <label for="aiApiKey">API key</label>
@@ -58,10 +62,24 @@
   const sessionKey = 'teachr-ai-api-key';
   const sessionProvider = 'teachr-ai-provider';
   const sessionModel = 'teachr-ai-model';
+  const apiBase = typeof window.TEACHR_API_BASE === 'string' ? window.TEACHR_API_BASE.replace(/\/$/, '') : '';
 
   const setStatus = (text, state = '') => {
     status.textContent = text;
     status.className = `aip-status ${state}`;
+  };
+
+  const setModelOptions = (models) => {
+    if (!Array.isArray(models) || !models.length) return;
+    const current = model.value;
+    model.replaceChildren(...models.map(id => {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = id;
+      return option;
+    }));
+    model.value = models.includes(current) ? current : models[0];
+    try { sessionStorage.setItem(sessionModel, model.value); } catch {}
   };
 
   try {
@@ -103,13 +121,20 @@
     testButton.disabled = true;
     setStatus('Testing…');
     try {
-      const response = await fetch('/api/ai/test', {
+      const response = await fetch(`${apiBase}/api/ai/test`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ provider: provider.value, model: model.value, apiKey: key })
       });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || 'Connection test failed');
+      const contentType = response.headers.get('content-type') || '';
+      const payload = contentType.includes('application/json') ? await response.json().catch(() => ({})) : {};
+      if (!response.ok) {
+        if (response.status === 404 || !contentType.includes('application/json')) {
+          throw new Error('TEACHR AI backend is not running. Start the local server with npm start.');
+        }
+        throw new Error(payload.error || 'Connection test failed');
+      }
+      setModelOptions(payload.availableModels);
       setStatus(`Connected · ${payload.model || model.value}`, 'ready');
     } catch (error) {
       setStatus(error.message || 'Connection test failed', 'error');
