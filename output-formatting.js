@@ -146,14 +146,23 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .ai-result-body{font-size:13px;line-height:1.6;color:#33445a}
-    .ai-result-body p{margin:0 0 8px}.ai-result-body p:last-child{margin-bottom:0}
-    .ai-result-body strong{font-weight:800;color:#18283b}.ai-result-body em{font-style:italic}
-    .ai-result-body code{padding:2px 5px;border-radius:5px;background:rgba(20,40,70,.08);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
-    .ai-result-body ul,.ai-result-body ol{margin:4px 0 10px 20px;padding:0}.ai-result-body li{margin:3px 0;padding-left:2px}
-    .ai-result-body h5{margin:8px 0 5px;font-size:13px}
-    .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.5)}
-    .ai-table th,.ai-table td{border:1px solid rgba(20,50,80,.12);padding:7px 8px;text-align:left;vertical-align:top}.ai-table th{font-weight:800;background:rgba(20,50,80,.06)}
+    .ai-result-body{font-size:13px;line-height:1.6;color:#dbe7f5}
+    .ai-result-body p{margin:0 0 8px;color:inherit}.ai-result-body p:last-child{margin-bottom:0}
+    .ai-result-body strong{font-weight:800;color:#f5f8ff}.ai-result-body em{font-style:italic;color:inherit}
+    .ai-result-body code{padding:2px 5px;border-radius:5px;background:rgba(255,255,255,.10);color:#f1f6ff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+    .ai-result-body ul,.ai-result-body ol{margin:4px 0 10px 20px;padding:0}.ai-result-body li{margin:3px 0;padding-left:2px;color:inherit}
+    .ai-result-body h5{margin:8px 0 5px;font-size:13px;color:#f5f8ff}
+    .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#dbe7f5}
+    .ai-table th,.ai-table td{border:1px solid rgba(190,215,245,.20);padding:7px 8px;text-align:left;vertical-align:top}.ai-table th{font-weight:800;background:rgba(255,255,255,.10);color:#f5f8ff}
+    @media print{
+      .ai-result-body{color:#33445a}
+      .ai-result-body p,.ai-result-body li,.ai-result-body em{color:inherit}
+      .ai-result-body strong,.ai-result-body h5{color:#18283b}
+      .ai-result-body code{background:#eef2f7;color:#18283b}
+      .ai-table{background:#fff;color:#33445a}
+      .ai-table th{background:#eef2f7;color:#18283b}
+      .ai-table th,.ai-table td{border-color:#cbd5e1}
+    }
   `;
   document.head.appendChild(style);
 })();
