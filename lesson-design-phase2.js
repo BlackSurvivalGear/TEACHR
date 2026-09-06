@@ -59,6 +59,9 @@
     input.addEventListener('change',()=>setTimeout(apply,0));
     input.addEventListener('input',()=>setTimeout(apply,0));
   });
+  form.addEventListener('input',event=>{
+    if(event.target && event.target.id === 'customTopic') setTimeout(apply,0);
+  });
   form.addEventListener('reset',()=>{ Object.keys(state).forEach(k=>{state[k]='';}); setTimeout(apply,0); });
   apply();
 })();
