@@ -1,0 +1,1 @@
+Phase 2 Lesson Design intelligence is loaded by lesson-design-smart-defaults.js.
