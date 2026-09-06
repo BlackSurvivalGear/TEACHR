@@ -12,7 +12,6 @@
   const sequence = document.getElementById('v2Sequence');
   const successCriteria = document.getElementById('successCriteria');
   if (!form || !curriculum || !subject || !year || !topic || !objective || !priorKnowledge || !vocabulary || !lessonStyle || !assessment || !sequence || !successCriteria) return;
-
   const defaults = {
     Mathematics: { style: 'Explicit instruction + guided practice', assessment: 'Mini-whiteboard checks', sequence: 'Retrieval starter → explicit teaching → modelling → guided practice → independent practice → assessment → exit ticket' },
     English: { style: 'Explicit instruction + guided practice', assessment: 'Questioning throughout', sequence: 'Retrieval starter → explicit teaching → modelling → guided practice → independent application → review' },
@@ -28,19 +27,11 @@
     'Physical education': { style: 'Practical / hands-on', assessment: 'Questioning throughout', sequence: 'Retrieval starter → demonstration → guided practice → progressive practice → competitive/application task → review' },
     'Religious education (RE)': { style: 'Discussion + collaborative learning', assessment: 'Questioning throughout', sequence: 'Retrieval starter → knowledge input → discussion/enquiry → evidence task → independent reflection → review' }
   };
-
   const STOP_WORDS = new Set(['about','after','again','also','being','between','could','from','have','into','more','must','other','over','should','their','there','these','they','this','those','through','under','using','what','when','where','which','while','with','would','pupils','students','learn','learning','understand','explain','describe','identify','develop','know','able','england','national','curriculum']);
   const state = { values: Object.create(null) };
   const initialValues = Object.fromEntries([lessonStyle, assessment, sequence, priorKnowledge, vocabulary, successCriteria].map(field => [field.id, field.value]));
-
-  function contextTopic() {
-    return (topic.value === '__custom__' ? document.getElementById('customTopic')?.value : topic.value) || '';
-  }
-
-  function cleanTopic(value) {
-    return String(value || '').replace(/\s+/g, ' ').trim();
-  }
-
+  function contextTopic() { return (topic.value === '__custom__' ? document.getElementById('customTopic')?.value : topic.value) || ''; }
+  function cleanTopic(value) { return String(value || '').replace(/\s+/g, ' ').trim(); }
   function setIfUntouched(field, value) {
     if (!field || !value) return;
     const previous = state.values[field.id];
@@ -51,16 +42,10 @@
       state.values[field.id] = value;
     }
   }
-
   function deriveVocabulary() {
-    const text = `${cleanTopic(contextTopic())} ${objective.value}`
-      .toLowerCase()
-      .replace(/[^a-z0-9' -]/g, ' ')
-      .split(/\s+/)
-      .filter(word => word.length >= 5 && !STOP_WORDS.has(word));
+    const text = `${cleanTopic(contextTopic())} ${objective.value}`.toLowerCase().replace(/[^a-z0-9' -]/g, ' ').split(/\s+/).filter(word => word.length >= 5 && !STOP_WORDS.has(word));
     return [...new Set(text)].slice(0, 8).join(' · ');
   }
-
   function derivePriorKnowledge() {
     const topicText = cleanTopic(contextTopic());
     if (!topicText) return '';
@@ -70,7 +55,6 @@
     if (defaults[subject.value]) return `Relevant knowledge and vocabulary from earlier lessons on ${topicText}.`;
     return '';
   }
-
   function deriveSuccessCriteria() {
     const text = objective.value.trim();
     if (!text) return '';
@@ -78,7 +62,6 @@
     if (!normalised) return '';
     return `I can ${normalised.charAt(0).toLowerCase()}${normalised.slice(1)}.`;
   }
-
   function applyDefaults() {
     const data = defaults[subject.value];
     if (!data) return;
@@ -89,16 +72,18 @@
     setIfUntouched(vocabulary, deriveVocabulary());
     setIfUntouched(successCriteria, deriveSuccessCriteria());
   }
-
   [curriculum, subject, year, topic, objective].forEach(input => {
     input.addEventListener('change', () => setTimeout(applyDefaults, 0));
     input.addEventListener('input', () => setTimeout(applyDefaults, 0));
   });
-
   form.addEventListener('reset', () => {
     Object.keys(state.values).forEach(key => { state.values[key] = ''; });
     setTimeout(applyDefaults, 0);
   });
-
   applyDefaults();
 })();
+
+const phase2Script = document.createElement('script');
+phase2Script.src = 'lesson-design-phase2.js';
+phase2Script.defer = true;
+document.body.appendChild(phase2Script);
