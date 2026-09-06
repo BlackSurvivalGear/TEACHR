@@ -1,0 +1,52 @@
+{
+  "id": "england-history-ks1-3",
+  "subject": "History",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: history programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-history-programmes-of-study/national-curriculum-in-england-history-programmes-of-study",
+    "published": "2013-09-11",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": "KS1-KS3",
+  "note": "Controlled paraphrases of the statutory programme of study. Example content marked non-statutory by the source is not represented as a statutory requirement.",
+  "domains": {
+    "KS1": ["Chronology and historical concepts", "Changes and events", "Significant individuals", "Local history", "Historical enquiry and sources"],
+    "KS2": ["Chronology and historical concepts", "Stone Age to Iron Age", "Roman Britain", "Anglo-Saxons and Scots", "Viking and Anglo-Saxon struggle", "Local history", "British history beyond 1066", "Ancient civilisations", "Ancient Greece", "Non-European societies", "Historical enquiry and sources"],
+    "KS3": ["Chronology and historical concepts", "Medieval Britain 1066-1509", "Britain 1509-1745", "Ideas, political power, industry and empire 1745-1901", "Britain, Europe and wider world 1901-present", "Local history", "British history themes", "World history and interconnections", "Historical enquiry, evidence and interpretations"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"HIS-KS1-01","domain":"Chronology and historical concepts","summary":"Develop awareness of the past using chronological language, placing studied people and events within a simple sequence and identifying similarities and differences between periods."},
+      {"id":"HIS-KS1-02","domain":"Changes and events","summary":"Explore changes within living memory and significant events beyond living memory, using them to identify features of change in national or wider life."},
+      {"id":"HIS-KS1-03","domain":"Significant individuals","summary":"Learn about significant people whose achievements contributed to national or international history and compare aspects of life across periods."},
+      {"id":"HIS-KS1-04","domain":"Local history","summary":"Study significant historical events, people and places connected with the pupils' own locality."},
+      {"id":"HIS-KS1-05","domain":"Historical enquiry and sources","summary":"Ask and answer historical questions using stories and other sources, recognising ways evidence about the past is discovered and represented."}
+    ],
+    "KS2": [
+      {"id":"HIS-KS2-01","domain":"Chronology and historical concepts","summary":"Build chronologically secure knowledge of British, local and world history, identifying connections, contrasts, trends, change, cause, similarity, difference and significance."},
+      {"id":"HIS-KS2-02","domain":"Stone Age to Iron Age","summary":"Study changes in Britain from the Stone Age to the Iron Age."},
+      {"id":"HIS-KS2-03","domain":"Roman Britain","summary":"Study the Roman Empire and its impact on Britain."},
+      {"id":"HIS-KS2-04","domain":"Anglo-Saxons and Scots","summary":"Study the settlement of Britain by Anglo-Saxons and Scots."},
+      {"id":"HIS-KS2-05","domain":"Viking and Anglo-Saxon struggle","summary":"Study the Viking and Anglo-Saxon struggle for the Kingdom of England to the time of Edward the Confessor."},
+      {"id":"HIS-KS2-06","domain":"Local history","summary":"Carry out a local history study that develops understanding of change and significance through evidence from the locality."},
+      {"id":"HIS-KS2-07","domain":"British history beyond 1066","summary":"Study an aspect or theme in British history that extends chronological knowledge beyond 1066."},
+      {"id":"HIS-KS2-08","domain":"Ancient civilisations","summary":"Study the emergence of the earliest civilisations and complete a depth study of one specified ancient civilisation."},
+      {"id":"HIS-KS2-09","domain":"Ancient Greece","summary":"Study Greek life and achievements and consider their influence on the western world."},
+      {"id":"HIS-KS2-10","domain":"Non-European societies","summary":"Study a specified non-European society that provides a contrast with British history."},
+      {"id":"HIS-KS2-11","domain":"Historical enquiry and sources","summary":"Develop historically valid questions, construct informed responses, select relevant information and understand that knowledge of the past is built from a range of sources."}
+    ],
+    "KS3": [
+      {"id":"HIS-KS3-01","domain":"Chronology and historical concepts","summary":"Extend chronologically secure knowledge of British, local and world history, making connections, drawing contrasts and analysing trends over periods and longer timescales."},
+      {"id":"HIS-KS3-02","domain":"Medieval Britain 1066-1509","summary":"Study the development of Church, state and society in Medieval Britain from 1066 to 1509."},
+      {"id":"HIS-KS3-03","domain":"Britain 1509-1745","summary":"Study the development of Church, state and society in Britain from 1509 to 1745."},
+      {"id":"HIS-KS3-04","domain":"Ideas, political power, industry and empire 1745-1901","summary":"Study ideas, political power, industry and empire in Britain from 1745 to 1901."},
+      {"id":"HIS-KS3-05","domain":"Britain, Europe and wider world 1901-present","summary":"Study challenges for Britain, Europe and the wider world from 1901 to the present, including the Holocaust."},
+      {"id":"HIS-KS3-06","domain":"Local history","summary":"Complete a local history study that deepens understanding through evidence, chronology and connections with wider history."},
+      {"id":"HIS-KS3-07","domain":"British history themes","summary":"Study an aspect or theme in British history that consolidates and extends chronological knowledge, including possible themes such as political power, landscape, migration or turning points."},
+      {"id":"HIS-KS3-08","domain":"World history and interconnections","summary":"Study at least one significant society or issue in world history and its interconnections with other world developments."},
+      {"id":"HIS-KS3-09","domain":"Historical enquiry, evidence and interpretations","summary":"Pursue historically valid enquiries, use sources rigorously to make historical claims, construct evidentially supported accounts and examine contrasting interpretations of the past."}
+    ]
+  }
+}
