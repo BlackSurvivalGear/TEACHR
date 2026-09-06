@@ -1,152 +1,29 @@
+/* TEACHR AI settings — one app-level provider/key configuration shared by all tools. */
 (() => {
-  const form = document.getElementById('builderForm');
-  if (!form || document.getElementById('aiProviderPanel')) return;
-
-  const style = document.createElement('style');
-  style.textContent = `
-    #aiProviderPanel{grid-column:1/-1;margin-top:4px;padding:20px;border:1px solid rgba(83,170,255,.18);border-radius:18px;background:linear-gradient(145deg,rgba(22,50,88,.42),rgba(7,23,45,.38))}
-    .aip-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
-    .aip-head strong{display:block;font-size:15px}.aip-head span{display:block;font-size:11px;color:#7890ae;margin-top:4px}
-    .aip-status{font-size:11px;font-weight:700;color:#91a7c1;white-space:nowrap}.aip-status.ready{color:#7ee2ad}.aip-status.error{color:#ff9d9d}
-    .aip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .aip-wide{grid-column:1/-1}.aip-key-wrap{position:relative}.aip-key-wrap input{padding-right:78px;width:100%}
-    .aip-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#8fa6c2;font-size:10px;font-weight:800;cursor:pointer}
-    .aip-actions{display:flex;align-items:center;gap:10px;margin-top:14px}.aip-note{font-size:10px;color:#7187a2;line-height:1.45}
-    .aip-test{border:1px solid rgba(155,190,255,.14);background:rgba(255,255,255,.04);color:#cfe0f5;border-radius:10px;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer}.aip-test:hover{background:rgba(255,255,255,.08);color:#fff}.aip-test:disabled{opacity:.55;cursor:wait}
-    @media(max-width:620px){.aip-grid{grid-template-columns:1fr}.aip-wide{grid-column:auto}.aip-head{display:block}.aip-status{margin-top:8px}}
-  `;
-  document.head.appendChild(style);
-
-  const panel = document.createElement('section');
-  panel.id = 'aiProviderPanel';
-  panel.innerHTML = `
-    <div class="aip-head">
-      <div><p class="eyebrow">AI ENGINE</p><strong>Choose your AI provider</strong><span>Temporary browser-direct proof-of-concept: your key is used only from this browser session and is not committed to the repository.</span></div>
-      <span class="aip-status" id="aiProviderStatus">Not configured</span>
-    </div>
-    <div class="aip-grid">
-      <div class="field">
-        <label for="aiProvider">AI provider</label>
-        <select id="aiProvider" name="aiProvider">
-          <option value="openai" selected>OpenAI</option>
-          <option value="google">Google Gemini — coming next</option>
-          <option value="anthropic">Anthropic Claude — coming next</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="aiModel">Model</label>
-        <select id="aiModel" name="aiModel">
-          <option value="gpt-5.6-luna" selected>GPT-5.6 Luna — cost-sensitive</option>
-          <option value="gpt-5.6-terra">GPT-5.6 Terra — balanced</option>
-          <option value="gpt-5.6-sol">GPT-5.6 Sol — frontier</option>
-        </select>
-      </div>
-      <div class="field aip-wide">
-        <label for="aiApiKey">API key</label>
-        <div class="aip-key-wrap"><input id="aiApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your provider API key for this session"><button class="aip-toggle" id="aiKeyToggle" type="button">SHOW</button></div>
-      </div>
-    </div>
-    <div class="aip-actions"><button class="aip-test" id="testAiConnection" type="button">Test connection</button><span class="aip-note">Temporary direct browser test. Do not commit or share the key; rotate it after this proof-of-concept if you are finished testing.</span></div>
-  `;
-
-  const actions = form.querySelector('.form-actions');
-  if (actions) form.insertBefore(panel, actions);
-  else form.appendChild(panel);
-
-  const provider = document.getElementById('aiProvider');
-  const model = document.getElementById('aiModel');
-  const apiKey = document.getElementById('aiApiKey');
-  const status = document.getElementById('aiProviderStatus');
-  const testButton = document.getElementById('testAiConnection');
-  const toggle = document.getElementById('aiKeyToggle');
   const sessionKey = 'teachr-ai-api-key';
   const sessionProvider = 'teachr-ai-provider';
   const sessionModel = 'teachr-ai-model';
-  const apiBase = typeof window.TEACHR_API_BASE === 'string' ? window.TEACHR_API_BASE.replace(/\/$/, '') : '';
-
-  const setStatus = (text, state = '') => {
-    status.textContent = text;
-    status.className = `aip-status ${state}`;
-  };
-
-  const setModelOptions = (models) => {
-    if (!Array.isArray(models) || !models.length) return;
-    const current = model.value;
-    model.replaceChildren(...models.map(id => {
-      const option = document.createElement('option');
-      option.value = id;
-      option.textContent = id;
-      return option;
-    }));
-    model.value = models.includes(current) ? current : models[0];
-    try { sessionStorage.setItem(sessionModel, model.value); } catch {}
-  };
-
-  try {
-    apiKey.value = sessionStorage.getItem(sessionKey) || '';
-    provider.value = sessionStorage.getItem(sessionProvider) || 'openai';
-    model.value = sessionStorage.getItem(sessionModel) || 'gpt-5.6-luna';
-    if (apiKey.value) setStatus('Key loaded for this session');
-  } catch {}
-
-  const updateProvider = () => {
-    const isOpenAI = provider.value === 'openai';
-    model.disabled = !isOpenAI;
-    testButton.disabled = !isOpenAI;
-    if (!isOpenAI) setStatus('Provider adapter coming next');
-    else if (!apiKey.value) setStatus('Not configured');
-  };
-
-  provider.addEventListener('change', () => {
-    try { sessionStorage.setItem(sessionProvider, provider.value); } catch {}
-    updateProvider();
-  });
-  model.addEventListener('change', () => { try { sessionStorage.setItem(sessionModel, model.value); } catch {} });
-  apiKey.addEventListener('input', () => {
-    try {
-      if (apiKey.value.trim()) sessionStorage.setItem(sessionKey, apiKey.value.trim());
-      else sessionStorage.removeItem(sessionKey);
-    } catch {}
-    if (apiKey.value.trim()) setStatus('Ready to test'); else setStatus('Not configured');
-  });
-  toggle.addEventListener('click', () => {
-    const visible = apiKey.type === 'text';
-    apiKey.type = visible ? 'password' : 'text';
-    toggle.textContent = visible ? 'SHOW' : 'HIDE';
-  });
-
-  testButton.addEventListener('click', async () => {
-    const key = apiKey.value.trim();
-    if (!key) return setStatus('Enter an API key first', 'error');
-    testButton.disabled = true;
-    setStatus('Testing…');
-    try {
-      let result;
-      if (window.TEACHR_DIRECT_OPENAI_ENABLED && window.TEACHR_DIRECT_OPENAI) {
-        result = await window.TEACHR_DIRECT_OPENAI.test(key, model.value);
-        setModelOptions(result.availableModels);
-        setStatus(`Connected · ${result.model}`, 'ready');
-        return;
-      }
-      const response = await fetch(`${apiBase}/api/ai/test`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ provider: provider.value, model: model.value, apiKey: key })
-      });
-      const contentType = response.headers.get('content-type') || '';
-      const payload = contentType.includes('application/json') ? await response.json().catch(() => ({})) : {};
-      if (!response.ok) {
-        if (response.status === 404 || !contentType.includes('application/json')) throw new Error('TEACHR AI backend is not running. Start the local server with npm start.');
-        throw new Error(payload.error || 'Connection test failed');
-      }
-      setModelOptions(payload.availableModels);
-      setStatus(`Connected · ${payload.model || model.value}`, 'ready');
-    } catch (error) {
-      setStatus(error.message || 'Connection test failed', 'error');
-    } finally {
-      testButton.disabled = provider.value !== 'openai';
-    }
-  });
-
-  updateProvider();
+  function ensureSettingsDialog() {
+    if (document.getElementById('aiSettingsDialog')) return document.getElementById('aiSettingsDialog');
+    const style = document.createElement('style');
+    style.textContent = `#aiSettingsDialog{border:0;padding:0;background:transparent;max-width:min(680px,calc(100vw - 32px));width:100%;color:#10233f}#aiSettingsDialog::backdrop{background:rgba(6,21,43,.58);backdrop-filter:blur(3px)}.ai-settings-card{padding:26px;border:1px solid #ddd0ff;border-radius:22px;background:linear-gradient(145deg,#f5f0ff 0%,#fffdf9 100%);box-shadow:0 24px 70px rgba(16,35,63,.22)}.ai-settings-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}.ai-settings-head h3{margin:0 0 6px;color:#10233f;font-size:24px;letter-spacing:-.03em}.ai-settings-head p:last-child{margin:0;color:#64758c;font-size:12px;line-height:1.5}.ai-settings-close{border:1px solid #d9d0ee;background:#fff;color:#5b45c7;border-radius:9px;width:34px;height:34px;font-size:20px;cursor:pointer}.ai-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.ai-settings-wide{grid-column:1/-1}.ai-settings-card label{display:block;color:#334e6f;font-size:11px;font-weight:700;margin-bottom:6px}.ai-settings-card input,.ai-settings-card select{width:100%;box-sizing:border-box;background:#fff;color:#10233f;border:1px solid #cbd8e6;border-radius:10px;padding:11px 12px;font:inherit;font-size:12px}.ai-settings-key-wrap{position:relative}.ai-settings-key-wrap input{padding-right:64px}.ai-settings-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#5b45c7;font-size:10px;font-weight:800;cursor:pointer}.ai-settings-actions{display:flex;align-items:center;gap:10px;margin-top:18px}.ai-settings-test{border:1px solid #cfc2f5;background:#fff;color:#5b45c7;border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700;cursor:pointer}.ai-settings-test:hover{background:#f7f3ff;color:#4934a8}.ai-settings-test:disabled{opacity:.55;cursor:wait}.ai-settings-save{border:0;background:linear-gradient(135deg,#159fe8 0%,#f4ad25 100%);color:#fff;border-radius:10px;padding:10px 14px;font-size:11px;font-weight:800;cursor:pointer}.ai-settings-status{font-size:11px;font-weight:700;color:#6852c9}.ai-settings-status.ready{color:#16875d}.ai-settings-status.error{color:#c24141}.ai-settings-note{margin:14px 0 0;color:#718199;font-size:10px;line-height:1.5}@media(max-width:620px){.ai-settings-grid{grid-template-columns:1fr}.ai-settings-wide{grid-column:auto}.ai-settings-actions{flex-wrap:wrap}}`;
+    document.head.appendChild(style);
+    const dialog = document.createElement('dialog');
+    dialog.id = 'aiSettingsDialog';
+    dialog.innerHTML = `<form method="dialog" class="ai-settings-card"><div class="ai-settings-head"><div><p class="eyebrow">AI ENGINE</p><h3>AI settings</h3><p>Set your AI provider once here. The same configuration is available to every TEACHR tool.</p></div><button class="ai-settings-close" value="cancel" type="submit" aria-label="Close">×</button></div><div class="ai-settings-grid"><div><label for="aiSettingsProvider">AI provider</label><select id="aiSettingsProvider"><option value="openai" selected>OpenAI</option><option value="google">Google Gemini — coming next</option><option value="anthropic">Anthropic Claude — coming next</option></select></div><div><label for="aiSettingsModel">Model</label><select id="aiSettingsModel"><option value="gpt-5.6-luna" selected>GPT-5.6 Luna — cost-sensitive</option><option value="gpt-5.6-terra">GPT-5.6 Terra — balanced</option><option value="gpt-5.6-sol">GPT-5.6 Sol — frontier</option></select></div><div class="ai-settings-wide"><label for="aiSettingsApiKey">API key</label><div class="ai-settings-key-wrap"><input id="aiSettingsApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your provider API key"><button class="ai-settings-toggle" id="aiSettingsToggle" type="button">SHOW</button></div></div></div><div class="ai-settings-actions"><button class="ai-settings-test" id="aiSettingsTest" type="button">Test connection</button><button class="ai-settings-save" id="aiSettingsSave" type="button">Save for all tools</button><span class="ai-settings-status" id="aiSettingsStatus">Not configured</span></div><p class="ai-settings-note">Proof-of-concept storage uses this browser session only. Do not commit or share your API key.</p></form>`;
+    document.body.appendChild(dialog);
+    const provider=dialog.querySelector('#aiSettingsProvider'), model=dialog.querySelector('#aiSettingsModel'), apiKey=dialog.querySelector('#aiSettingsApiKey'), status=dialog.querySelector('#aiSettingsStatus'), testButton=dialog.querySelector('#aiSettingsTest'), saveButton=dialog.querySelector('#aiSettingsSave');
+    const setStatus=(text,state='')=>{status.textContent=text;status.className=`ai-settings-status ${state}`};
+    const setModelOptions=models=>{if(!Array.isArray(models)||!models.length)return;const current=model.value;model.replaceChildren(...models.map(id=>{const option=document.createElement('option');option.value=id;option.textContent=id;return option}));model.value=models.includes(current)?current:models[0]};
+    const updateProvider=()=>{const isOpenAI=provider.value==='openai';model.disabled=!isOpenAI;testButton.disabled=!isOpenAI;if(!isOpenAI)setStatus('Provider adapter coming next');else if(!apiKey.value.trim())setStatus('Not configured')};
+    const load=()=>{try{provider.value=sessionStorage.getItem(sessionProvider)||'openai';model.value=sessionStorage.getItem(sessionModel)||'gpt-5.6-luna';apiKey.value=sessionStorage.getItem(sessionKey)||'';setStatus(apiKey.value?'Configured for this session':'Not configured')}catch{setStatus('Not configured')}updateProvider()};
+    provider.addEventListener('change',()=>{try{sessionStorage.setItem(sessionProvider,provider.value)}catch{}updateProvider()});
+    model.addEventListener('change',()=>{try{sessionStorage.setItem(sessionModel,model.value)}catch{}});
+    apiKey.addEventListener('input',()=>setStatus(apiKey.value.trim()?'Ready to test':'Not configured'));
+    dialog.querySelector('#aiSettingsToggle').addEventListener('click',()=>{const visible=apiKey.type==='text';apiKey.type=visible?'password':'text';dialog.querySelector('#aiSettingsToggle').textContent=visible?'SHOW':'HIDE'});
+    testButton.addEventListener('click',async()=>{const key=apiKey.value.trim();if(!key)return setStatus('Enter an API key first','error');testButton.disabled=true;setStatus('Testing…');try{if(!window.TEACHR_DIRECT_OPENAI_ENABLED||!window.TEACHR_DIRECT_OPENAI)throw new Error('AI test engine is not available');const result=await window.TEACHR_DIRECT_OPENAI.test(key,model.value);setModelOptions(result.availableModels);setStatus(`Connected · ${result.model}`,'ready')}catch(error){setStatus(error.message||'Connection test failed','error')}finally{testButton.disabled=provider.value!=='openai'}});
+    saveButton.addEventListener('click',()=>{const key=apiKey.value.trim();if(!key)return setStatus('Enter an API key first','error');try{sessionStorage.setItem(sessionKey,key);sessionStorage.setItem(sessionProvider,provider.value);sessionStorage.setItem(sessionModel,model.value);setStatus('Saved · available to all tools','ready');document.dispatchEvent(new CustomEvent('teachr:aisettingschange'))}catch{setStatus('Could not save settings','error')}});
+    load();return dialog;
+  }
+  window.TEACHR_AI_SETTINGS={open(){ensureSettingsDialog().showModal()},isConfigured(){try{return Boolean(sessionStorage.getItem(sessionKey))}catch{return false}}};
 })();
