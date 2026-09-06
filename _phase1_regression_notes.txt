@@ -1,0 +1,1 @@
+Temporary verification note: output cleanup removes Markdown code fences and standalone ellipsis artefacts while preserving useful pseudocode content. Remove this file before merge if CI does not require it.
