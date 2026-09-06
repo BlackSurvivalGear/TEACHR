@@ -1,0 +1,43 @@
+{
+  "id": "england-languages-ks2-3",
+  "subject": "Languages",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: languages programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-languages-progammes-of-study/national-curriculum-in-england-languages-progammes-of-study",
+    "published": "2013-09-11",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": "KS2-KS3",
+  "note": "Controlled paraphrases of the statutory Languages programmes of study. KS2 is the foreign-language programme; KS3 is the modern foreign-language programme. Example content marked non-statutory by the source is not represented as a statutory requirement.",
+  "domains": {
+    "KS2": ["Listening and responding", "Phonology, spelling and sound", "Spoken interaction", "Speaking and presentation", "Reading and comprehension", "Cultural texts", "Vocabulary and dictionaries", "Writing and adaptation", "Description", "Grammar and language structures"],
+    "KS3": ["Listening", "Speaking and interaction", "Reading", "Writing", "Grammar and vocabulary", "Translation", "Language learning strategies", "Literary texts", "Culture and wider understanding"]
+  },
+  "objectives": {
+    "KS2": [
+      {"id":"LAN-KS2-01","domain":"Listening and responding","summary":"Listen attentively to spoken language and demonstrate understanding by joining in and responding."},
+      {"id":"LAN-KS2-02","domain":"Phonology, spelling and sound","summary":"Explore patterns and sounds through songs and rhymes and connect spelling, sound and meaning."},
+      {"id":"LAN-KS2-03","domain":"Spoken interaction","summary":"Take part in conversations, ask and answer questions, express opinions, respond to others and seek clarification or help."},
+      {"id":"LAN-KS2-04","domain":"Speaking and presentation","summary":"Speak in sentences using familiar vocabulary, phrases and basic structures, with pronunciation and intonation that support understanding, and present ideas to audiences."},
+      {"id":"LAN-KS2-05","domain":"Reading and comprehension","summary":"Read carefully and understand words, phrases and simple writing in the language studied."},
+      {"id":"LAN-KS2-06","domain":"Cultural texts","summary":"Appreciate stories, songs, poems and rhymes in the language studied."},
+      {"id":"LAN-KS2-07","domain":"Vocabulary and dictionaries","summary":"Broaden vocabulary and use strategies such as dictionaries to understand new words in familiar written material."},
+      {"id":"LAN-KS2-08","domain":"Writing and adaptation","summary":"Write phrases from memory and adapt them to create new sentences that express ideas clearly."},
+      {"id":"LAN-KS2-09","domain":"Description","summary":"Describe people, places, things and actions orally and in writing."},
+      {"id":"LAN-KS2-10","domain":"Grammar and language structures","summary":"Understand basic grammar appropriate to the language, including relevant gender, verb forms, patterns and sentence-building structures, and compare these with English where appropriate."}
+    ],
+    "KS3": [
+      {"id":"LAN-KS3-01","domain":"Listening","summary":"Understand the main points and detail in a range of spoken language and respond appropriately."},
+      {"id":"LAN-KS3-02","domain":"Speaking and interaction","summary":"Speak with increasing spontaneity, fluency and accuracy, initiate and sustain conversations, ask questions and develop and justify points of view."},
+      {"id":"LAN-KS3-03","domain":"Reading","summary":"Understand the main points, ideas and details in a range of written texts, including authentic material where appropriate."},
+      {"id":"LAN-KS3-04","domain":"Writing","summary":"Write at varying length for different purposes and audiences, expressing and developing ideas with increasing independence and accuracy."},
+      {"id":"LAN-KS3-05","domain":"Grammar and vocabulary","summary":"Use and manipulate key grammatical structures and patterns, develop a wide-ranging vocabulary, and apply accurate grammar, spelling and punctuation."},
+      {"id":"LAN-KS3-06","domain":"Translation","summary":"Translate short written texts accurately into and out of the language studied, using a range of structures and vocabulary."},
+      {"id":"LAN-KS3-07","domain":"Language learning strategies","summary":"Use strategies such as context, reference materials and linguistic knowledge to understand unfamiliar language and communicate effectively."},
+      {"id":"LAN-KS3-08","domain":"Literary texts","summary":"Read and respond to a variety of authentic literary texts in the language studied."},
+      {"id":"LAN-KS3-09","domain":"Culture and wider understanding","summary":"Develop understanding of the culture and wider context associated with the language and use language knowledge to support further study."}
+    ]
+  }
+}
