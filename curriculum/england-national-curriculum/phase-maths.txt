@@ -1,0 +1,1 @@
+Mathematics KS1-KS4 dataset phase marker. Source: DfE Mathematics programmes of study on GOV.UK. Structured domains and controlled objective summaries are loaded by the TEACHR curriculum resolver. Full verbatim statutory text is not copied into application data; the official GOV.UK publication remains authoritative.
