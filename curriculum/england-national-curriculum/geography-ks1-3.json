@@ -1,0 +1,57 @@
+{
+  "id": "england-geography-ks1-3",
+  "subject": "Geography",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "authority": "Department for Education",
+  "source": {
+    "title": "National curriculum in England: geography programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-geography-programmes-of-study/national-curriculum-in-england-geography-programmes-of-study",
+    "status": "statutory-guidance",
+    "updated": "2013-09-11",
+    "licence": "OGL v3.0"
+  },
+  "coverage": {"keyStages": ["KS1", "KS2", "KS3"], "yearStructure": "key-stage programme; no statutory year-by-year sequence", "ks4": "not applicable as a national curriculum programme"},
+  "statementPolicy": "Controlled paraphrases only. Example content in square brackets is not represented as statutory objectives.",
+  "domains": {
+    "KS1": ["Locational knowledge", "Place knowledge", "Human and physical geography", "Geographical skills and fieldwork"],
+    "KS2": ["Locational knowledge", "Place knowledge", "Human and physical geography", "Geographical skills and fieldwork"],
+    "KS3": ["Locational knowledge", "Place knowledge", "Human and physical geography", "Geographical skills and fieldwork"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"GEO-KS1-LOC-01","domain":"Locational knowledge","summary":"Name and locate the world's seven continents and five oceans."},
+      {"id":"GEO-KS1-LOC-02","domain":"Locational knowledge","summary":"Name and locate the four countries and capital cities of the United Kingdom and its surrounding seas."},
+      {"id":"GEO-KS1-PLACE-01","domain":"Place knowledge","summary":"Compare human and physical geography of a small area of the United Kingdom with a contrasting non-European area."},
+      {"id":"GEO-KS1-HUM-01","domain":"Human and physical geography","summary":"Identify seasonal and daily weather patterns in the United Kingdom and locate hot and cold areas in relation to the Equator and the poles."},
+      {"id":"GEO-KS1-HUM-02","domain":"Human and physical geography","summary":"Use basic vocabulary for key physical features such as coasts, forests, hills, mountains, rivers, soil and vegetation."},
+      {"id":"GEO-KS1-HUM-03","domain":"Human and physical geography","summary":"Use basic vocabulary for key human features such as cities, towns, villages, farms, factories, ports, harbours and shops."},
+      {"id":"GEO-KS1-SKILL-01","domain":"Geographical skills and fieldwork","summary":"Use world maps, atlases and globes to identify the United Kingdom, countries, continents and oceans studied."},
+      {"id":"GEO-KS1-SKILL-02","domain":"Geographical skills and fieldwork","summary":"Use simple compass directions and locational language to describe locations and routes on maps."},
+      {"id":"GEO-KS1-SKILL-03","domain":"Geographical skills and fieldwork","summary":"Use aerial photographs and plan perspectives to recognise features, devise simple maps and use basic symbols and keys."},
+      {"id":"GEO-KS1-SKILL-04","domain":"Geographical skills and fieldwork","summary":"Use simple fieldwork and observation to study the school, its grounds and the surrounding environment."}
+    ],
+    "KS2": [
+      {"id":"GEO-KS2-LOC-01","domain":"Locational knowledge","summary":"Locate countries using maps, with focus on Europe, North America and South America and their environmental regions and major human and physical characteristics."},
+      {"id":"GEO-KS2-LOC-02","domain":"Locational knowledge","summary":"Name and locate UK counties, cities and geographical regions and describe identifying human and physical characteristics, topographical features and land-use patterns."},
+      {"id":"GEO-KS2-LOC-03","domain":"Locational knowledge","summary":"Understand the position and significance of latitude, longitude, the Equator, hemispheres, the Tropics, polar circles, the Prime Meridian and time zones."},
+      {"id":"GEO-KS2-PLACE-01","domain":"Place knowledge","summary":"Compare human and physical geography of a UK region, a region in a European country and a region in North or South America."},
+      {"id":"GEO-KS2-HUM-01","domain":"Human and physical geography","summary":"Describe and understand physical geography including climate zones, biomes, vegetation belts, rivers, mountains, volcanoes, earthquakes and the water cycle."},
+      {"id":"GEO-KS2-HUM-02","domain":"Human and physical geography","summary":"Describe and understand human geography including settlement, land use, economic activity, trade links and natural resource distribution."},
+      {"id":"GEO-KS2-SKILL-01","domain":"Geographical skills and fieldwork","summary":"Use maps, atlases, globes and digital mapping to locate countries and describe studied features."},
+      {"id":"GEO-KS2-SKILL-02","domain":"Geographical skills and fieldwork","summary":"Use compass points, grid references, symbols and keys, including Ordnance Survey maps, to develop knowledge of the United Kingdom and wider world."},
+      {"id":"GEO-KS2-SKILL-03","domain":"Geographical skills and fieldwork","summary":"Use fieldwork to observe, measure, record and present local human and physical features through maps, plans, graphs and digital technologies."}
+    ],
+    "KS3": [
+      {"id":"GEO-KS3-LOC-01","domain":"Locational knowledge","summary":"Extend locational knowledge and spatial awareness of world countries, with focus on Africa, Russia, Asia and the Middle East and their environmental regions and major human and physical characteristics."},
+      {"id":"GEO-KS3-PLACE-01","domain":"Place knowledge","summary":"Understand geographical similarities, differences and links through study of a region in Africa and a region in Asia."},
+      {"id":"GEO-KS3-HUM-01","domain":"Human and physical geography","summary":"Understand physical geography processes including plate tectonics, rocks, weathering, soils, weather and climate change, glaciation, hydrology and coasts."},
+      {"id":"GEO-KS3-HUM-02","domain":"Human and physical geography","summary":"Understand human geography processes including population, urbanisation, international development, economic sectors and natural resource use."},
+      {"id":"GEO-KS3-HUM-03","domain":"Human and physical geography","summary":"Understand how human and physical processes interact to change landscapes, environments and climate and how human activity depends on natural systems."},
+      {"id":"GEO-KS3-SKILL-01","domain":"Geographical skills and fieldwork","summary":"Develop routine use of globes, maps and atlases in classroom and field contexts."},
+      {"id":"GEO-KS3-SKILL-02","domain":"Geographical skills and fieldwork","summary":"Interpret Ordnance Survey maps using grid references, scale, topographical and thematic mapping, and aerial and satellite photographs."},
+      {"id":"GEO-KS3-SKILL-03","domain":"Geographical skills and fieldwork","summary":"Use Geographical Information Systems to view, analyse and interpret places and data."},
+      {"id":"GEO-KS3-SKILL-04","domain":"Geographical skills and fieldwork","summary":"Use fieldwork in contrasting locations to collect, analyse and draw conclusions from geographical data using increasingly complex information sources."}
+    ]
+  }
+}
