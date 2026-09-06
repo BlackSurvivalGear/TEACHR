@@ -12,6 +12,7 @@
   };
   const TOOL_ICONS = { lesson: '✦', worksheet: '▤', quiz: '?', differentiate: '◈', curriculum: '▦', revision: '◆', parent: '✉', library: '▣' };
   const TOOL_CLASSES = { lesson: 'blue', worksheet: 'purple', quiz: 'cyan', differentiate: 'violet', curriculum: 'green', revision: 'orange', parent: 'pink', library: 'teal' };
+  let publicNav = null;
 
   function createShell() {
     if (document.getElementById('teachrApp')) return document.getElementById('teachrApp');
@@ -38,18 +39,43 @@
     document.querySelector('main').prepend(root);
 
     const grid = root.querySelector('#appToolGrid');
-    Object.entries(TOOL_LABELS).forEach(([key, [title, description]]) => {
+    Object.entries(TOOL_LABELS).forEach(([key, [toolTitle, description]]) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'app-tool-card';
       button.dataset.tool = key;
-      button.innerHTML = `<span class="app-tool-icon ${TOOL_CLASSES[key]}">${TOOL_ICONS[key]}</span><strong>${title}</strong><small>${description}</small><span class="app-tool-arrow">→</span>`;
+      button.innerHTML = `<span class="app-tool-icon ${TOOL_CLASSES[key]}">${TOOL_ICONS[key]}</span><strong>${toolTitle}</strong><small>${description}</small><span class="app-tool-arrow">→</span>`;
       button.addEventListener('click', () => openTool(key));
       grid.appendChild(button);
     });
     root.querySelector('#appHomeButton').addEventListener('click', showDashboard);
     root.querySelector('#backToTools').addEventListener('click', showDashboard);
     return root;
+  }
+
+  function setApplicationNavigation(signedIn) {
+    const nav = document.querySelector('.topnav');
+    const brand = document.querySelector('.brand');
+    if (!nav) return;
+    if (!publicNav) publicNav = nav.innerHTML;
+    if (signedIn) {
+      nav.innerHTML = '<a href="#app-dashboard" id="appNavDashboard">Dashboard</a><a href="#app-library" id="appNavLibrary">Library</a>';
+      document.getElementById('appNavDashboard')?.addEventListener('click', event => { event.preventDefault(); showDashboard(); });
+      document.getElementById('appNavLibrary')?.addEventListener('click', event => { event.preventDefault(); openTool('library'); });
+      brand?.setAttribute('href', '#app-dashboard');
+      brand?.addEventListener('click', handleBrandClick);
+    } else {
+      nav.innerHTML = publicNav;
+      brand?.setAttribute('href', '#home');
+      brand?.removeEventListener('click', handleBrandClick);
+    }
+  }
+
+  function handleBrandClick(event) {
+    if (document.documentElement.dataset.auth === 'signed-in') {
+      event.preventDefault();
+      showDashboard();
+    }
   }
 
   function moveApplicationContent() {
@@ -62,6 +88,7 @@
     document.querySelectorAll('main > section:not(#teachrApp)').forEach(section => section.classList.add('public-section-hidden'));
     document.querySelector('footer')?.classList.add('public-section-hidden');
     root.hidden = false;
+    setApplicationNavigation(true);
     updateGreeting();
   }
 
@@ -75,6 +102,7 @@
     const builder = document.getElementById('builderPanel');
     if (workspace && builder && builder.parentElement !== workspace) workspace.appendChild(builder);
     if (main && library && library.parentElement !== main) main.appendChild(library);
+    setApplicationNavigation(false);
   }
 
   function updateGreeting() {
