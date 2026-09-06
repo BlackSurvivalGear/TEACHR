@@ -1,0 +1,36 @@
+{
+  "id": "england-national-curriculum-mathematics-ks1-4",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "subject": "Mathematics",
+  "authority": "Department for Education",
+  "source": {
+    "title": "National curriculum in England: mathematics programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-mathematics-programmes-of-study",
+    "status": "statutory-guidance",
+    "lastUpdated": "2021-09-28"
+  },
+  "licence": "Open Government Licence v3.0",
+  "coverage": {
+    "KS1": { "years": ["Year 1", "Year 2"], "structure": "year-by-year" },
+    "KS2": { "years": ["Year 3", "Year 4", "Year 5", "Year 6"], "structure": "year-by-year" },
+    "KS3": { "years": ["Year 7", "Year 8", "Year 9"], "structure": "key-stage programme" },
+    "KS4": { "years": ["Year 10", "Year 11"], "structure": "key-stage programme" }
+  },
+  "rules": {
+    "statutory": true,
+    "exampleContentIsStatutory": false,
+    "nonStatutoryContentIsStatutory": false,
+    "ks1Ks2Progression": "Schools are required to teach the relevant programme by the end of the key stage and have flexibility over when content is introduced within the key stage.",
+    "ks3Progression": "Progression should be based on pupils' security of understanding and readiness rather than a fabricated year-by-year statutory sequence.",
+    "ks4HigherAttainers": "Additional higher-attaining content is identified in braces in the official programme."
+  },
+  "domains": {
+    "KS1": ["Number", "Number and place value", "Addition and subtraction", "Multiplication and division", "Fractions", "Measurement", "Geometry", "Properties of shapes", "Position and direction", "Statistics"],
+    "KS2": ["Number", "Number and place value", "Addition, subtraction, multiplication and division", "Fractions", "Decimals", "Percentages", "Ratio and proportion", "Algebra", "Measurement", "Geometry", "Properties of shapes", "Position and direction", "Statistics"],
+    "KS3": ["Working mathematically", "Number", "Algebra", "Ratio, proportion and rates of change", "Geometry and measures", "Probability", "Statistics"],
+    "KS4": ["Working mathematically", "Number", "Algebra", "Ratio, proportion and rates of change", "Geometry and measures", "Probability", "Statistics"]
+  },
+  "statements": [],
+  "statementPolicy": "Only source-checked curriculum statements may be added. Empty statements means objective-level alignment is not yet verified."
+}
