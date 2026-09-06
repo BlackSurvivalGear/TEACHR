@@ -1,0 +1,75 @@
+{
+  "id": "england-science-ks1-4",
+  "subject": "Science",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: science programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-science-programmes-of-study/national-curriculum-in-england-science-programmes-of-study",
+    "authority": "Department for Education",
+    "status": "statutory-guidance",
+    "updated": "2015-05-06",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": {
+    "KS1": { "structure": "year-by-year", "years": ["Year 1", "Year 2"] },
+    "KS2": { "structure": "year-by-year", "years": ["Year 3", "Year 4", "Year 5", "Year 6"] },
+    "KS3": { "structure": "key-stage programme", "years": ["Year 7", "Year 8", "Year 9"] },
+    "KS4": { "structure": "key-stage programme", "years": ["Year 10", "Year 11"] }
+  },
+  "statementPolicy": "Objectives are concise TEACHR-controlled paraphrases of the official programme. They are curriculum-alignment guidance, not verbatim statutory text. Non-statutory notes and examples are not represented as statutory objectives.",
+  "domains": {
+    "KS1": ["Working scientifically", "Plants", "Animals including humans", "Everyday materials", "Seasonal changes", "Living things and their habitats", "Uses of everyday materials"],
+    "KS2": ["Working scientifically", "Plants", "Animals including humans", "Rocks", "Light", "Forces and magnets", "Living things and their habitats", "States of matter", "Sound", "Electricity", "Properties and changes of materials", "Earth and space", "Evolution and inheritance"],
+    "KS3": ["Working scientifically", "Biology", "Chemistry", "Physics"],
+    "KS4": ["Working scientifically", "Biology", "Chemistry", "Physics"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"SCI-KS1-WS-01","domain":"Working scientifically","summary":"Ask simple scientific questions, observe closely, perform simple tests, classify objects and living things, and record observations or data to help answer questions."},
+      {"id":"SCI-Y1-PL-01","domain":"Plants","summary":"Identify common wild and garden plants, including deciduous and evergreen trees, and describe basic structures of common flowering plants."},
+      {"id":"SCI-Y1-AH-01","domain":"Animals including humans","summary":"Identify common animal groups, distinguish carnivores, herbivores and omnivores, compare basic animal structures, and identify body parts linked to the senses."},
+      {"id":"SCI-Y1-MA-01","domain":"Everyday materials","summary":"Distinguish objects from the materials they are made from, identify common materials, describe simple physical properties, and group materials by those properties."},
+      {"id":"SCI-Y1-SC-01","domain":"Seasonal changes","summary":"Observe changes across the four seasons and describe associated weather and variation in day length."},
+      {"id":"SCI-Y2-LH-01","domain":"Living things and their habitats","summary":"Compare living, dead and never-alive things, identify suitable habitats and microhabitats, and describe simple food chains and interdependence."},
+      {"id":"SCI-Y2-PL-01","domain":"Plants","summary":"Observe seed and bulb growth and describe the importance of water, light and suitable temperature for healthy plant growth."},
+      {"id":"SCI-Y2-AH-01","domain":"Animals including humans","summary":"Recognise that animals have offspring that grow into adults and describe basic survival needs, exercise, nutrition and hygiene."},
+      {"id":"SCI-Y2-UM-01","domain":"Uses of everyday materials","summary":"Compare the suitability of everyday materials for different purposes and investigate how solid objects can be changed by squashing, bending, twisting or stretching."}
+    ],
+    "KS2": [
+      {"id":"SCI-KS2-WS-01","domain":"Working scientifically","summary":"Ask relevant questions, choose appropriate enquiries, make observations and measurements, record and present data, report findings, draw conclusions, make predictions and use evidence."},
+      {"id":"SCI-Y3-PL-01","domain":"Plants","summary":"Describe functions of flowering-plant parts, investigate requirements for growth, explore water transport, and describe the role of flowers in pollination, seed formation and dispersal."},
+      {"id":"SCI-Y3-AH-01","domain":"Animals including humans","summary":"Describe nutrition needs in animals and humans and explain how skeletons and muscles support, protect and enable movement."},
+      {"id":"SCI-Y3-RO-01","domain":"Rocks","summary":"Compare and group rocks by appearance and physical properties, describe fossil formation in simple terms, and recognise that soil contains rock and organic matter."},
+      {"id":"SCI-Y3-LI-01","domain":"Light","summary":"Recognise that light enables vision, is reflected by surfaces, can be hazardous from the Sun, and forms shadows when blocked by opaque objects."},
+      {"id":"SCI-Y3-FM-01","domain":"Forces and magnets","summary":"Compare movement on different surfaces, distinguish contact and magnetic forces, investigate attraction and repulsion, classify magnetic materials and reason about magnet poles."},
+      {"id":"SCI-Y4-LH-01","domain":"Living things and their habitats","summary":"Group living things in different ways, use classification keys, identify organisms and recognise that changing environments can threaten living things."},
+      {"id":"SCI-Y4-AH-01","domain":"Animals including humans","summary":"Describe basic digestive-system functions, identify types of human teeth and their functions, and construct or interpret food chains using producers, predators and prey."},
+      {"id":"SCI-Y4-SM-01","domain":"States of matter","summary":"Classify materials as solids, liquids or gases, investigate changes of state with temperature, and relate evaporation and condensation to the water cycle."},
+      {"id":"SCI-Y4-SO-01","domain":"Sound","summary":"Explain sound as linked to vibration, recognise that vibrations travel through a medium, and investigate patterns involving pitch, volume and distance."},
+      {"id":"SCI-Y4-EL-01","domain":"Electricity","summary":"Identify electrical appliances, construct simple series circuits, determine when a circuit is complete, explain switch operation, and distinguish conductors from insulators."},
+      {"id":"SCI-Y5-LM-01","domain":"Living things and their habitats","summary":"Describe life cycles of plants and animals and compare reproduction and life-cycle patterns in different organisms."},
+      {"id":"SCI-Y5-AH-01","domain":"Animals including humans","summary":"Describe human development from birth to old age, including changes associated with puberty."},
+      {"id":"SCI-Y5-MC-01","domain":"Properties and changes of materials","summary":"Compare materials by properties, recognise that some substances dissolve, describe how mixtures can be separated, and investigate reversible and irreversible changes."},
+      {"id":"SCI-Y5-EA-01","domain":"Earth and space","summary":"Describe the Sun, Earth and Moon as bodies in space, use a model to explain day and night, and explain apparent movement of the Sun and Moon."},
+      {"id":"SCI-Y5-FM-01","domain":"Forces and magnets","summary":"Explain gravity as a force, identify friction and air or water resistance, and explore how mechanisms such as levers, pulleys and gears affect forces."},
+      {"id":"SCI-Y6-LH-01","domain":"Living things and their habitats","summary":"Classify living things into broad groups using observable characteristics and give reasons for classifications based on similarities and differences."},
+      {"id":"SCI-Y6-AH-01","domain":"Animals including humans","summary":"Describe the human circulatory system and functions of the heart, blood vessels and blood, and relate health to diet, exercise, drugs and lifestyle."},
+      {"id":"SCI-Y6-EI-01","domain":"Evolution and inheritance","summary":"Recognise that living things change over time, fossils provide evidence, offspring vary, and adaptation can contribute to evolution."},
+      {"id":"SCI-Y6-LI-01","domain":"Light","summary":"Use the model of light travelling in straight lines to explain vision, reflection and the formation and shape of shadows."},
+      {"id":"SCI-Y6-EL-01","domain":"Electricity","summary":"Relate lamp brightness or buzzer volume to cells, compare component behaviour, and represent simple series circuits using recognised symbols."}
+    ],
+    "KS3": [
+      {"id":"SCI-KS3-WS-01","domain":"Working scientifically","summary":"Select and carry out appropriate scientific enquiries, use models and explanations, collect and process data, evaluate evidence, and identify limitations and further questions."},
+      {"id":"SCI-KS3-BIO-01","domain":"Biology","summary":"Develop understanding of cells, tissues, organs, organ systems, reproduction, health, ecosystems, interdependence, adaptation and biological processes."},
+      {"id":"SCI-KS3-CHEM-01","domain":"Chemistry","summary":"Use the particulate model to explain matter, atoms and compounds, chemical reactions, acids and alkalis, energy changes, periodic patterns and Earth materials."},
+      {"id":"SCI-KS3-PHY-01","domain":"Physics","summary":"Develop explanations involving energy, forces and motion, pressure, waves, sound, light, electricity, magnetism and electromagnetism."}
+    ],
+    "KS4": [
+      {"id":"SCI-KS4-WS-01","domain":"Working scientifically","summary":"Plan and evaluate investigations, use appropriate apparatus and sampling, collect and analyse data, assess uncertainty and errors, evaluate risk, and communicate evidence-based conclusions."},
+      {"id":"SCI-KS4-BIO-01","domain":"Biology","summary":"Study cells, transport, health and disease, coordination, ecosystems, biodiversity, genetics, inheritance, variation, evolution and related biological processes."},
+      {"id":"SCI-KS4-CHEM-01","domain":"Chemistry","summary":"Study particles, atoms, elements and compounds, mixtures, reactions, acids and alkalis, energetics, periodic patterns, materials, Earth resources and atmosphere."},
+      {"id":"SCI-KS4-PHY-01","domain":"Physics","summary":"Study energy, motion and forces, pressure, waves, light, sound, electricity, electromagnetism and relevant quantitative relationships."}
+    ]
+  }
+}
