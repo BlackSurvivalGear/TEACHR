@@ -8,12 +8,13 @@ These datasets are maintained by TEACHR and grounded in official Department for 
 - TEACHR stores structured metadata and concise controlled paraphrases for application use.
 - The source publication remains authoritative; TEACHR summaries are not presented as verbatim statutory text.
 - Example content and material explicitly marked non-statutory are not treated as statutory requirements.
-- Each subject dataset should record its source publication and verification/update date.
+- Each subject dataset records its source publication and verification/update date.
 
 ## Current coverage
 
 - Registry: all England National Curriculum subjects and applicable key stages.
 - Mathematics: KS1–KS4 structured domains and controlled objective summaries.
+- English: KS1–KS4 structured domains and controlled objective summaries.
 - Additional subjects: registry metadata only until their source-checked subject datasets are populated.
 
 ## Expansion rule
