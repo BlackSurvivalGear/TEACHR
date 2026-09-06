@@ -2,6 +2,9 @@
 :root { --brand-navy:#0b1f3a; --brand-navy-deep:#06152b; --brand-blue:#159fe8; --brand-sky:#36bdf6; --brand-gold:#f7b928; --brand-orange:#ef7b22; --brand-coral:#f97316; --brand-indigo:#6366f1; --brand-emerald:#10b981; --brand-rose:#f43f5e; --brand-teal:#14b8a6; --brand-cream:#fffaf0; --brand-surface:#fff; --brand-text:#10233f; --brand-muted:#667892; --brand-line:#dce4ee; --brand-shadow:0 18px 50px rgba(16,35,63,.10); }
 .brand-logo { width:132px !important; height:auto; display:block; }
 .brand-logo-light { display:none !important; }
+.brand-logo-dark { display:block; }
+html[data-theme="light"] .brand-logo-dark { display:none !important; }
+html[data-theme="light"] .brand-logo-light { display:block !important; }
 body { background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transparent 25%),radial-gradient(circle at 5% 42%,rgba(21,159,232,.16),transparent 30%),linear-gradient(135deg,#06152b 0%,#0b1f3a 52%,#081a31 100%); color:#f8fbff; }
 .topbar { background:rgba(6,21,43,.88); border-bottom:1px solid rgba(255,255,255,.10); }
 .topnav a { color:#aabbd1; } .topnav a:hover { color:#fff; }
@@ -40,6 +43,7 @@ body { background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transpar
 .hero-card-wrap { min-height:500px; height:500px; position:relative; isolation:isolate; }
 .hero-card-wrap::before { content:""; position:absolute; inset:0; background:url("HERO.png") center bottom / contain no-repeat; z-index:2; filter:drop-shadow(0 24px 35px rgba(0,0,0,.28)); }
 .hero-card-wrap .orb { z-index:1; }
+@media(max-width:900px){.topbar{height:82px;min-height:82px}.brand img{width:118px !important;max-height:74px}.brand{min-width:125px}.hero-card-wrap{min-height:420px;height:420px}}
 
 /* Dashboard cards — warm application palette */
 .app-tool-card { background:linear-gradient(145deg,#fffdf8 0%,#fff8eb 100%) !important; border:1px solid #eadfcf !important; box-shadow:0 10px 28px rgba(120,82,34,.08) !important; }
@@ -47,25 +51,13 @@ body { background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transpar
 .app-tool-card strong { color:#132b48 !important; }
 .app-tool-card small { color:#66758a !important; }
 .app-tool-arrow { color:#d48617 !important; }
-.app-tool-icon.blue { background:#e6f5ff !important; color:#147fc0 !important; }
-.app-tool-icon.purple { background:#eee9ff !important; color:#6f50d9 !important; }
-.app-tool-icon.cyan { background:#e4f8fa !important; color:#118fa4 !important; }
-.app-tool-icon.violet { background:#f0eaff !important; color:#7556d8 !important; }
-.app-tool-icon.green { background:#e6f7ed !important; color:#16845e !important; }
-.app-tool-icon.orange { background:#fff0d5 !important; color:#cc7613 !important; }
-.app-tool-icon.pink { background:#ffe7ed !important; color:#d83d63 !important; }
-.app-tool-icon.teal { background:#e2f6f3 !important; color:#087f74 !important; }
 .app-home-button { color:#17304d !important; background:#fffdf8 !important; border-color:#dfd2bf !important; }
 .app-home-button:hover { background:#fff7e9 !important; border-color:#e4bf78 !important; }
-
 /* Light mode is the application default; dark mode is explicit. */
-html[data-theme="dark"] .teachr-app { color:#f6f9fd; background:linear-gradient(180deg,#081a31 0%,#0b1f3a 100%); }
-html[data-theme="dark"] .teachr-app-head h1,html[data-theme="dark"] .app-intro h2 { color:#f7faff; }
-html[data-theme="dark"] .teachr-app-head>div>p:last-child,html[data-theme="dark"] .app-intro p { color:#91a5bf; }
-html[data-theme="dark"] .app-home-button { color:#eaf3fd !important; background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.14) !important; }
-html[data-theme="dark"] .app-tool-card { color:#fff !important; background:linear-gradient(145deg,#102c4e,#0b203b) !important; border-color:rgba(122,181,224,.18) !important; box-shadow:0 14px 35px rgba(0,0,0,.18) !important; }
-html[data-theme="dark"] .app-tool-card strong { color:#fff !important; }
-html[data-theme="dark"] .app-tool-card small { color:#a8bad0 !important; }
-html[data-theme="dark"] .app-tool-arrow { color:#73c5f4 !important; }
-
-@media(max-width:900px){.topbar{height:82px;min-height:82px}.brand img{width:118px !important;max-height:74px}.brand{min-width:125px}.hero-card-wrap{min-height:420px;height:420px}}
+html[data-theme="dark"] .teachr-app { color:#e9f2fb; background:linear-gradient(180deg,#0a1c31 0%,#0b223d 100%); }
+html[data-theme="dark"] .app-tool-card { color:#eaf3fc !important; background:linear-gradient(145deg,#122a45 0%,#0d2139 100%) !important; border-color:#294563 !important; }
+html[data-theme="dark"] .app-tool-card strong { color:#f3f8fd !important; }
+html[data-theme="dark"] .app-tool-card small { color:#aec0d2 !important; }
+html[data-theme="dark"] .app-tool-arrow { color:#65c9fa !important; }
+html[data-theme="dark"] .app-home-button { color:#eaf3fc !important; background:#122a45 !important; border-color:#34516d !important; }
+html[data-theme="dark"] .app-home-button:hover { background:#173451 !important; border-color:#4c6b88 !important; }
