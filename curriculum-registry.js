@@ -3,7 +3,11 @@
     'Year 1': 'KS1', 'Year 2': 'KS1', 'Year 3': 'KS2', 'Year 4': 'KS2', 'Year 5': 'KS2', 'Year 6': 'KS2',
     'Year 7': 'KS3', 'Year 8': 'KS3', 'Year 9': 'KS3', 'Year 10': 'KS4', 'Year 11': 'KS4'
   };
-  const DATASET_PATHS = { Mathematics: 'curriculum/england-national-curriculum/mathematics-ks1-4.json', English: 'curriculum/england-national-curriculum/english-ks1-4.json' };
+  const DATASET_PATHS = {
+    Mathematics: 'curriculum/england-national-curriculum/mathematics-ks1-4.json',
+    English: 'curriculum/england-national-curriculum/english-ks1-4.json',
+    Science: 'curriculum/england-national-curriculum/science-ks1-4.json'
+  };
   const TOPIC_DOMAINS = {
     Mathematics: [
       ['fraction',['Number','Fractions, decimals and percentages']],['decimal',['Number','Fractions, decimals and percentages']],['percentage',['Number','Fractions, decimals and percentages','Ratio and proportion','Ratio, proportion and rates of change']],
@@ -15,6 +19,11 @@
       ['reading',['Reading']],['read',['Reading']],['comprehension',['Reading']],['phonics',['Reading']],['literature',['Reading']],['writing',['Writing']],['write',['Writing']],['composition',['Writing']],['creative writing',['Writing']],
       ['grammar',['Vocabulary, grammar and punctuation']],['punctuation',['Vocabulary, grammar and punctuation']],['spelling',['Vocabulary, grammar and punctuation']],['vocabulary',['Vocabulary, grammar and punctuation']],['language',['Vocabulary, grammar and punctuation']],
       ['speaking',['Spoken language']],['speeches',['Spoken language']],['debate',['Spoken language']],['discussion',['Spoken language']],['drama',['Spoken language']],['presentation',['Spoken language']]
+    ],
+    Science: [
+      ['plant',['Plants']],['photosynthesis',['Biology']],['cell',['Biology']],['cells',['Biology']],['animal',['Animals including humans','Biology']],['human',['Animals including humans','Biology']],['body',['Animals including humans','Biology']],['digestive',['Animals including humans','Biology']],['circulatory',['Animals including humans','Biology']],['health',['Animals including humans','Biology']],['disease',['Biology']],['habitat',['Living things and their habitats','Biology']],['ecosystem',['Living things and their habitats','Biology']],['food chain',['Living things and their habitats','Biology']],['evolution',['Evolution and inheritance','Biology']],['inheritance',['Evolution and inheritance','Biology']],['genetics',['Biology']],['adaptation',['Evolution and inheritance','Biology']],
+      ['material',['Everyday materials','Uses of everyday materials','Properties and changes of materials','Chemistry']],['matter',['States of matter','Chemistry']],['particle',['Chemistry']],['atom',['Chemistry']],['element',['Chemistry']],['compound',['Chemistry']],['mixture',['Properties and changes of materials','Chemistry']],['reaction',['Properties and changes of materials','Chemistry']],['acid',['Chemistry']],['alkali',['Chemistry']],['periodic',['Chemistry']],['rock',['Rocks','Chemistry']],['earth',['Earth and space','Chemistry']],['atmosphere',['Chemistry']],
+      ['light',['Light','Physics']],['sound',['Sound','Physics']],['force',['Forces and magnets','Physics']],['magnet',['Forces and magnets','Physics']],['motion',['Physics']],['energy',['Physics']],['electric',['Electricity','Physics']],['circuit',['Electricity','Physics']],['wave',['Physics']],['pressure',['Physics']],['gravity',['Physics']],['space',['Earth and space','Physics']],['solar',['Earth and space','Physics']],['planet',['Earth and space','Physics']],['working scientifically',['Working scientifically']],['scientific enquiry',['Working scientifically']],['experiment',['Working scientifically']],['investigation',['Working scientifically']]
     ]
   };
   const state = { registry: null, datasets: {}, ready: null, error: null };
