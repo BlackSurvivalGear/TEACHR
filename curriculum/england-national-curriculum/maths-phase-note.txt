@@ -1,2 +1,0 @@
-Phase: Mathematics KS1-KS4 curriculum intelligence
-The Mathematics dataset provides source provenance, statutory-status rules, key-stage structure, domains and concise controlled objective summaries. The GOV.UK publication remains authoritative. Full statement-level coverage is expanded subject/domain by subject/domain in subsequent curriculum phases.
