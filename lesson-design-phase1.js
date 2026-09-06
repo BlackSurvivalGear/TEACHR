@@ -19,6 +19,7 @@
   if (Object.values(fields).some(field => !field)) return;
 
   const state = Object.fromEntries(Object.keys(fields).map(key => [key, '']));
+  const initialValues = Object.fromEntries(Object.keys(fields).map(key => [key, fields[key].value]));
   let applying = false;
 
   function contextKey() {
@@ -30,8 +31,8 @@
     if (!value || !fields[key]) return;
     applying = true;
     fields[key].value = value;
-    applying = false;
     state[key] = value;
+    applying = false;
     fields[key].dispatchEvent(new Event(fields[key].tagName === 'SELECT' ? 'change' : 'input', { bubbles: true }));
   }
 
@@ -95,21 +96,24 @@
   }
 
   Object.keys(state).forEach(key => {
-    if (fields[key] && fields[key].tagName !== 'SELECT') fields[key].addEventListener('input', () => markTeacherEdit(key));
-    if (fields[key]) fields[key].addEventListener('change', () => markTeacherEdit(key));
+    if (fields[key].tagName !== 'SELECT') fields[key].addEventListener('input', () => markTeacherEdit(key));
+    fields[key].addEventListener('change', () => markTeacherEdit(key));
   });
+
+  function canReplace(key) {
+    return !fields[key].value.trim() || state[key] || fields[key].value === initialValues[key];
+  }
 
   function applyDefaults() {
     const key = contextKey();
     if (!key || !fields.topic.value.trim()) return;
 
-    if (!fields.style.value || state.style) setGenerated('style', lessonStyleDefault());
-    if (!fields.assessment.value || state.assessment) setGenerated('assessment', assessmentDefault());
-
-    if (!fields.priorKnowledge.value.trim() || state.priorKnowledge) setGenerated('priorKnowledge', priorKnowledgeDefault());
-    if (!fields.vocabulary.value.trim() || state.vocabulary) setGenerated('vocabulary', vocabularyDefault());
-    if (!fields.sequence.value.trim() || state.sequence) setGenerated('sequence', sequenceDefault());
-    if (!fields.successCriteria.value.trim() || state.successCriteria) setGenerated('successCriteria', successCriteriaDefault());
+    if (canReplace('style')) setGenerated('style', lessonStyleDefault());
+    if (canReplace('assessment')) setGenerated('assessment', assessmentDefault());
+    if (canReplace('priorKnowledge')) setGenerated('priorKnowledge', priorKnowledgeDefault());
+    if (canReplace('vocabulary')) setGenerated('vocabulary', vocabularyDefault());
+    if (canReplace('sequence')) setGenerated('sequence', sequenceDefault());
+    if (canReplace('successCriteria')) setGenerated('successCriteria', successCriteriaDefault());
 
     form.dataset.lessonDesignPhase1Context = key;
   }
