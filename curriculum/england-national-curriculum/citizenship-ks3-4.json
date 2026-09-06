@@ -1,0 +1,63 @@
+{
+  "id": "england-citizenship-ks3-4",
+  "subject": "Citizenship",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: citizenship programmes of study for key stages 3 and 4",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-citizenship-programmes-of-study/national-curriculum-in-england-citizenship-programmes-of-study-for-key-stages-3-and-4",
+    "authority": "Department for Education",
+    "status": "statutory-guidance",
+    "updated": "2013-09-11",
+    "licence": "OGL v3.0"
+  },
+  "coverage": {
+    "KS3": { "structure": "key-stage programme", "years": ["Year 7", "Year 8", "Year 9"] },
+    "KS4": { "structure": "key-stage programme", "years": ["Year 10", "Year 11"] }
+  },
+  "statementPolicy": "Controlled paraphrases of the statutory programme of study, not verbatim curriculum text. Example content shown in square brackets and other non-statutory material are not treated as statutory objectives.",
+  "domains": {
+    "KS3": [
+      "Democracy, government and political participation",
+      "Parliament, elections and political parties",
+      "Rights, liberties and responsibilities",
+      "Law, justice and the legal system",
+      "Public institutions, voluntary groups and community participation",
+      "Money, budgeting and financial decision-making",
+      "Research, evidence, debate and informed action"
+    ],
+    "KS4": [
+      "Parliamentary democracy and the UK constitution",
+      "Elections and democratic participation",
+      "Forms of government and international governance",
+      "Human rights and international law",
+      "UK law and the justice system",
+      "Identity, diversity, mutual respect and understanding",
+      "Community participation and responsible activity",
+      "Personal finance and public money",
+      "Research, evidence, persuasion and civic action"
+    ]
+  },
+  "objectives": {
+    "KS3": [
+      { "id": "CIT-KS3-01", "domain": "Democracy, government and political participation", "summary": "Understand the development and operation of democratic government in the United Kingdom and the roles of citizens, Parliament and the monarch." },
+      { "id": "CIT-KS3-02", "domain": "Parliament, elections and political parties", "summary": "Understand how Parliament operates, including voting and elections, and understand the role of political parties." },
+      { "id": "CIT-KS3-03", "domain": "Rights, liberties and responsibilities", "summary": "Develop knowledge and understanding of the liberties and responsibilities associated with citizenship in the United Kingdom." },
+      { "id": "CIT-KS3-04", "domain": "Law, justice and the legal system", "summary": "Understand the nature of rules and laws and the operation of the justice system, including the roles of police, courts and tribunals." },
+      { "id": "CIT-KS3-05", "domain": "Public institutions, voluntary groups and community participation", "summary": "Understand the roles of public institutions and voluntary groups and ways citizens can work together to improve their communities." },
+      { "id": "CIT-KS3-06", "domain": "Money, budgeting and financial decision-making", "summary": "Understand the functions and uses of money, the importance and practice of budgeting, and how to manage financial risk." },
+      { "id": "CIT-KS3-07", "domain": "Research, evidence, debate and informed action", "summary": "Research and interrogate evidence, debate and evaluate viewpoints, present reasoned arguments and take informed action." }
+    ],
+    "KS4": [
+      { "id": "CIT-KS4-01", "domain": "Parliamentary democracy and the UK constitution", "summary": "Understand parliamentary democracy and key elements of the UK constitution, including government power and the roles of the executive, legislature, judiciary, citizens and a free press." },
+      { "id": "CIT-KS4-02", "domain": "Elections and democratic participation", "summary": "Understand electoral systems and ways citizens can participate in democratic and electoral processes to influence decisions at different levels." },
+      { "id": "CIT-KS4-03", "domain": "Forms of government and international governance", "summary": "Understand different democratic and non-democratic systems of government and the UK's relationships with European, Commonwealth, United Nations and wider international institutions." },
+      { "id": "CIT-KS4-04", "domain": "Human rights and international law", "summary": "Develop knowledge and understanding of human rights and international law." },
+      { "id": "CIT-KS4-05", "domain": "UK law and the justice system", "summary": "Understand the UK legal system, different sources of law and how law helps society respond to complex problems." },
+      { "id": "CIT-KS4-06", "domain": "Identity, diversity, mutual respect and understanding", "summary": "Understand diverse national, regional, religious and ethnic identities in the United Kingdom and the importance of mutual respect and understanding." },
+      { "id": "CIT-KS4-07", "domain": "Community participation and responsible activity", "summary": "Understand ways citizens can contribute to improving their communities through volunteering and other responsible activity." },
+      { "id": "CIT-KS4-08", "domain": "Personal finance and public money", "summary": "Understand income and expenditure, credit and debt, insurance, savings and pensions, financial products and services, and how public money is raised and spent." },
+      { "id": "CIT-KS4-09", "domain": "Research, evidence, persuasion and civic action", "summary": "Use research strategies, weigh evidence, make persuasive arguments, substantiate conclusions and evaluate ways citizens can act together to solve problems and contribute to society." }
+    ]
+  }
+}
