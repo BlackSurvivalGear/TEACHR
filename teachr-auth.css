@@ -30,4 +30,5 @@ html[data-theme="light"] .auth-dialog { background: #ffffff; color: #172033; bor
 html[data-theme="light"] .auth-head p { color: #5d6b7d; }
 html[data-theme="light"] .auth-field label { color: #344054; }
 html[data-theme="light"] .auth-field input { background: #f8fafc; color: #172033; border-color: #cfd8e3; }
+[hidden] { display: none !important; }
 @media (max-width: 720px) { .auth-shell { padding: 22px; } }
