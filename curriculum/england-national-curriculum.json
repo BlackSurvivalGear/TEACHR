@@ -1,0 +1,106 @@
+{
+  "id": "england-national-curriculum",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "authority": "Department for Education",
+  "source": {
+    "title": "National curriculum in England: framework for key stages 1 to 4",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-framework-for-key-stages-1-to-4",
+    "status": "statutory-guidance"
+  },
+  "keyStages": {
+    "KS1": { "years": ["Year 1", "Year 2"], "ages": "5-7" },
+    "KS2": { "years": ["Year 3", "Year 4", "Year 5", "Year 6"], "ages": "7-11" },
+    "KS3": { "years": ["Year 7", "Year 8", "Year 9"], "ages": "11-14" },
+    "KS4": { "years": ["Year 10", "Year 11"], "ages": "14-16" }
+  },
+  "subjects": {
+    "English": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "core",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-english-programmes-of-study"
+    },
+    "Mathematics": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "core",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-mathematics-programmes-of-study"
+    },
+    "Science": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "core",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-science-programmes-of-study"
+    },
+    "Art and design": {
+      "keyStages": ["KS1", "KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-art-and-design-programmes-of-study"
+    },
+    "Citizenship": {
+      "keyStages": ["KS3", "KS4"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-citizenship-programmes-of-study"
+    },
+    "Computing": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-computing-programmes-of-study"
+    },
+    "Design and technology": {
+      "keyStages": ["KS1", "KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-design-and-technology-programmes-of-study"
+    },
+    "Geography": {
+      "keyStages": ["KS1", "KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-geography-programmes-of-study"
+    },
+    "History": {
+      "keyStages": ["KS1", "KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-history-programmes-of-study"
+    },
+    "Languages": {
+      "keyStages": ["KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-languages-progammes-of-study"
+    },
+    "Music": {
+      "keyStages": ["KS1", "KS2", "KS3"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-music-programmes-of-study"
+    },
+    "Physical education": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "foundation",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-physical-education-programmes-of-study"
+    }
+  },
+  "statutoryRequirements": {
+    "Religious education (RE)": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "statutory-school-requirement",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-framework-for-key-stages-1-to-4"
+    },
+    "Relationships and health education": {
+      "keyStages": ["KS1", "KS2", "KS3", "KS4"],
+      "type": "statutory-school-requirement",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-framework-for-key-stages-1-to-4"
+    },
+    "Sex education": {
+      "keyStages": ["KS3", "KS4"],
+      "type": "statutory-school-requirement",
+      "source": "https://www.gov.uk/government/publications/national-curriculum-in-england-framework-for-key-stages-1-to-4"
+    }
+  },
+  "ks4EntitlementAreas": [
+    "Arts",
+    "Design and technology",
+    "Humanities",
+    "Modern foreign languages"
+  ],
+  "coverage": {
+    "stage": "registry",
+    "note": "This file establishes the authoritative subject/key-stage registry and source provenance. Curriculum statements and structured domains are populated separately and must not be inferred from this metadata alone."
+  }
+}
