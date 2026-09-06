@@ -1,0 +1,38 @@
+{
+  "id": "england-art-and-design-ks1-3",
+  "subject": "Art and design",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "authority": "Department for Education",
+  "source": {
+    "title": "National curriculum in England: art and design programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-art-and-design-programmes-of-study/national-curriculum-in-england-art-and-design-programmes-of-study",
+    "status": "statutory-guidance",
+    "updated": "2013-09-11",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": {"keyStages":["KS1","KS2","KS3"],"yearStructure":"key-stage programme; no statutory year-by-year sequence","ks4":"not applicable; the England National Curriculum art and design programme covers KS1-KS3"},
+  "statementPolicy":"Controlled paraphrases only. Example content in square brackets and other non-statutory material are not represented as statutory objectives.",
+  "domains":{"KS1":["Creating and making","Techniques and formal elements","Artists, craft makers and designers"],"KS2":["Developing techniques","Sketchbooks and recording","Drawing, painting and sculpture","Artists, architects and designers"],"KS3":["Developing ideas and proficiency","Techniques and media","Analysis and evaluation","History of art, craft, design and architecture"]},
+  "objectives":{
+    "KS1":[
+      {"id":"AD-KS1-CREATE-01","domain":"Creating and making","summary":"Use a range of materials creatively to design and make products."},
+      {"id":"AD-KS1-CREATE-02","domain":"Creating and making","summary":"Use drawing, painting and sculpture to develop and communicate ideas, experiences and imagination."},
+      {"id":"AD-KS1-TECH-01","domain":"Techniques and formal elements","summary":"Develop techniques using colour, pattern, texture, line, shape, form and space."},
+      {"id":"AD-KS1-ARTISTS-01","domain":"Artists, craft makers and designers","summary":"Learn about a range of artists, craft makers and designers, compare practices and disciplines, and connect their work to pupils' own work."}
+    ],
+    "KS2":[
+      {"id":"AD-KS2-TECH-01","domain":"Developing techniques","summary":"Develop control and use of materials with increasing creativity, experimentation and awareness of different kinds of art, craft and design."},
+      {"id":"AD-KS2-SKETCH-01","domain":"Sketchbooks and recording","summary":"Create sketchbooks to record observations and use them to review and revisit ideas."},
+      {"id":"AD-KS2-TECH-02","domain":"Drawing, painting and sculpture","summary":"Improve mastery of drawing, painting and sculpture techniques using a range of materials."},
+      {"id":"AD-KS2-ARTISTS-01","domain":"Artists, architects and designers","summary":"Learn about significant artists, architects and designers in history."}
+    ],
+    "KS3":[
+      {"id":"AD-KS3-IDEAS-01","domain":"Developing ideas and proficiency","summary":"Develop creativity and ideas while increasing proficiency in executing art, craft and design work."},
+      {"id":"AD-KS3-TECH-01","domain":"Techniques and media","summary":"Use varied techniques to record observations and explore ideas through sketchbooks, journals and other media."},
+      {"id":"AD-KS3-TECH-02","domain":"Techniques and media","summary":"Use a range of techniques and media, including painting, and increase proficiency in handling different materials."},
+      {"id":"AD-KS3-EVAL-01","domain":"Analysis and evaluation","summary":"Analyse and evaluate pupils' own work and the work of others to strengthen visual impact or application."},
+      {"id":"AD-KS3-HISTORY-01","domain":"History of art, craft, design and architecture","summary":"Learn about the history of art, craft, design and architecture, including periods, styles and major movements from ancient times to the present."}
+    ]
+  }
+}
