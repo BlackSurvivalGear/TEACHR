@@ -65,3 +65,8 @@
   form.addEventListener('reset',()=>{ Object.keys(state).forEach(k=>{state[k]='';}); setTimeout(apply,0); });
   apply();
 })();
+
+const phase3Script = document.createElement('script');
+phase3Script.src = 'lesson-design-coherence.js';
+phase3Script.defer = true;
+document.body.appendChild(phase3Script);
