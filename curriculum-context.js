@@ -4,6 +4,10 @@
 
   const HISTORY_DATASET_PATH = 'curriculum/england-national-curriculum/history-ks1-3.json';
   const LANGUAGES_DATASET_PATH = 'curriculum/england-national-curriculum/languages-ks2-3.json';
+  const MUSIC_DATASET_PATH = 'curriculum/england-national-curriculum/music-ks1-3.json';
+  const PE_DATASET_PATH = 'curriculum/england-national-curriculum/physical-education-ks1-4.json';
+  const RE_DATASET_PATH = 'curriculum/england-national-curriculum/religious-education-ks1-4.json';
+
   const HISTORY_TOPIC_DOMAINS = [
     ['chronology',['Chronology and historical concepts']],['chronological',['Chronology and historical concepts']],['change',['Chronology and historical concepts','Changes and events','British history beyond 1066','British history themes']],['continuity',['Chronology and historical concepts','British history themes']],['cause',['Chronology and historical concepts']],['consequence',['Chronology and historical concepts']],['similarity',['Chronology and historical concepts']],['difference',['Chronology and historical concepts']],['significance',['Chronology and historical concepts']],
     ['source',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['sources',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['evidence',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['interpretation',['Historical enquiry, evidence and interpretations']],['enquiry',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],
@@ -16,34 +20,51 @@
   const LANGUAGES_TOPIC_DOMAINS = [
     ['listening',['Listening and responding','Listening']],['listen',['Listening and responding','Listening']],['speaking',['Speaking and presentation','Speaking and interaction']],['speak',['Speaking and presentation','Speaking and interaction']],['conversation',['Spoken interaction','Speaking and interaction']],['communicat',['Spoken interaction','Speaking and interaction']],['pronunciation',['Phonology, spelling and sound','Speaking and interaction']],['intonation',['Phonology, spelling and sound','Speaking and interaction']],['phonology',['Phonology, spelling and sound']],['sound',['Phonology, spelling and sound']],['spelling',['Phonology, spelling and sound','Writing']],['reading',['Reading and comprehension','Reading']],['read',['Reading and comprehension','Reading']],['writing',['Writing and adaptation','Writing']],['write',['Writing and adaptation','Writing']],['vocabulary',['Vocabulary and dictionaries','Grammar and vocabulary']],['dictionary',['Vocabulary and dictionaries']],['grammar',['Grammar and language structures','Grammar and vocabulary']],['tense',['Grammar and language structures','Grammar and vocabulary']],['verb',['Grammar and language structures','Grammar and vocabulary']],['translation',['Translation']],['translate',['Translation']],['literature',['Literary texts']],['literary',['Literary texts']],['story',['Cultural texts','Literary texts']],['song',['Cultural texts']],['poem',['Cultural texts']],['poetry',['Cultural texts','Literary texts']],['culture',['Culture and wider understanding']],['opinion',['Spoken interaction','Speaking and interaction']],['question',['Spoken interaction','Speaking and interaction']],['describe',['Description','Writing']],['description',['Description','Writing']],['dictionary skills',['Vocabulary and dictionaries','Language learning strategies']],['language learning',['Language learning strategies']]
   ];
+  const MUSIC_TOPIC_DOMAINS = [
+    ['sing',['Singing and voice','Performance']],['voice',['Singing and voice','Performance']],['instrument',['Instrumental performance','Performance']],['perform',['Instrumental performance','Performance']],['ensemble',['Performance']],['compose',['Creating and combining sounds','Improvisation and composition']],['composition',['Creating and combining sounds','Improvisation and composition']],['improv',['Creating and combining sounds','Improvisation and composition']],['listen',['Listening and musical understanding','Listening and musical traditions','Listening and discrimination']],['notation',['Notation']],['staff notation',['Notation']],['history',['History of music','Musical contexts and history']],['genre',['Listening and musical traditions','Musical contexts and history']],['tradition',['Listening and musical traditions','Musical contexts and history']],['style',['Listening and musical traditions','Musical contexts and history']],['technology',['Musical contexts and history']],['pitch',['Creating and combining sounds','Musical dimensions and devices']],['rhythm',['Creating and combining sounds','Musical dimensions and devices']],['tempo',['Creating and combining sounds','Musical dimensions and devices']],['dynamics',['Creating and combining sounds','Musical dimensions and devices']],['timbre',['Creating and combining sounds','Musical dimensions and devices']],['texture',['Creating and combining sounds','Musical dimensions and devices']],['structure',['Creating and combining sounds','Musical dimensions and devices']]
+  ];
+  const PE_TOPIC_DOMAINS = [
+    ['running',['Fundamental movement','Movement skills']],['jump',['Fundamental movement','Movement skills']],['throw',['Fundamental movement','Movement skills']],['catch',['Fundamental movement','Movement skills']],['balance',['Fundamental movement','Fitness and physical skills']],['agility',['Fundamental movement','Fitness and physical skills']],['coordination',['Fundamental movement','Movement skills']],['team game',['Team games and tactics','Competitive games','Tactics and strategies']],['attack',['Team games and tactics','Competitive games','Tactics and strategies']],['defend',['Team games and tactics','Competitive games','Tactics and strategies']],['tactic',['Team games and tactics','Competitive games','Tactics and strategies']],['sport',['Competitive games','Competitive sports and physical activity']],['football',['Competitive games','Competitive sports and physical activity']],['basketball',['Competitive games','Competitive sports and physical activity']],['cricket',['Competitive games','Competitive sports and physical activity']],['tennis',['Competitive games','Competitive sports and physical activity']],['athletics',['Fitness and physical skills','Competitive sports and physical activity']],['gymnastics',['Fitness and physical skills','Competitive sports and physical activity']],['dance',['Dance']],['flexibility',['Fitness and physical skills']],['strength',['Fitness and physical skills']],['fitness',['Fitness and physical skills','Fitness and healthy lifestyle']],['outdoor',['Outdoor and adventurous activity']],['adventurous',['Outdoor and adventurous activity']],['teamwork',['Outdoor and adventurous activity']],['problem solving',['Outdoor and adventurous activity']],['analyse',['Performance analysis','Performance evaluation']],['analysis',['Performance analysis','Performance evaluation']],['evaluate',['Performance analysis','Performance evaluation']],['performance',['Performance improvement','Performance analysis','Performance evaluation']],['personal best',['Performance improvement','Performance analysis','Performance evaluation']],['swim',['Swimming and water safety']],['swimming',['Swimming and water safety']],['water safety',['Swimming and water safety']],['self-rescue',['Swimming and water safety']],['healthy lifestyle',['Fitness and healthy lifestyle']],['community sport',['Community sport and activity']]
+  ];
+  const SUBJECT_DATASETS = {
+    History: HISTORY_DATASET_PATH,
+    Languages: LANGUAGES_DATASET_PATH,
+    Music: MUSIC_DATASET_PATH,
+    'Physical education': PE_DATASET_PATH,
+    'Religious education (RE)': RE_DATASET_PATH
+  };
+  const TOPIC_DOMAINS = {
+    History: HISTORY_TOPIC_DOMAINS,
+    Languages: LANGUAGES_TOPIC_DOMAINS,
+    Music: MUSIC_TOPIC_DOMAINS,
+    'Physical education': PE_TOPIC_DOMAINS,
+    'Religious education (RE)': []
+  };
 
-  const historyReady = fetch(HISTORY_DATASET_PATH,{cache:'no-cache'}).then(async response => {
-    if (!response.ok) throw new Error(`History curriculum dataset returned ${response.status}`);
-    return response.json();
-  });
-  const languagesReady = fetch(LANGUAGES_DATASET_PATH,{cache:'no-cache'}).then(async response => {
-    if (!response.ok) throw new Error(`Languages curriculum dataset returned ${response.status}`);
-    return response.json();
-  });
+  const datasetReady = Object.entries(SUBJECT_DATASETS).map(([subject, path]) =>
+    fetch(path,{cache:'no-cache'}).then(async response => {
+      if (!response.ok) throw new Error(`${subject} curriculum dataset returned ${response.status}`);
+      return [subject, await response.json()];
+    })
+  );
 
   if (registry) {
     const originalResolve = registry.resolve.bind(registry);
     const originalReady = registry.ready;
-    registry.ready = Promise.all([originalReady, historyReady, languagesReady]).then(([loadedRegistry, historyDataset, languagesDataset]) => {
-      if (registry.detail && historyDataset) registry.detail.History = historyDataset;
-      if (registry.detail && languagesDataset) registry.detail.Languages = languagesDataset;
+    registry.ready = Promise.all([originalReady, ...datasetReady]).then(([loadedRegistry, ...datasets]) => {
+      if (registry.detail) datasets.forEach(([subject, dataset]) => { registry.detail[subject] = dataset; });
       return loadedRegistry;
     });
     registry.resolve = (selection = {}) => {
       const subject = String(selection.subject || '').trim();
       const resolved = originalResolve(selection);
-      if (subject !== 'History' && subject !== 'Languages') return resolved;
+      if (!Object.prototype.hasOwnProperty.call(SUBJECT_DATASETS, subject)) return resolved;
       const dataset = registry.detail?.[subject];
       if (!dataset || !resolved.jurisdiction) return resolved;
       const text = String(selection.topic || '').toLowerCase();
       const keyStage = resolved.keyStage;
       const available = dataset.domains?.[keyStage] || [];
-      const topicDomains = subject === 'History' ? HISTORY_TOPIC_DOMAINS : LANGUAGES_TOPIC_DOMAINS;
+      const topicDomains = TOPIC_DOMAINS[subject] || [];
       const matches = topicDomains.filter(([term]) => text.includes(term)).flatMap(([, domains]) => domains);
       const domains = [...new Set(matches)].filter(domain => available.includes(domain));
       const objectives = dataset.objectives?.[keyStage]?.filter(item => !domains.length || domains.includes(item.domain)) || [];
