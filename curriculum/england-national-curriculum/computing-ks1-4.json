@@ -1,0 +1,93 @@
+{
+  "id": "england-computing-ks1-4",
+  "subject": "Computing",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: computing programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-computing-programmes-of-study/national-curriculum-in-england-computing-programmes-of-study",
+    "authority": "Department for Education",
+    "status": "statutory-guidance",
+    "updated": "2013-09-11",
+    "licence": "OGL v3.0"
+  },
+  "coverage": {
+    "KS1": { "structure": "key-stage programme", "years": ["Year 1", "Year 2"] },
+    "KS2": { "structure": "key-stage programme", "years": ["Year 3", "Year 4", "Year 5", "Year 6"] },
+    "KS3": { "structure": "key-stage programme", "years": ["Year 7", "Year 8", "Year 9"] },
+    "KS4": { "structure": "key-stage programme", "years": ["Year 10", "Year 11"] }
+  },
+  "statementPolicy": "Controlled paraphrases of the statutory programme of study, not verbatim curriculum text. Example content shown in square brackets in the source is not treated as a statutory objective.",
+  "domains": {
+    "KS1": [
+      "Algorithms and programming",
+      "Debugging and logical reasoning",
+      "Digital content",
+      "Information technology",
+      "Online safety and responsible use"
+    ],
+    "KS2": [
+      "Programming and decomposition",
+      "Sequence, selection, repetition, variables, input and output",
+      "Algorithms and logical reasoning",
+      "Networks and the internet",
+      "Search and evaluation of digital content",
+      "Software, data and digital content",
+      "Online safety and responsible use"
+    ],
+    "KS3": [
+      "Computational abstraction",
+      "Algorithms and computational thinking",
+      "Programming and data structures",
+      "Boolean logic and binary representation",
+      "Computer systems and communication",
+      "Digital data representation",
+      "Digital artefacts and information technology",
+      "Online safety, security and privacy"
+    ],
+    "KS4": [
+      "Computer science",
+      "Digital media",
+      "Information technology",
+      "Analytical, design and computational thinking",
+      "Online safety, security and privacy"
+    ]
+  },
+  "objectives": {
+    "KS1": [
+      { "id": "COM-KS1-01", "domain": "Algorithms and programming", "summary": "Understand algorithms as precise instructions and recognise how algorithms are implemented as programs on digital devices." },
+      { "id": "COM-KS1-02", "domain": "Algorithms and programming", "summary": "Create simple programs and debug them when they do not behave as intended." },
+      { "id": "COM-KS1-03", "domain": "Debugging and logical reasoning", "summary": "Use logical reasoning to predict the behaviour of simple programs." },
+      { "id": "COM-KS1-04", "domain": "Digital content", "summary": "Use technology purposefully to create, organise, store, manipulate and retrieve digital content." },
+      { "id": "COM-KS1-05", "domain": "Information technology", "summary": "Recognise common uses of information technology beyond school." },
+      { "id": "COM-KS1-06", "domain": "Online safety and responsible use", "summary": "Use technology safely and respectfully, protect personal information, and know where to seek help about concerning online content or contact." }
+    ],
+    "KS2": [
+      { "id": "COM-KS2-01", "domain": "Programming and decomposition", "summary": "Design, write and debug programs for specific goals, including controlling or simulating physical systems, and decompose problems into smaller parts." },
+      { "id": "COM-KS2-02", "domain": "Sequence, selection, repetition, variables, input and output", "summary": "Use sequence, selection and repetition in programs and work with variables plus different forms of input and output." },
+      { "id": "COM-KS2-03", "domain": "Algorithms and logical reasoning", "summary": "Use logical reasoning to explain simple algorithms and identify and correct errors in algorithms and programs." },
+      { "id": "COM-KS2-04", "domain": "Networks and the internet", "summary": "Understand computer networks, including the internet, their services such as the World Wide Web, and opportunities for communication and collaboration." },
+      { "id": "COM-KS2-05", "domain": "Search and evaluation of digital content", "summary": "Use search technologies effectively, understand that results are selected and ranked, and evaluate digital content critically." },
+      { "id": "COM-KS2-06", "domain": "Software, data and digital content", "summary": "Select and combine software and internet services across digital devices to create programs, systems and content, including collecting, analysing, evaluating and presenting data and information." },
+      { "id": "COM-KS2-07", "domain": "Online safety and responsible use", "summary": "Use technology safely, respectfully and responsibly, recognise acceptable and unacceptable behaviour, and know ways to report concerns about content or contact." }
+    ],
+    "KS3": [
+      { "id": "COM-KS3-01", "domain": "Computational abstraction", "summary": "Design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems." },
+      { "id": "COM-KS3-02", "domain": "Algorithms and computational thinking", "summary": "Understand key algorithms associated with computational thinking and use logical reasoning to compare the usefulness of alternative algorithms." },
+      { "id": "COM-KS3-03", "domain": "Programming and data structures", "summary": "Use at least two programming languages, including one textual language, to solve computational problems and use suitable data structures, procedures and functions." },
+      { "id": "COM-KS3-04", "domain": "Boolean logic and binary representation", "summary": "Understand Boolean logic and some applications in circuits and programming, and represent and operate on numbers in binary." },
+      { "id": "COM-KS3-05", "domain": "Computer systems and communication", "summary": "Understand the hardware and software components of computer systems and how systems communicate with each other." },
+      { "id": "COM-KS3-06", "domain": "Digital data representation", "summary": "Understand how instructions are stored and executed and how text, sound and pictures can be represented and manipulated digitally using binary digits." },
+      { "id": "COM-KS3-07", "domain": "Digital artefacts and information technology", "summary": "Create projects using multiple applications and devices to collect and analyse data and meet the needs of known users." },
+      { "id": "COM-KS3-08", "domain": "Digital artefacts and information technology", "summary": "Create, reuse, revise and repurpose digital artefacts for a defined audience, considering trustworthiness, design and usability." },
+      { "id": "COM-KS3-09", "domain": "Online safety, security and privacy", "summary": "Use technology safely, respectfully, responsibly and securely, including protecting online identity and privacy and reporting inappropriate content, contact or conduct." }
+    ],
+    "KS4": [
+      { "id": "COM-KS4-01", "domain": "Computer science", "summary": "Develop capability, creativity and knowledge in computer science at sufficient depth to support progression to higher study or professional careers." },
+      { "id": "COM-KS4-02", "domain": "Digital media", "summary": "Develop capability, creativity and knowledge in digital media and apply them to practical and analytical tasks." },
+      { "id": "COM-KS4-03", "domain": "Information technology", "summary": "Develop capability, creativity and knowledge in information technology and apply them to practical and analytical tasks." },
+      { "id": "COM-KS4-04", "domain": "Analytical, design and computational thinking", "summary": "Develop and apply analytical, problem-solving, design and computational thinking skills." },
+      { "id": "COM-KS4-05", "domain": "Online safety, security and privacy", "summary": "Understand how technological change affects safety, including new approaches to protecting online privacy and identity and reporting concerns." }
+    ]
+  }
+}
