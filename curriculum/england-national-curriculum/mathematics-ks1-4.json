@@ -1,0 +1,64 @@
+{
+  "id": "england-national-curriculum-mathematics-ks1-4",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "subject": "Mathematics",
+  "authority": "Department for Education",
+  "source": { "title": "National curriculum in England: mathematics programmes of study", "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-mathematics-programmes-of-study", "status": "statutory-guidance", "lastUpdated": "2021-09-28" },
+  "licence": "Open Government Licence v3.0",
+  "coverage": {
+    "KS1": { "years": ["Year 1", "Year 2"], "structure": "year-by-year" },
+    "KS2": { "years": ["Year 3", "Year 4", "Year 5", "Year 6"], "structure": "year-by-year" },
+    "KS3": { "years": ["Year 7", "Year 8", "Year 9"], "structure": "key-stage programme" },
+    "KS4": { "years": ["Year 10", "Year 11"], "structure": "key-stage programme" }
+  },
+  "rules": {
+    "statutory": true,
+    "exampleContentIsStatutory": false,
+    "nonStatutoryContentIsStatutory": false,
+    "ks1Ks2Progression": "Schools are required to teach the relevant programme by the end of the key stage and have flexibility over when content is introduced within the key stage.",
+    "ks3Progression": "Progression should be based on pupils' security of understanding and readiness rather than a fabricated year-by-year statutory sequence.",
+    "ks4HigherAttainers": "Additional higher-attaining content is identified in braces in the official programme."
+  },
+  "domains": {
+    "KS1": ["Number", "Number and place value", "Addition and subtraction", "Multiplication and division", "Fractions", "Measurement", "Geometry", "Position and direction", "Statistics"],
+    "KS2": ["Number", "Number and place value", "Addition, subtraction, multiplication and division", "Fractions, decimals and percentages", "Ratio and proportion", "Algebra", "Measurement", "Geometry", "Position and direction", "Statistics"],
+    "KS3": ["Working mathematically", "Number", "Algebra", "Ratio, proportion and rates of change", "Geometry and measures", "Probability", "Statistics"],
+    "KS4": ["Working mathematically", "Number", "Algebra", "Ratio, proportion and rates of change", "Geometry and measures", "Probability", "Statistics"]
+  },
+  "objectives": {
+    "KS1": [
+      { "id": "M-KS1-NUM", "domain": "Number", "summary": "Develop fluency with whole numbers, counting, place value, the four operations and simple fractions; apply number knowledge to practical problems.", "status": "statutory" },
+      { "id": "M-KS1-MEA", "domain": "Measurement", "summary": "Use measures to compare and describe length, mass, capacity, time and money, including practical problem solving.", "status": "statutory" },
+      { "id": "M-KS1-GEO", "domain": "Geometry", "summary": "Recognise, describe, compare and classify common 2-D and 3-D shapes and use positional and directional language.", "status": "statutory" },
+      { "id": "M-KS1-STA", "domain": "Statistics", "summary": "Interpret and construct simple representations of data and ask and answer questions about what the data shows.", "status": "statutory" }
+    ],
+    "KS2": [
+      { "id": "M-KS2-NUM", "domain": "Number", "summary": "Extend place value and calculation fluency to larger whole numbers, negative numbers, fractions, decimals and percentages, including efficient written and mental methods.", "status": "statutory" },
+      { "id": "M-KS2-RAT", "domain": "Ratio and proportion", "summary": "Develop understanding of ratio, proportion and scaling through problem solving and connections with fractions, decimals and percentages.", "status": "statutory" },
+      { "id": "M-KS2-ALG", "domain": "Algebra", "summary": "Use simple algebraic notation, sequences, unknowns and relationships to solve problems and generalise patterns.", "status": "statutory" },
+      { "id": "M-KS2-MEA", "domain": "Measurement", "summary": "Use common units and conversions, solve measurement problems and connect measures with number and geometry.", "status": "statutory" },
+      { "id": "M-KS2-GEO", "domain": "Geometry", "summary": "Classify and describe shapes and angles, use coordinates and position, and reason about geometric properties and measures.", "status": "statutory" },
+      { "id": "M-KS2-STA", "domain": "Statistics", "summary": "Interpret and present data using tables, charts and graphs and solve problems involving averages and data interpretation.", "status": "statutory" }
+    ],
+    "KS3": [
+      { "id": "M-KS3-WM", "domain": "Working mathematically", "summary": "Develop fluency, reason mathematically, model situations and solve increasingly sophisticated, unfamiliar and non-routine problems using appropriate representations and methods.", "status": "statutory" },
+      { "id": "M-KS3-NUM", "domain": "Number", "summary": "Extend understanding of the number system to integers, decimals, fractions, powers and roots; use accurate calculation, notation, factors and multiples.", "status": "statutory" },
+      { "id": "M-KS3-ALG", "domain": "Algebra", "summary": "Use algebraic notation, simplify and manipulate expressions, substitute values, solve equations and inequalities, work with sequences and connect algebraic and graphical representations.", "status": "statutory" },
+      { "id": "M-KS3-RAT", "domain": "Ratio, proportion and rates of change", "summary": "Use ratio, proportion, scale, percentages and rates to model and solve problems and interpret relationships between quantities.", "status": "statutory" },
+      { "id": "M-KS3-GEO", "domain": "Geometry and measures", "summary": "Reason about properties of shapes, angles, transformations, coordinates, constructions, similarity, congruence, perimeter, area, volume and measures.", "status": "statutory" },
+      { "id": "M-KS3-PRO", "domain": "Probability", "summary": "Describe and calculate probabilities, use appropriate representations and understand relationships between likely outcomes.", "status": "statutory" },
+      { "id": "M-KS3-STA", "domain": "Statistics", "summary": "Interpret, analyse and compare distributions and data, select appropriate representations and use summary measures to support conclusions.", "status": "statutory" }
+    ],
+    "KS4": [
+      { "id": "M-KS4-WM", "domain": "Working mathematically", "summary": "Consolidate mathematical fluency, reasoning, problem solving and interpretation across the KS4 programme, including exact calculation and accuracy.", "status": "statutory" },
+      { "id": "M-KS4-NUM", "domain": "Number", "summary": "Work confidently with powers, roots, indices, standard form, exact values, fractions, recurring decimals, ratio problems and limits of accuracy.", "status": "statutory" },
+      { "id": "M-KS4-ALG", "domain": "Algebra", "summary": "Manipulate algebraic expressions, solve equations and inequalities, work with sequences and functions, and use algebraic and graphical methods to solve problems.", "status": "statutory" },
+      { "id": "M-KS4-RAT", "domain": "Ratio, proportion and rates of change", "summary": "Apply direct and inverse proportion, growth and decay, compound measures, rates and proportional reasoning to mathematical and real-world problems.", "status": "statutory" },
+      { "id": "M-KS4-GEO", "domain": "Geometry and measures", "summary": "Use geometric properties, similarity, congruence, circle theorems, trigonometry, vectors, transformations and measures to reason and solve problems.", "status": "statutory" },
+      { "id": "M-KS4-PRO", "domain": "Probability", "summary": "Calculate and interpret probabilities using appropriate models, including combined events and other relationships specified by the programme.", "status": "statutory" },
+      { "id": "M-KS4-STA", "domain": "Statistics", "summary": "Collect, represent, interpret and compare data distributions using appropriate statistical measures, diagrams and reasoning.", "status": "statutory" }
+    ]
+  },
+  "statementPolicy": "Objectives are concise TEACHR paraphrases of the statutory programme structure, not substitutes for the official source text. The official GOV.UK publication remains authoritative. Example content and non-statutory notes must not be represented as statutory requirements."
+}
