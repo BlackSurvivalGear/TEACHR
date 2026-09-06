@@ -1,0 +1,94 @@
+{
+  "id": "england-design-and-technology-ks1-3",
+  "subject": "Design and technology",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "authority": "Department for Education",
+  "source": {
+    "title": "National curriculum in England: design and technology programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-design-and-technology-programmes-of-study/national-curriculum-in-england-design-and-technology-programmes-of-study",
+    "status": "statutory-guidance",
+    "updated": "2013-09-11",
+    "licence": "OGL v3.0"
+  },
+  "coverage": {
+    "keyStages": ["KS1", "KS2", "KS3"],
+    "yearStructure": "key-stage programme; no statutory year-by-year sequence",
+    "ks4": "not applicable as a national curriculum programme; design and technology is a KS4 entitlement area"
+  },
+  "statementPolicy": "Controlled paraphrases only. Example content in square brackets and other non-statutory material are not represented as statutory objectives.",
+  "domains": {
+    "KS1": [
+      "Design",
+      "Make",
+      "Evaluate",
+      "Technical knowledge",
+      "Cooking and nutrition"
+    ],
+    "KS2": [
+      "Design",
+      "Make",
+      "Evaluate",
+      "Technical knowledge",
+      "Cooking and nutrition"
+    ],
+    "KS3": [
+      "Design",
+      "Make",
+      "Evaluate",
+      "Technical knowledge",
+      "Cooking and nutrition"
+    ]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"DT-KS1-DESIGN-01","domain":"Design","summary":"Design purposeful, functional and appealing products for users using design criteria."},
+      {"id":"DT-KS1-DESIGN-02","domain":"Design","summary":"Generate, develop, model and communicate ideas through discussion, drawing, templates, mock-ups and appropriate digital tools."},
+      {"id":"DT-KS1-MAKE-01","domain":"Make","summary":"Select and use a range of tools and equipment for practical tasks."},
+      {"id":"DT-KS1-MAKE-02","domain":"Make","summary":"Select materials and components, including construction materials, textiles and ingredients, according to their characteristics."},
+      {"id":"DT-KS1-EVAL-01","domain":"Evaluate","summary":"Explore and evaluate existing products."},
+      {"id":"DT-KS1-EVAL-02","domain":"Evaluate","summary":"Evaluate ideas and products against design criteria."},
+      {"id":"DT-KS1-TECH-01","domain":"Technical knowledge","summary":"Build structures and explore ways to make them stronger, stiffer and more stable."},
+      {"id":"DT-KS1-TECH-02","domain":"Technical knowledge","summary":"Explore and use mechanisms such as levers, sliders, wheels and axles in products."},
+      {"id":"DT-KS1-FOOD-01","domain":"Cooking and nutrition","summary":"Use basic principles of a healthy and varied diet when preparing dishes."},
+      {"id":"DT-KS1-FOOD-02","domain":"Cooking and nutrition","summary":"Understand where food comes from."}
+    ],
+    "KS2": [
+      {"id":"DT-KS2-DESIGN-01","domain":"Design","summary":"Use research and design criteria to develop innovative, functional and appealing products for particular users."},
+      {"id":"DT-KS2-DESIGN-02","domain":"Design","summary":"Generate, develop, model and communicate ideas using discussion, annotated sketches, diagrams, prototypes, pattern pieces and computer-aided design."},
+      {"id":"DT-KS2-MAKE-01","domain":"Make","summary":"Select and use a wider range of tools and equipment accurately for practical tasks."},
+      {"id":"DT-KS2-MAKE-02","domain":"Make","summary":"Select materials and components according to functional properties and aesthetic qualities."},
+      {"id":"DT-KS2-EVAL-01","domain":"Evaluate","summary":"Investigate and analyse existing products."},
+      {"id":"DT-KS2-EVAL-02","domain":"Evaluate","summary":"Evaluate ideas and products against design criteria, consider others' views and improve work."},
+      {"id":"DT-KS2-EVAL-03","domain":"Evaluate","summary":"Understand how key events and individuals in design and technology have helped shape the world."},
+      {"id":"DT-KS2-TECH-01","domain":"Technical knowledge","summary":"Apply understanding of how to strengthen, stiffen and reinforce more complex structures."},
+      {"id":"DT-KS2-TECH-02","domain":"Technical knowledge","summary":"Understand and use mechanical systems such as gears, pulleys, cams, levers and linkages in products."},
+      {"id":"DT-KS2-TECH-03","domain":"Technical knowledge","summary":"Understand and use electrical systems in products."},
+      {"id":"DT-KS2-TECH-04","domain":"Technical knowledge","summary":"Apply computing to program, monitor and control products."},
+      {"id":"DT-KS2-FOOD-01","domain":"Cooking and nutrition","summary":"Understand and apply principles of a healthy and varied diet."},
+      {"id":"DT-KS2-FOOD-02","domain":"Cooking and nutrition","summary":"Prepare and cook a variety of predominantly savoury dishes using a range of cooking techniques."},
+      {"id":"DT-KS2-FOOD-03","domain":"Cooking and nutrition","summary":"Understand seasonality and where and how ingredients are grown, reared, caught and processed."}
+    ],
+    "KS3": [
+      {"id":"DT-KS3-DESIGN-01","domain":"Design","summary":"Use research and exploration to identify and understand user needs, including through consideration of different cultures."},
+      {"id":"DT-KS3-DESIGN-02","domain":"Design","summary":"Identify and solve design problems and reformulate problems when required."},
+      {"id":"DT-KS3-DESIGN-03","domain":"Design","summary":"Develop specifications for innovative, functional and appealing products that respond to needs in varied situations."},
+      {"id":"DT-KS3-DESIGN-04","domain":"Design","summary":"Use varied approaches to generate creative ideas and avoid stereotypical responses."},
+      {"id":"DT-KS3-DESIGN-05","domain":"Design","summary":"Develop and communicate ideas through annotated sketches, detailed plans, 3-D and mathematical modelling, oral and digital presentations."},
+      {"id":"DT-KS3-MAKE-01","domain":"Make","summary":"Select and use specialist tools, techniques, processes, equipment and machinery precisely, including computer-aided manufacture."},
+      {"id":"DT-KS3-MAKE-02","domain":"Make","summary":"Select a wider and more complex range of materials, components and ingredients according to their properties."},
+      {"id":"DT-KS3-EVAL-01","domain":"Evaluate","summary":"Analyse the work of past and present professionals to broaden understanding of design and technology."},
+      {"id":"DT-KS3-EVAL-02","domain":"Evaluate","summary":"Investigate new and emerging technologies."},
+      {"id":"DT-KS3-EVAL-03","domain":"Evaluate","summary":"Test, evaluate and refine ideas and products against a specification using views of intended users and other interested groups."},
+      {"id":"DT-KS3-EVAL-04","domain":"Evaluate","summary":"Understand developments in design and technology, their impact on people, society and the environment, and the responsibilities of designers, engineers and technologists."},
+      {"id":"DT-KS3-TECH-01","domain":"Technical knowledge","summary":"Understand and use material properties and structural performance to achieve functioning solutions."},
+      {"id":"DT-KS3-TECH-02","domain":"Technical knowledge","summary":"Understand how advanced mechanical systems enable changes in movement and force."},
+      {"id":"DT-KS3-TECH-03","domain":"Technical knowledge","summary":"Understand how advanced electrical and electronic systems can be powered and used in products."},
+      {"id":"DT-KS3-TECH-04","domain":"Technical knowledge","summary":"Apply computing and electronics to embed intelligence in products that respond to inputs and control outputs using programmable components."},
+      {"id":"DT-KS3-FOOD-01","domain":"Cooking and nutrition","summary":"Understand and apply principles of nutrition and health."},
+      {"id":"DT-KS3-FOOD-02","domain":"Cooking and nutrition","summary":"Cook a repertoire of predominantly savoury dishes that supports a healthy and varied diet."},
+      {"id":"DT-KS3-FOOD-03","domain":"Cooking and nutrition","summary":"Become competent in a range of cooking techniques and adapt recipes using knowledge of taste, texture and smell."},
+      {"id":"DT-KS3-FOOD-04","domain":"Cooking and nutrition","summary":"Understand the source, seasonality and characteristics of a broad range of ingredients."}
+    ]
+  }
+}
