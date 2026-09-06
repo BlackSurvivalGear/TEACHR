@@ -102,3 +102,8 @@
 
   applyDefaults();
 })();
+
+const phase2Script = document.createElement('script');
+phase2Script.src = 'lesson-design-phase2.js';
+phase2Script.defer = true;
+document.body.appendChild(phase2Script);
