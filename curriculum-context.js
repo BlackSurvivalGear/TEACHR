@@ -3,6 +3,7 @@
   const registry = window.TEACHR_CURRICULUM;
 
   const HISTORY_DATASET_PATH = 'curriculum/england-national-curriculum/history-ks1-3.json';
+  const LANGUAGES_DATASET_PATH = 'curriculum/england-national-curriculum/languages-ks2-3.json';
   const HISTORY_TOPIC_DOMAINS = [
     ['chronology',['Chronology and historical concepts']],['chronological',['Chronology and historical concepts']],['change',['Chronology and historical concepts','Changes and events','British history beyond 1066','British history themes']],['continuity',['Chronology and historical concepts','British history themes']],['cause',['Chronology and historical concepts']],['consequence',['Chronology and historical concepts']],['similarity',['Chronology and historical concepts']],['difference',['Chronology and historical concepts']],['significance',['Chronology and historical concepts']],
     ['source',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['sources',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['evidence',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['interpretation',['Historical enquiry, evidence and interpretations']],['enquiry',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],
@@ -12,28 +13,38 @@
     ['industrial',['Ideas, political power, industry and empire 1745-1901']],['industry',['Ideas, political power, industry and empire 1745-1901']],['empire',['Ideas, political power, industry and empire 1745-1901']],['slave trade',['Ideas, political power, industry and empire 1745-1901']],['abolition',['Ideas, political power, industry and empire 1745-1901']],['franchise',['Ideas, political power, industry and empire 1745-1901']],
     ['world war',['Britain, Europe and wider world 1901-present']],['first world war',['Britain, Europe and wider world 1901-present']],['second world war',['Britain, Europe and wider world 1901-present']],['holocaust',['Britain, Europe and wider world 1901-present']],['welfare state',['Britain, Europe and wider world 1901-present']],['migration',['British history themes']],['political power',['British history themes']],['turning point',['British history themes']],['world history',['World history and interconnections']],['society',['World history and interconnections']]
   ];
+  const LANGUAGES_TOPIC_DOMAINS = [
+    ['listening',['Listening and responding','Listening']],['listen',['Listening and responding','Listening']],['speaking',['Speaking and presentation','Speaking and interaction']],['speak',['Speaking and presentation','Speaking and interaction']],['conversation',['Spoken interaction','Speaking and interaction']],['communicat',['Spoken interaction','Speaking and interaction']],['pronunciation',['Phonology, spelling and sound','Speaking and interaction']],['intonation',['Phonology, spelling and sound','Speaking and interaction']],['phonology',['Phonology, spelling and sound']],['sound',['Phonology, spelling and sound']],['spelling',['Phonology, spelling and sound','Writing']],['reading',['Reading and comprehension','Reading']],['read',['Reading and comprehension','Reading']],['writing',['Writing and adaptation','Writing']],['write',['Writing and adaptation','Writing']],['vocabulary',['Vocabulary and dictionaries','Grammar and vocabulary']],['dictionary',['Vocabulary and dictionaries']],['grammar',['Grammar and language structures','Grammar and vocabulary']],['tense',['Grammar and language structures','Grammar and vocabulary']],['verb',['Grammar and language structures','Grammar and vocabulary']],['translation',['Translation']],['translate',['Translation']],['literature',['Literary texts']],['literary',['Literary texts']],['story',['Cultural texts','Literary texts']],['song',['Cultural texts']],['poem',['Cultural texts']],['poetry',['Cultural texts','Literary texts']],['culture',['Culture and wider understanding']],['opinion',['Spoken interaction','Speaking and interaction']],['question',['Spoken interaction','Speaking and interaction']],['describe',['Description','Writing']],['description',['Description','Writing']],['dictionary skills',['Vocabulary and dictionaries','Language learning strategies']],['language learning',['Language learning strategies']]
+  ];
 
   const historyReady = fetch(HISTORY_DATASET_PATH,{cache:'no-cache'}).then(async response => {
     if (!response.ok) throw new Error(`History curriculum dataset returned ${response.status}`);
+    return response.json();
+  });
+  const languagesReady = fetch(LANGUAGES_DATASET_PATH,{cache:'no-cache'}).then(async response => {
+    if (!response.ok) throw new Error(`Languages curriculum dataset returned ${response.status}`);
     return response.json();
   });
 
   if (registry) {
     const originalResolve = registry.resolve.bind(registry);
     const originalReady = registry.ready;
-    registry.ready = Promise.all([originalReady, historyReady]).then(([loadedRegistry, dataset]) => {
-      if (registry.detail && dataset) registry.detail.History = dataset;
+    registry.ready = Promise.all([originalReady, historyReady, languagesReady]).then(([loadedRegistry, historyDataset, languagesDataset]) => {
+      if (registry.detail && historyDataset) registry.detail.History = historyDataset;
+      if (registry.detail && languagesDataset) registry.detail.Languages = languagesDataset;
       return loadedRegistry;
     });
     registry.resolve = (selection = {}) => {
+      const subject = String(selection.subject || '').trim();
       const resolved = originalResolve(selection);
-      if (String(selection.subject || '').trim() !== 'History' || !historyReady) return resolved;
-      const dataset = registry.detail?.History;
+      if (subject !== 'History' && subject !== 'Languages') return resolved;
+      const dataset = registry.detail?.[subject];
       if (!dataset || !resolved.jurisdiction) return resolved;
       const text = String(selection.topic || '').toLowerCase();
       const keyStage = resolved.keyStage;
       const available = dataset.domains?.[keyStage] || [];
-      const matches = HISTORY_TOPIC_DOMAINS.filter(([term]) => text.includes(term)).flatMap(([, domains]) => domains);
+      const topicDomains = subject === 'History' ? HISTORY_TOPIC_DOMAINS : LANGUAGES_TOPIC_DOMAINS;
+      const matches = topicDomains.filter(([term]) => text.includes(term)).flatMap(([, domains]) => domains);
       const domains = [...new Set(matches)].filter(domain => available.includes(domain));
       const objectives = dataset.objectives?.[keyStage]?.filter(item => !domains.length || domains.includes(item.domain)) || [];
       return {
