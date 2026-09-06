@@ -9,7 +9,13 @@ import {
   signOut as firebaseSignOut,
   updateProfile
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+  setDoc
+} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 
 const app = initializeApp(firebaseConfig);
@@ -43,6 +49,22 @@ const signOutButton = document.getElementById('signOutButton');
 
 let createMode = false;
 
+async function ensureUserProfile(user) {
+  const ref = doc(db, 'users', user.uid);
+  const snapshot = await getDoc(ref);
+
+  if (!snapshot.exists()) {
+    await setDoc(ref, {
+      displayName: user.displayName || '',
+      email: user.email || '',
+      photoURL: user.photoURL || '',
+      role: 'member',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+  }
+}
+
 function friendlyAuthError(error) {
   const code = error?.code || '';
   const messages = {
@@ -50,10 +72,15 @@ function friendlyAuthError(error) {
     'auth/invalid-credential': 'Email or password is incorrect.',
     'auth/invalid-email': 'Enter a valid email address.',
     'auth/missing-password': 'Enter your password.',
+    'auth/operation-not-allowed': 'Google sign-in is not enabled for this Firebase project.',
+    'auth/unauthorized-domain': 'This site is not authorized in Firebase Authentication. Add the TEACHR domain under Authorized domains.',
     'auth/popup-closed-by-user': 'Google sign-in was closed before it finished.',
     'auth/popup-blocked': 'Your browser blocked the Google sign-in window.',
+    'auth/cancelled-popup-request': 'Another Google sign-in request is already in progress.',
+    'auth/too-many-requests': 'Too many sign-in attempts. Wait a moment and try again.',
     'auth/weak-password': 'Use a stronger password with at least 6 characters.',
-    'auth/network-request-failed': 'Authentication could not reach Firebase. Check your connection and try again.'
+    'auth/network-request-failed': 'Authentication could not reach Firebase. Check your connection and try again.',
+    'permission-denied': 'Firebase authenticated you, but TEACHR could not create your user profile. Check the deployed Firestore rules.'
   };
   return messages[code] || 'Authentication could not be completed. Please try again.';
 }
@@ -132,7 +159,8 @@ googleButton?.addEventListener('click', async () => {
   errorBox.hidden = true;
   setBusy(true);
   try {
-    await signInWithPopup(auth, googleProvider);
+    const credential = await signInWithPopup(auth, googleProvider);
+    await ensureUserProfile(credential.user);
     closeAuthDialog();
   } catch (error) {
     errorBox.textContent = friendlyAuthError(error);
@@ -151,8 +179,10 @@ form?.addEventListener('submit', async event => {
       const credential = await createUserWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
       const displayName = nameInput.value.trim();
       if (displayName) await updateProfile(credential.user, { displayName });
+      await ensureUserProfile(credential.user);
     } else {
-      await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
+      const credential = await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
+      await ensureUserProfile(credential.user);
     }
     closeAuthDialog();
   } catch (error) {
