@@ -53,6 +53,16 @@ body { background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transpar
 .app-tool-arrow { color:#d48617 !important; }
 .app-home-button { color:#17304d !important; background:#fffdf8 !important; border-color:#dfd2bf !important; }
 .app-home-button:hover { background:#fff7e9 !important; border-color:#e4bf78 !important; }
+
+/* Warm workspace surfaces. Keep Lesson Design and AI Engine panel treatments intact. */
+html[data-theme="light"] #appToolMount>.builder { background:linear-gradient(180deg,#fffdf9 0%,#fffaf2 100%); border-color:#eadfcf; box-shadow:0 18px 44px rgba(120,82,34,.08); }
+html[data-theme="light"] #appToolMount .online { color:#665f55; background:#fff8ea; border-color:#ead8b9; }
+html[data-theme="light"] #appToolMount .result { background:#fffdf9; border-color:#eadfcf; }
+html[data-theme="light"] #appToolMount .result-item { background:#fffaf2; border-color:#eadfcf; }
+html[data-theme="light"] #appToolMount .resource-card { background:linear-gradient(145deg,#fffdf9 0%,#fff8eb 100%); border-color:#eadfcf; box-shadow:0 10px 28px rgba(120,82,34,.07); }
+html[data-theme="light"] #appToolMount .resource-preview span { background:#fff4df; border-color:#ead8b9; color:#6c6255; }
+html[data-theme="light"] #appToolMount .filter.active,html[data-theme="light"] #appToolMount .filter:hover { background:#fff1d7; border-color:#e5bf79; color:#8a5b10; }
+
 /* Light mode is the application default; dark mode is explicit. */
 html[data-theme="dark"] .teachr-app { color:#e9f2fb; background:linear-gradient(180deg,#0a1c31 0%,#0b223d 100%); }
 html[data-theme="dark"] .app-tool-card { color:#eaf3fc !important; background:linear-gradient(145deg,#122a45 0%,#0d2139 100%) !important; border-color:#294563 !important; }
