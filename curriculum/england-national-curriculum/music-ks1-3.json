@@ -1,0 +1,44 @@
+{
+  "id": "england-music-ks1-3",
+  "subject": "Music",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: music programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-music-programmes-of-study/national-curriculum-in-england-music-programmes-of-study",
+    "published": "2013-09-11",
+    "lastUpdated": "2021-03-26",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": "KS1-KS3",
+  "note": "Controlled paraphrases of the statutory Music programmes of study. The source requires pupils to know, apply and understand the specified matters, skills and processes by the end of each key stage.",
+  "domains": {
+    "KS1": ["Singing and voice", "Instrumental performance", "Listening and musical understanding", "Creating and combining sounds"],
+    "KS2": ["Performance", "Improvisation and composition", "Aural memory", "Notation", "Listening and musical traditions", "History of music"],
+    "KS3": ["Performance", "Improvisation and composition", "Notation", "Musical dimensions and devices", "Listening and discrimination", "Musical contexts and history"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"MUS-KS1-01","domain":"Singing and voice","summary":"Use voices expressively and creatively through songs, chants and rhymes."},
+      {"id":"MUS-KS1-02","domain":"Instrumental performance","summary":"Play tuned and untuned instruments musically."},
+      {"id":"MUS-KS1-03","domain":"Listening and musical understanding","summary":"Listen with concentration and understanding to a range of high-quality live and recorded music."},
+      {"id":"MUS-KS1-04","domain":"Creating and combining sounds","summary":"Experiment with, create, select and combine sounds using the interrelated dimensions of music."}
+    ],
+    "KS2": [
+      {"id":"MUS-KS2-01","domain":"Performance","summary":"Perform in solo and ensemble contexts with increasing accuracy, fluency, control and expression using voices and instruments."},
+      {"id":"MUS-KS2-02","domain":"Improvisation and composition","summary":"Improvise and compose music for different purposes using the interrelated dimensions of music."},
+      {"id":"MUS-KS2-03","domain":"Aural memory","summary":"Listen attentively and recall sounds with increasing aural memory."},
+      {"id":"MUS-KS2-04","domain":"Notation","summary":"Use and understand staff notation and other musical notation."},
+      {"id":"MUS-KS2-05","domain":"Listening and musical traditions","summary":"Appreciate and understand high-quality live and recorded music from different traditions and from major composers and musicians."},
+      {"id":"MUS-KS2-06","domain":"History of music","summary":"Develop an understanding of the history of music."}
+    ],
+    "KS3": [
+      {"id":"MUS-KS3-01","domain":"Performance","summary":"Perform confidently in varied solo and ensemble contexts with musical fluency, accuracy and expression."},
+      {"id":"MUS-KS3-02","domain":"Improvisation and composition","summary":"Improvise, compose and develop musical ideas using varied structures, styles, genres and traditions."},
+      {"id":"MUS-KS3-03","domain":"Notation","summary":"Use staff and other relevant notation appropriately and accurately across musical styles and genres."},
+      {"id":"MUS-KS3-04","domain":"Musical dimensions and devices","summary":"Use the interrelated dimensions of music expressively and with increasing sophistication, including tonalities, scales and other musical devices."},
+      {"id":"MUS-KS3-05","domain":"Listening and discrimination","summary":"Listen with increasing discrimination to a wide range of music from major composers and musicians."},
+      {"id":"MUS-KS3-06","domain":"Musical contexts and history","summary":"Develop deeper understanding of music performed and heard, including its history, contexts, styles and traditions, and use technology appropriately."}
+    ]
+  }
+}
