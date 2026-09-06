@@ -1,0 +1,134 @@
+/* TEACHR tool panels — warm, high-contrast application surfaces. */
+
+#appToolMount .lesson-design-panel {
+  background:linear-gradient(145deg,#fffaf0 0%,#fffdf8 100%) !important;
+  border:1px solid #f1d7a5 !important;
+  box-shadow:0 10px 28px rgba(16,35,63,.06) !important;
+  color:#10233f !important;
+}
+
+#appToolMount .lesson-design-panel .eyebrow {
+  color:#d97706 !important;
+}
+
+#appToolMount .lesson-design-panel .lesson-design-head strong {
+  color:#10233f !important;
+}
+
+#appToolMount .lesson-design-panel .lesson-design-head span {
+  color:#667892 !important;
+}
+
+#appToolMount .lesson-design-panel .lesson-reset {
+  color:#9a5b00 !important;
+  background:#fff !important;
+  border-color:#e8c982 !important;
+}
+
+#appToolMount .lesson-design-panel .lesson-reset:hover {
+  color:#713f00 !important;
+  background:#fff8e8 !important;
+  border-color:#d9ad52 !important;
+}
+
+#appToolMount .lesson-design-panel .field label {
+  color:#334e6f !important;
+}
+
+#appToolMount .lesson-design-panel .field input,
+#appToolMount .lesson-design-panel .field select,
+#appToolMount .lesson-design-panel .field textarea {
+  background:#fff !important;
+  color:#10233f !important;
+  border-color:#cbd8e6 !important;
+}
+
+#appToolMount .lesson-design-panel .field input::placeholder,
+#appToolMount .lesson-design-panel .field textarea::placeholder {
+  color:#718199 !important;
+  opacity:1;
+}
+
+#appToolMount #aiProviderPanel {
+  background:linear-gradient(145deg,#f2f8ff 0%,#fbfdff 100%) !important;
+  border:1px solid #c9dff1 !important;
+  box-shadow:0 10px 28px rgba(16,35,63,.06) !important;
+  color:#10233f !important;
+}
+
+#appToolMount #aiProviderPanel .eyebrow {
+  color:#1688c6 !important;
+}
+
+#appToolMount #aiProviderPanel .aip-head strong {
+  color:#10233f !important;
+}
+
+#appToolMount #aiProviderPanel .aip-head span,
+#appToolMount #aiProviderPanel .aip-note {
+  color:#5f738c !important;
+}
+
+#appToolMount #aiProviderPanel .aip-status {
+  color:#51657f !important;
+}
+
+#appToolMount #aiProviderPanel .field label {
+  color:#334e6f !important;
+}
+
+#appToolMount #aiProviderPanel .field input,
+#appToolMount #aiProviderPanel .field select {
+  background:#fff !important;
+  color:#10233f !important;
+  border-color:#cbd8e6 !important;
+}
+
+#appToolMount #aiProviderPanel .field input::placeholder {
+  color:#718199 !important;
+  opacity:1;
+}
+
+#appToolMount #aiProviderPanel .aip-test {
+  color:#0b6eaa !important;
+  background:#fff !important;
+  border-color:#9dcbe7 !important;
+}
+
+#appToolMount #aiProviderPanel .aip-test:hover {
+  color:#07567f !important;
+  background:#eef8ff !important;
+}
+
+/* Keep the panels readable in the existing dark application mode. */
+html:not([data-theme="light"]) #appToolMount .lesson-design-panel {
+  background:linear-gradient(145deg,#122d4d 0%,#0d2541 100%) !important;
+  border-color:rgba(128,196,241,.24) !important;
+  color:#f7fbff !important;
+}
+
+html:not([data-theme="light"]) #appToolMount .lesson-design-panel .lesson-design-head strong,
+html:not([data-theme="light"]) #appToolMount .lesson-design-panel .field label {
+  color:#eef6ff !important;
+}
+
+html:not([data-theme="light"]) #appToolMount .lesson-design-panel .lesson-design-head span,
+html:not([data-theme="light"]) #appToolMount .lesson-design-panel .field label span {
+  color:#9db2cc !important;
+}
+
+html:not([data-theme="light"]) #appToolMount #aiProviderPanel {
+  background:linear-gradient(145deg,#102d4d 0%,#0c233e 100%) !important;
+  border-color:rgba(128,196,241,.24) !important;
+  color:#f7fbff !important;
+}
+
+html:not([data-theme="light"]) #appToolMount #aiProviderPanel .aip-head strong,
+html:not([data-theme="light"]) #appToolMount #aiProviderPanel .field label {
+  color:#eef6ff !important;
+}
+
+html:not([data-theme="light"]) #appToolMount #aiProviderPanel .aip-head span,
+html:not([data-theme="light"]) #appToolMount #aiProviderPanel .aip-note {
+  color:#9db2cc !important;
+}
