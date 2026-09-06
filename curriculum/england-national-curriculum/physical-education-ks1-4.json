@@ -1,0 +1,52 @@
+{
+  "id": "england-physical-education-ks1-4",
+  "subject": "Physical education",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: physical education programmes of study",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-physical-education-programmes-of-study/national-curriculum-in-england-physical-education-programmes-of-study",
+    "published": "2013-09-11",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": "KS1-KS4",
+  "note": "Controlled paraphrases of the statutory Physical Education programmes of study. Example content in square brackets is not represented as a statutory requirement. Swimming and water safety requirements are included separately because the source specifies them as a distinct requirement.",
+  "domains": {
+    "KS1": ["Fundamental movement", "Team games and tactics", "Dance"],
+    "KS2": ["Movement skills", "Competitive games", "Fitness and physical skills", "Dance", "Outdoor and adventurous activity", "Performance improvement", "Swimming and water safety"],
+    "KS3": ["Tactics and strategies", "Competitive sports", "Dance", "Outdoor and adventurous activity", "Performance analysis", "Community sport and activity"],
+    "KS4": ["Tactics and strategies", "Competitive sports and physical activity", "Outdoor and adventurous activity", "Performance evaluation", "Community sport and activity", "Fitness and healthy lifestyle"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"PE-KS1-01","domain":"Fundamental movement","summary":"Master basic running, jumping, throwing and catching movements and develop balance, agility and coordination."},
+      {"id":"PE-KS1-02","domain":"Team games and tactics","summary":"Participate in team games and develop simple attacking and defending tactics."},
+      {"id":"PE-KS1-03","domain":"Dance","summary":"Perform dances using simple movement patterns."}
+    ],
+    "KS2": [
+      {"id":"PE-KS2-01","domain":"Movement skills","summary":"Apply and combine running, jumping, throwing and catching skills and develop a broader range of movement sequences."},
+      {"id":"PE-KS2-02","domain":"Competitive games","summary":"Play competitive games and apply basic principles for attacking and defending."},
+      {"id":"PE-KS2-03","domain":"Fitness and physical skills","summary":"Develop flexibility, strength, technique, control and balance."},
+      {"id":"PE-KS2-04","domain":"Dance","summary":"Perform dances using a range of movement patterns."},
+      {"id":"PE-KS2-05","domain":"Outdoor and adventurous activity","summary":"Take part in outdoor and adventurous activity challenges individually and in teams."},
+      {"id":"PE-KS2-06","domain":"Performance improvement","summary":"Compare performances with previous performances and demonstrate improvement towards a personal best."},
+      {"id":"PE-KS2-07","domain":"Swimming and water safety","summary":"Provide swimming instruction in KS1 or KS2 so pupils can swim at least 25 metres, use a range of strokes effectively and perform safe self-rescue in different water situations."}
+    ],
+    "KS3": [
+      {"id":"PE-KS3-01","domain":"Tactics and strategies","summary":"Use tactics and strategies to overcome opponents in direct competition through team and individual games."},
+      {"id":"PE-KS3-02","domain":"Competitive sports","summary":"Develop technique and improve performance in competitive sports and physical activities."},
+      {"id":"PE-KS3-03","domain":"Dance","summary":"Perform dances using advanced techniques across different dance styles and forms."},
+      {"id":"PE-KS3-04","domain":"Outdoor and adventurous activity","summary":"Take part in outdoor and adventurous activities that present physical and intellectual challenges and develop teamwork and problem-solving."},
+      {"id":"PE-KS3-05","domain":"Performance analysis","summary":"Analyse performance against previous performances and demonstrate improvement towards a personal best."},
+      {"id":"PE-KS3-06","domain":"Community sport and activity","summary":"Take part in competitive sports and activities outside school through community links or sports clubs."}
+    ],
+    "KS4": [
+      {"id":"PE-KS4-01","domain":"Tactics and strategies","summary":"Use and develop tactics and strategies to overcome opponents in team and individual games."},
+      {"id":"PE-KS4-02","domain":"Competitive sports and physical activity","summary":"Develop technique and improve performance in competitive sports or other physical activities."},
+      {"id":"PE-KS4-03","domain":"Outdoor and adventurous activity","summary":"Take part in demanding outdoor and adventurous activities that develop teamwork, trust and problem-solving."},
+      {"id":"PE-KS4-04","domain":"Performance evaluation","summary":"Evaluate performances and demonstrate improvement across physical activities towards a personal best."},
+      {"id":"PE-KS4-05","domain":"Community sport and activity","summary":"Continue to take part regularly in competitive sports and activities outside school through community links or sports clubs."},
+      {"id":"PE-KS4-06","domain":"Fitness and healthy lifestyle","summary":"Engage in complex physical activities that develop personal fitness and promote an active, healthy lifestyle."}
+    ]
+  }
+}
