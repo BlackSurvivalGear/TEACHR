@@ -3,11 +3,7 @@
   const panel = document.querySelector('.lesson-design-panel');
   if (!form || !panel) return;
 
-  const ids = [
-    'lessonObjective','priorKnowledge','v2Vocabulary','lessonStyle','assessmentMethod',
-    'v2Starter','v2Misconceptions','v2Challenge','supportNeeds','resourcesNeeded',
-    'v2Homework','v2Sequence','successCriteria','v2Reflection'
-  ];
+  const ids = ['lessonObjective','priorKnowledge','v2Vocabulary','lessonStyle','assessmentMethod','v2Starter','v2Misconceptions','v2Challenge','supportNeeds','resourcesNeeded','v2Homework','v2Sequence','successCriteria','v2Reflection'];
   const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
   if (ids.some(id => !fields[id])) return;
 
@@ -43,15 +39,14 @@
 
   const status = document.getElementById('lessonCoherenceStatus');
   const list = document.getElementById('lessonCoherenceList');
+  const getField = id => fields[id] || document.getElementById(id);
+  const value = id => String(getField(id)?.value || '').trim();
+  const hasAny = () => ids.some(id => value(id));
+  const keywords = () => [...new Set(`${value('lessonObjective')} ${value('v2Vocabulary')}`.toLowerCase().replace(/[^a-z0-9' -]/g,' ').split(/\s+/).filter(w => w.length >= 5))].slice(0,5);
 
-  function value(id){ return String(fields[id].value || '').trim(); }
-  function hasAny(){ return ids.some(id => value(id)); }
-  function keywords(){
-    return [...new Set(`${value('lessonObjective')} ${value('v2Vocabulary')}`.toLowerCase().replace(/[^a-z0-9' -]/g,' ').split(/\s+/).filter(w => w.length >= 5))].slice(0,5);
-  }
   function checks(){
-    const subject = value('subject') || document.getElementById('subject')?.value || '';
-    const topic = value('topic') || document.getElementById('topic')?.value || '';
+    const subject = value('subject');
+    const topic = value('topic');
     const issues = [];
     const objective = value('lessonObjective');
     const success = value('successCriteria');
@@ -62,13 +57,12 @@
     if (objective && !success) issues.push({field:'successCriteria', title:'Success criteria', text:'Consider adding observable criteria that show what successful learning will look like.'});
     if (!value('v2Starter') && (objective || topic)) issues.push({field:'v2Starter', title:'Retrieval starter', text:'Consider a short retrieval activity linked to prerequisite knowledge or the current topic.'});
     if (!value('v2Sequence')) issues.push({field:'v2Sequence', title:'Lesson sequence', text:'Add the main teaching flow so the approach, practice and assessment form a coherent progression.'});
-    if (assessment && sequence && !sequence.includes('exit') && assessment.includes('exit')) issues.push({field:'v2Sequence', title:'Assessment in sequence', text:'The selected assessment is an exit ticket, but the sequence does not mention when it happens.'});
+    if (assessment && sequence && assessment.includes('exit') && !sequence.includes('exit')) issues.push({field:'v2Sequence', title:'Assessment in sequence', text:'The selected assessment is an exit ticket, but the sequence does not mention when it happens.'});
     if (assessment && sequence && assessment.includes('quiz') && !sequence.includes('quiz')) issues.push({field:'v2Sequence', title:'Assessment in sequence', text:'The selected assessment is a quiz, but the sequence does not show where it is used.'});
-    if (practicalSubjects.has(subject) && !value('resourcesNeeded')) issues.push({field:'resourcesNeeded', title:'Resources', text:'This subject often benefits from explicit resource planning; consider listing the equipment, materials or stimuli required.'});
-    if (value('lessonStyle').toLowerCase().includes('practical') && !value('resourcesNeeded')) issues.push({field:'resourcesNeeded', title:'Practical resources', text:'A practical lesson approach is selected, so consider recording the equipment or materials needed.'});
+    if ((practicalSubjects.has(subject) || value('lessonStyle').toLowerCase().includes('practical')) && !value('resourcesNeeded')) issues.push({field:'resourcesNeeded', title:'Resources', text:'Consider listing the equipment, materials or stimuli required for the planned activities.'});
     if (complexSupportSubjects.has(subject) && !value('supportNeeds')) issues.push({field:'supportNeeds', title:'Support options', text:'Consider recording accessible explanations, modelling, prompts or other support that may help pupils access the task.'});
     const terms = keywords();
-    if (value('v2Starter') && terms.length && !terms.some(term => value('v2Starter').toLowerCase().includes(term))) issues.push({field:'v2Starter', title:'Retrieval alignment', text:'The starter does not visibly reuse the main objective/vocabulary terms. Consider checking that retrieval targets useful prerequisite knowledge.'});
+    if (value('v2Starter') && terms.length && !terms.some(term => value('v2Starter').toLowerCase().includes(term))) issues.push({field:'v2Starter', title:'Retrieval alignment', text:'The starter does not visibly reuse the main objective/vocabulary terms. Check that retrieval targets useful prerequisite knowledge.'});
     if (objective && value('v2Challenge') && !value('v2Challenge').toLowerCase().includes('objective')) issues.push({field:'v2Challenge', title:'Challenge alignment', text:'Check that the extension increases depth or independence while still serving the learning objective.'});
     if (objective && !value('assessmentMethod')) issues.push({field:'assessmentMethod', title:'Assessment', text:'Select an assessment method that gives evidence against the learning objective.'});
     if (!value('priorKnowledge') && objective) issues.push({field:'priorKnowledge', title:'Prior knowledge', text:'Consider identifying the knowledge or skill pupils need before starting the new learning.'});
@@ -77,7 +71,7 @@
   }
 
   function applySuggestion(issue){
-    const field = fields[issue.field];
+    const field = getField(issue.field);
     if (!field || field.value.trim()) return;
     const suggestions = {
       lessonObjective:'Define one clear, pupil-centred learning outcome for the lesson.',
@@ -107,7 +101,7 @@
       return;
     }
     list.innerHTML = issues.map((issue,index) => {
-      const canApply = fields[issue.field] && !value(issue.field) && ['lessonObjective','successCriteria','v2Starter','v2Sequence','resourcesNeeded','supportNeeds','assessmentMethod'].includes(issue.field);
+      const canApply = getField(issue.field) && !value(issue.field) && ['lessonObjective','successCriteria','v2Starter','v2Sequence','resourcesNeeded','supportNeeds','assessmentMethod'].includes(issue.field);
       return `<div class="lesson-coherence-item"><span><strong>${issue.title}:</strong> ${issue.text}</span>${canApply ? `<button type="button" data-coherence-index="${index}">Apply suggestion</button>` : ''}</div>`;
     }).join('');
     list.querySelectorAll('[data-coherence-index]').forEach(button => button.addEventListener('click', () => applySuggestion(issues[Number(button.dataset.coherenceIndex)])));
