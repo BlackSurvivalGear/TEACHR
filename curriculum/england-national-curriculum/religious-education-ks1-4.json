@@ -1,0 +1,35 @@
+{
+  "id": "england-religious-education-ks1-4",
+  "subject": "Religious education (RE)",
+  "jurisdiction": "England",
+  "framework": "National Curriculum",
+  "source": {
+    "title": "National curriculum in England: framework for key stages 1 to 4",
+    "url": "https://www.gov.uk/government/publications/national-curriculum-in-england-framework-for-key-stages-1-to-4/the-national-curriculum-in-england-framework-for-key-stages-1-to-4",
+    "published": "2013-09-11",
+    "lastUpdated": "2014-12-02",
+    "licence": "Open Government Licence v3.0"
+  },
+  "coverage": "KS1-KS4",
+  "note": "This dataset records the statutory requirement to teach religious education at every key stage. RE is not one of the 12 national-curriculum subjects with a single national programme of study; syllabus content is determined through the applicable legal and school context. TEACHR therefore does not invent national subject objectives for RE.",
+  "domains": {
+    "KS1": ["Statutory RE provision"],
+    "KS2": ["Statutory RE provision"],
+    "KS3": ["Statutory RE provision"],
+    "KS4": ["Statutory RE provision"]
+  },
+  "objectives": {
+    "KS1": [
+      {"id":"RE-KS1-REQ-01","domain":"Statutory RE provision","summary":"Religious education must be taught to pupils at key stage 1; TEACHR does not assign a national programme-of-study objective where the source does not provide one."}
+    ],
+    "KS2": [
+      {"id":"RE-KS2-REQ-01","domain":"Statutory RE provision","summary":"Religious education must be taught to pupils at key stage 2; TEACHR does not assign a national programme-of-study objective where the source does not provide one."}
+    ],
+    "KS3": [
+      {"id":"RE-KS3-REQ-01","domain":"Statutory RE provision","summary":"Religious education must be taught to pupils at key stage 3; TEACHR does not assign a national programme-of-study objective where the source does not provide one."}
+    ],
+    "KS4": [
+      {"id":"RE-KS4-REQ-01","domain":"Statutory RE provision","summary":"Religious education must be taught to pupils at key stage 4; TEACHR does not assign a national programme-of-study objective where the source does not provide one."}
+    ]
+  }
+}
