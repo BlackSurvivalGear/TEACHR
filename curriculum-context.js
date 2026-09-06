@@ -1,10 +1,55 @@
 (() => {
   const originalFetch = window.fetch.bind(window);
+  const registry = window.TEACHR_CURRICULUM;
+
+  const HISTORY_DATASET_PATH = 'curriculum/england-national-curriculum/history-ks1-3.json';
+  const HISTORY_TOPIC_DOMAINS = [
+    ['chronology',['Chronology and historical concepts']],['chronological',['Chronology and historical concepts']],['change',['Chronology and historical concepts','Changes and events','British history beyond 1066','British history themes']],['continuity',['Chronology and historical concepts','British history themes']],['cause',['Chronology and historical concepts']],['consequence',['Chronology and historical concepts']],['similarity',['Chronology and historical concepts']],['difference',['Chronology and historical concepts']],['significance',['Chronology and historical concepts']],
+    ['source',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['sources',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['evidence',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],['interpretation',['Historical enquiry, evidence and interpretations']],['enquiry',['Historical enquiry and sources','Historical enquiry, evidence and interpretations']],
+    ['living memory',['Changes and events']],['significant individual',['Significant individuals']],['individual',['Significant individuals']],['local history',['Local history']],['stone age',['Stone Age to Iron Age']],['iron age',['Stone Age to Iron Age']],['roman',['Roman Britain']],['roman empire',['Roman Britain']],['anglo-saxon',['Anglo-Saxons and Scots','Viking and Anglo-Saxon struggle']],['anglo saxon',['Anglo-Saxons and Scots','Viking and Anglo-Saxon struggle']],['scots',['Anglo-Saxons and Scots']],['viking',['Viking and Anglo-Saxon struggle']],['vikings',['Viking and Anglo-Saxon struggle']],
+    ['ancient civilisation',['Ancient civilisations']],['ancient civilizations',['Ancient civilisations']],['ancient egypt',['Ancient civilisations']],['sumer',['Ancient civilisations']],['indus valley',['Ancient civilisations']],['shang',['Ancient civilisations']],['ancient greece',['Ancient Greece']],['greek',['Ancient Greece']],['islamic civilisation',['Non-European societies']],['mayan',['Non-European societies']],['benin',['Non-European societies']],
+    ['medieval',['Medieval Britain 1066-1509']],['norman',['Medieval Britain 1066-1509']],['magna carta',['Medieval Britain 1066-1509']],['black death',['Medieval Britain 1066-1509']],['wars of the roses',['Medieval Britain 1066-1509']],['reformation',['Britain 1509-1745']],['renaissance',['Britain 1509-1745']],['civil war',['Britain 1509-1745']],['restoration',['Britain 1509-1745']],['glorious revolution',['Britain 1509-1745']],
+    ['industrial',['Ideas, political power, industry and empire 1745-1901']],['industry',['Ideas, political power, industry and empire 1745-1901']],['empire',['Ideas, political power, industry and empire 1745-1901']],['slave trade',['Ideas, political power, industry and empire 1745-1901']],['abolition',['Ideas, political power, industry and empire 1745-1901']],['franchise',['Ideas, political power, industry and empire 1745-1901']],
+    ['world war',['Britain, Europe and wider world 1901-present']],['first world war',['Britain, Europe and wider world 1901-present']],['second world war',['Britain, Europe and wider world 1901-present']],['holocaust',['Britain, Europe and wider world 1901-present']],['welfare state',['Britain, Europe and wider world 1901-present']],['migration',['British history themes']],['political power',['British history themes']],['turning point',['British history themes']],['world history',['World history and interconnections']],['society',['World history and interconnections']]
+  ];
+
+  const historyReady = fetch(HISTORY_DATASET_PATH,{cache:'no-cache'}).then(async response => {
+    if (!response.ok) throw new Error(`History curriculum dataset returned ${response.status}`);
+    return response.json();
+  });
+
+  if (registry) {
+    const originalResolve = registry.resolve.bind(registry);
+    const originalReady = registry.ready;
+    registry.ready = Promise.all([originalReady, historyReady]).then(([loadedRegistry, dataset]) => {
+      if (registry.detail && dataset) registry.detail.History = dataset;
+      return loadedRegistry;
+    });
+    registry.resolve = (selection = {}) => {
+      const resolved = originalResolve(selection);
+      if (String(selection.subject || '').trim() !== 'History' || !historyReady) return resolved;
+      const dataset = registry.detail?.History;
+      if (!dataset || !resolved.jurisdiction) return resolved;
+      const text = String(selection.topic || '').toLowerCase();
+      const keyStage = resolved.keyStage;
+      const available = dataset.domains?.[keyStage] || [];
+      const matches = HISTORY_TOPIC_DOMAINS.filter(([term]) => text.includes(term)).flatMap(([, domains]) => domains);
+      const domains = [...new Set(matches)].filter(domain => available.includes(domain));
+      const objectives = dataset.objectives?.[keyStage]?.filter(item => !domains.length || domains.includes(item.domain)) || [];
+      return {
+        ...resolved,
+        status: resolved.status === 'not-applicable-at-key-stage' ? resolved.status : 'verified-source-structure',
+        domains,
+        objectives,
+        statements: objectives.map(item => `${item.id}: ${item.summary}`)
+      };
+    };
+  }
 
   function curriculumContext(inputs) {
-    const registry = window.TEACHR_CURRICULUM;
-    if (!registry) return '';
-    const resolved = registry.resolve(inputs);
+    const currentRegistry = window.TEACHR_CURRICULUM;
+    if (!currentRegistry) return '';
+    const resolved = currentRegistry.resolve(inputs);
     if (!resolved.jurisdiction) return '';
 
     const source = resolved.source ? `Authoritative source: ${resolved.source}` : 'Authoritative source: registered TEACHR curriculum source';
