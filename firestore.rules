@@ -1,39 +1,39 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId} {
-      allow create: if request.auth != null
-        && request.auth.uid == userId
-        && request.resource.data.role == 'member';
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null
-        && request.auth.uid == userId
-        && request.resource.data.role == resource.data.role;
-      allow delete: if false;
+    function signedIn() { return request.auth != null; }
+    function isSuperadmin() { return signedIn() && request.auth.token.email == 'admin@lawal.org'; }
+    function ownProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)); }
+    function isAdmin() { return isSuperadmin() || (signedIn() && ownProfile().data.role == 'admin'); }
 
-      match /savedPlaces/{placeId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /interests/{interestId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
+    match /users/{uid} {
+      allow read: if signedIn() && (uid == request.auth.uid || isAdmin());
+      allow create: if signedIn() && uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.suspended == false
+        && request.resource.data.accountStatus == 'active'
+        && ((isSuperadmin() && request.resource.data.role == 'superadmin' && request.resource.data.plan == 'pro')
+          || (!isSuperadmin() && request.resource.data.role == 'member' && request.resource.data.plan == 'free'));
+      allow update: if signedIn() && uid == request.auth.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.plan == resource.data.get('plan', 'free')
+        && request.resource.data.suspended == resource.data.get('suspended', false)
+        && request.resource.data.accountStatus == resource.data.get('accountStatus', 'active')
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','photoURL','updatedAt','lastSignInAt'])
+        || isSuperadmin() && uid != request.auth.uid && resource.data.email != 'admin@lawal.org'
+        && request.resource.data.role in ['member','pro','admin'] && request.resource.data.plan in ['free','pro']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role','plan','suspended','accountStatus','updatedAt'])
+        || isAdmin() && !isSuperadmin() && uid != request.auth.uid && resource.data.role in ['member','pro']
+        && request.resource.data.role in ['member','pro'] && request.resource.data.plan in ['free','pro']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role','plan','suspended','accountStatus','updatedAt']);
+      allow delete: if isSuperadmin() && uid != request.auth.uid && resource.data.email != 'admin@lawal.org'
+        || isAdmin() && !isSuperadmin() && uid != request.auth.uid && resource.data.role in ['member','pro'];
+      match /savedPlaces/{placeId} { allow read, write: if signedIn() && request.auth.uid == uid; }
+      match /interests/{interestId} { allow read, write: if signedIn() && request.auth.uid == uid; }
     }
-
-    match /places/{placeId} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    match /returns/{returnId} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    match /groups/{groupId} {
-      allow read: if true;
-      allow write: if false;
-    }
+    match /places/{placeId} { allow read: if true; allow write: if false; }
+    match /returns/{returnId} { allow read: if true; allow write: if false; }
+    match /groups/{groupId} { allow read: if true; allow write: if false; }
   }
 }

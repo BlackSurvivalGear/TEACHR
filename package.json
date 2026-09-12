@@ -5,7 +5,8 @@
   "description": "TEACHR AI Teaching Assistant",
   "scripts": {
     "start": "node server/index.js",
-    "check": "node --check app.js && node --check server/index.js"
+    "check": "node --check app.js && node --check server/index.js && node --check teachr-auth.js && node --check pro-paywall.js && node --check upgrade.js && node --check admin.js && node --check < apps-script/Code.gs",
+    "test": "node lesson-builder.test.js && node tests/pro-access.test.js"
   },
   "engines": {
     "node": ">=18"

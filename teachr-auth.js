@@ -55,14 +55,25 @@ async function ensureUserProfile(user) {
 
   if (!snapshot.exists()) {
     await setDoc(ref, {
+      uid: user.uid,
       displayName: user.displayName || '',
       email: user.email || '',
       photoURL: user.photoURL || '',
-      role: 'member',
+      role: user.email?.toLowerCase() === 'admin@lawal.org' ? 'superadmin' : 'member',
+      plan: user.email?.toLowerCase() === 'admin@lawal.org' ? 'pro' : 'free',
+      suspended: false,
+      accountStatus: 'active',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
   }
+
+  const profile = (await getDoc(ref)).data() || {};
+  return {
+    ...profile,
+    role: user.email?.toLowerCase() === 'admin@lawal.org' ? 'superadmin' : (profile.role || 'member'),
+    plan: user.email?.toLowerCase() === 'admin@lawal.org' ? 'pro' : (profile.plan || 'free')
+  };
 }
 
 function friendlyAuthError(error) {
@@ -116,7 +127,7 @@ function closeAuthDialog() {
   if (dialog.open) dialog.close();
 }
 
-function publishAuthState(user) {
+function publishAuthState(user, profile = null) {
   state.user = user || null;
   state.status = user ? 'signed-in' : 'public';
   state.mode = user ? 'signed-in' : 'public';
@@ -129,7 +140,9 @@ function publishAuthState(user) {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || '',
-        photoURL: user.photoURL || ''
+        photoURL: user.photoURL || '',
+        role: profile?.role || 'member',
+        plan: profile?.plan || 'free'
       } : null
     }
   }));
@@ -201,9 +214,21 @@ signOutButton?.addEventListener('click', async () => {
   }
 });
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   renderAuthState(user);
-  publishAuthState(user);
+  if (!user) { publishAuthState(null); return; }
+  try {
+    const profile = await ensureUserProfile(user);
+    if (profile.suspended && user.email?.toLowerCase() !== 'admin@lawal.org') {
+      await firebaseSignOut(auth);
+      window.alert('This TEACHR account is suspended. Please contact support.');
+      return;
+    }
+    publishAuthState(user, profile);
+  } catch (error) {
+    console.error('Unable to load TEACHR profile:', error);
+    publishAuthState(user, { role: 'member', plan: 'free' });
+  }
 });
 
 window.TEACHR_AUTH = Object.freeze({
