@@ -24,8 +24,14 @@ onAuthStateChanged(auth, async (user) => {
     if (!api) { setStatus('Payment setup is awaiting the TEACHR checkout web-app URL.', 'error'); return; }
     setStatus(`Signed in as ${user.email}`); button.disabled = false;
     button.onclick = () => {
-      button.disabled = true; setStatus('Opening secure Stripe checkout…');
-      location.href = `${api}?action=pro-pay&uid=${encodeURIComponent(user.uid)}&email=${encodeURIComponent(user.email || '')}`;
+      const checkoutUrl = `${api}?action=pro-pay&uid=${encodeURIComponent(user.uid)}&email=${encodeURIComponent(user.email || '')}`;
+      const checkoutWindow = window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+      if (!checkoutWindow) {
+        setStatus('Your browser blocked the checkout window. Allow pop-ups for TEACHR and try again.', 'error');
+        return;
+      }
+      button.disabled = true;
+      setStatus('Stripe checkout opened in a new secure tab. Keep this TEACHR tab open.');
     };
   } catch (error) { console.error(error); setStatus('Your TEACHR account could not be checked. Please try again.', 'error'); }
 });
