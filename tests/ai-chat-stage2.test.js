@@ -6,14 +6,14 @@ const transport = fs.readFileSync('generation-client.js', 'utf8');
 const apps = fs.readFileSync('apps-script/Generation.gs', 'utf8');
 const css = fs.readFileSync('ai-chat-panel.css', 'utf8');
 
-assert(chat.includes("tool: 'chat'"), 'chat panel must call the dedicated chat tool');
+assert(/tool\s*:\s*'chat'/.test(chat), 'chat panel must call the dedicated chat tool');
 assert(chat.includes('TEACHR_AUTH.getIdToken'), 'chat must use the signed-in Firebase token');
 assert(chat.includes('TEACHR_AI.generate'), 'chat must reuse the shared TEACHR AI transport');
-assert(chat.includes('includeCurriculum: false'), 'Stage 2 chat must not silently add transport-level curriculum context');
+assert(/includeCurriculum\s*:\s*false/.test(chat), 'Stage 2 chat must not silently add transport-level curriculum context');
 assert(chat.includes('new AbortController()'), 'chat must support stopping a request');
-assert(chat.includes("send.textContent = 'Stop'"), 'send control must become Stop while generating');
+assert(/send\.textContent\s*=\s*'Stop'/.test(chat), 'send control must become Stop while generating');
 assert(chat.includes('history.slice(-8)'), 'chat should preserve bounded in-panel conversational context');
-assert(chat.includes("document.documentElement.dataset.auth !== 'signed-in'"), 'chat panel must refuse to open signed out');
+assert(/document\.documentElement\.dataset\.auth\s*!==\s*'signed-in'/.test(chat), 'chat panel must refuse to open signed out');
 assert(css.includes('html:not([data-auth="signed-in"]) .teachr-chat-panel'), 'chat panel must be hidden on public home');
 assert(transport.includes("tool === 'lesson' || tool === 'chat'"), 'shared transport must recognise chat without lesson stripping');
 assert(transport.includes("includeCurriculum = tool !== 'chat'"), 'chat must default to no duplicate transport-level curriculum injection');
