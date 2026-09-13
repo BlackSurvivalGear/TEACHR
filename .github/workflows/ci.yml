@@ -14,6 +14,8 @@ jobs:
         run: |
           node --check app.js
           node --check server/index.js
+          node --check server/firebase-admin.js
+          node --check server/usage-enforcement.js
           node --check ai-provider.js
           node --check output-formatting.js
           node --check generation-usage.js
@@ -41,3 +43,5 @@ jobs:
           grep -q "teachrApp" app-shell.js
       - name: Validate generation usage model
         run: node tests/generation-usage.test.js
+      - name: Validate server usage enforcement
+        run: node tests/usage-enforcement.test.js
