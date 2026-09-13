@@ -26,6 +26,7 @@ const googleProvider = new GoogleAuthProvider();
 const state = {
   status: 'loading',
   user: null,
+  profile: null,
   mode: 'public'
 };
 
@@ -131,6 +132,7 @@ function closeAuthDialog() {
 
 function publishAuthState(user, profile = null) {
   state.user = user || null;
+  state.profile = user ? (profile || {}) : null;
   state.status = user ? 'signed-in' : 'public';
   state.mode = user ? 'signed-in' : 'public';
   document.documentElement.dataset.auth = state.mode;
@@ -239,6 +241,12 @@ window.TEACHR_AUTH = Object.freeze({
   auth,
   db,
   getUser: () => state.user,
+  getAccount: () => state.user ? {
+    uid: state.user.uid,
+    email: state.user.email || '',
+    role: state.profile?.role || 'member',
+    plan: state.profile?.plan || 'free'
+  } : null,
   getMode: () => state.mode,
   openSignIn: () => openAuthDialog('signin'),
   openCreateAccount: () => openAuthDialog('create'),
