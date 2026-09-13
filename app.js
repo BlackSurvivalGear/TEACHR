@@ -79,9 +79,16 @@ function parseAISections(content) {
   return sections.length ? sections : [['AI output', content]];
 }
 async function generateWithAI(data) {
-  const response = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: buildPrompt(data), tool: activeTool, profile: getProfile(), inputs: data }) });
-  if (!response.ok) throw new Error(`AI service returned ${response.status}`); const payload = await response.json(); if (!payload.content) throw new Error('AI service returned no content');
-  return { title: `${data.topic} ${toolConfig[activeTool].type.toLowerCase()}`, summary: `${data.year} · ${data.subject} · AI generated`, sections: parseAISections(payload.content) };
+  const token = await window.TEACHR_AUTH?.getIdToken?.();
+  if (!token) throw Object.assign(new Error('Sign in to generate resources.'), { code: 'AUTH_REQUIRED' });
+  const response = await fetch('/api/generate', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: buildPrompt(data), tool: activeTool, profile: getProfile(), inputs: data }) });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw Object.assign(new Error(payload.error || `AI service returned ${response.status}`), { code: payload.code, status: response.status });
+  if (!payload.content) throw new Error('AI service returned no content');
+  return {
+    output: { title: `${data.topic} ${toolConfig[activeTool].type.toLowerCase()}`, summary: `${data.year} · ${data.subject} · AI generated`, sections: parseAISections(payload.content) },
+    usage: payload.usage
+  };
 }
 
 function renderResult(output, source) {
@@ -94,8 +101,24 @@ function renderResult(output, source) {
 async function handleSubmit(event) {
   event.preventDefault(); if (activeTool === 'library') { renderLibrary(); return; }
   const data = Object.fromEntries(new FormData(els.form).entries()); const submit = els.form.querySelector('button[type="submit"]'); submit.disabled = true; submit.classList.add('loading');
-  try { els.engineStatus.textContent = 'Trying AI…'; const output = await generateWithAI(data); els.engineStatus.textContent = 'AI connected'; renderResult(output, 'ai'); showToast('AI resource generated.'); }
-  catch { els.engineStatus.textContent = 'Local demo engine'; renderResult(demoOutput(data), 'demo'); showToast('Demo generated locally — backend can be connected later.'); }
+  try {
+    els.engineStatus.textContent = 'Generating securely…';
+    const result = await generateWithAI(data);
+    window.TEACHR_USAGE?.applyGenerationResult?.(activeTool, result.usage);
+    window.TEACHR_USAGE?.refresh?.();
+    els.engineStatus.textContent = 'AI connected';
+    renderResult(result.output, 'ai');
+    showToast('AI resource generated.');
+  } catch (error) {
+    els.engineStatus.textContent = 'Generation unavailable';
+    if (error.code === 'FREE_LIMIT_REACHED') {
+      await window.TEACHR_USAGE?.refresh?.();
+      showToast('Your free generations for this tool are used. Upgrade to continue.');
+      setTimeout(() => { window.location.href = 'upgrade.html'; }, 900);
+    } else {
+      showToast(error.message || 'Generation failed. Please try again.');
+    }
+  }
   finally { submit.disabled = false; submit.classList.remove('loading'); }
 }
 els.form.addEventListener('submit', handleSubmit);
