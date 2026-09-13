@@ -16,6 +16,7 @@ jobs:
           node --check server/index.js
           node --check ai-provider.js
           node --check output-formatting.js
+          node --check generation-usage.js
           node --check teachr-auth.js
           node --check app-shell.js
       - name: Validate package metadata
@@ -28,6 +29,7 @@ jobs:
           test -f app-shell.js
           test -f ai-provider.js
           test -f output-formatting.js
+          test -f generation-usage.js
           test -f LOGO.png
           test -f server/index.js
           test -f server/.env.example
@@ -37,3 +39,5 @@ jobs:
           grep -q "Assessment" index.html
           grep -q "/api/generate" app.js
           grep -q "teachrApp" app-shell.js
+      - name: Validate generation usage model
+        run: node tests/generation-usage.test.js
