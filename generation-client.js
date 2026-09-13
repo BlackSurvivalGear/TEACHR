@@ -33,17 +33,17 @@
   }
 
   function toolPrompt(prompt, tool) {
-    if (tool === 'lesson') return prompt;
+    if (tool === 'lesson' || tool === 'chat') return String(prompt || '').trim();
     return String(prompt || '').replace(/\n?\[TEACHR LESSON DESIGN\][\s\S]*?(?=\n\nTEACHR CURRICULUM CONTEXT|$)/, '').trim();
   }
 
   root.TEACHR_AI = Object.freeze({
-    async generate({ token, prompt, tool }) {
+    async generate({ token, prompt, tool, signal, includeCurriculum = tool !== 'chat' }) {
       if (!token) throw Object.assign(new Error('Sign in to generate resources.'), { code: 'AUTH_REQUIRED' });
-      if (root.TEACHR_CURRICULUM?.ready) {
+      if (includeCurriculum && root.TEACHR_CURRICULUM?.ready) {
         try { await root.TEACHR_CURRICULUM.ready; } catch { /* generation can continue without registry detail */ }
       }
-      const context = curriculumContext(currentInputs());
+      const context = includeCurriculum ? curriculumContext(currentInputs()) : '';
       const cleanPrompt = toolPrompt(prompt, tool);
       const finalPrompt = context ? `${cleanPrompt}${context}` : cleanPrompt;
       const local = ['localhost', '127.0.0.1', '[::1]'].includes(root.location.hostname);
@@ -52,7 +52,7 @@
         throw new Error('The generation service is not configured.');
       }
       const response = await root.fetch(url, {
-        method: 'POST', credentials: 'omit', redirect: 'follow',
+        method: 'POST', credentials: 'omit', redirect: 'follow', signal,
         headers: local ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'text/plain;charset=UTF-8' },
         body: JSON.stringify(local ? { prompt: finalPrompt, tool } : { action: 'generate', idToken: token, prompt: finalPrompt, tool })
       });
