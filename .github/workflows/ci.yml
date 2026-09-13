@@ -21,6 +21,7 @@ jobs:
           node --check generation-usage.js
           node --check usage-service.js
           node --check usage-ui.js
+          node --check upgrade.js
           node --check teachr-auth.js
           node --check app-shell.js
       - name: Validate package metadata
@@ -53,6 +54,8 @@ jobs:
         run: node tests/usage-ui.test.js
       - name: Validate authenticated generation client
         run: node tests/generation-client.test.js
+      - name: Validate Stage 7 upgrade experience
+        run: node tests/upgrade-experience.test.js
       - name: Validate server usage enforcement
         run: node tests/usage-enforcement.test.js
       - name: Validate Firestore usage rules
