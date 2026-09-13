@@ -4,6 +4,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  reload,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -52,6 +54,19 @@ const errorBox = document.getElementById('authError');
 const signOutButton = document.getElementById('signOutButton');
 
 let createMode = false;
+let verificationDialog;
+
+function isPasswordUser(user) {
+  return user?.providerData?.some(provider => provider.providerId === 'password');
+}
+
+function requiresVerification(user) {
+  return Boolean(user && isPasswordUser(user) && !user.emailVerified);
+}
+
+function verificationReturnUrl() {
+  return `${location.origin}${location.pathname}`;
+}
 
 async function ensureUserProfile(user) {
   const ref = doc(db, 'users', user.uid);
@@ -111,7 +126,7 @@ function setCreateMode(value) {
   createMode = Boolean(value);
   title.textContent = createMode ? 'Create your TEACHR account' : 'Sign in to TEACHR';
   subtitle.textContent = createMode
-    ? 'Create an account to unlock your personal TEACHR workspace.'
+    ? 'Create an account. You will verify your email before entering the workspace.'
     : 'Sign in to access your TEACHR workspace.';
   nameField.hidden = !createMode;
   nameInput.required = createMode;
@@ -137,7 +152,80 @@ function closeProfileDialog() {
 
 async function signOut() {
   closeProfileDialog();
+  verificationDialog?.close();
   return firebaseSignOut(auth);
+}
+
+function ensureVerificationDialog() {
+  if (verificationDialog) return verificationDialog;
+  verificationDialog = document.createElement('dialog');
+  verificationDialog.id = 'verificationDialog';
+  verificationDialog.className = 'auth-dialog';
+  verificationDialog.innerHTML = `<div class="auth-shell"><div class="auth-head"><div><p class="eyebrow">VERIFY YOUR EMAIL</p><h3>Check your inbox</h3><p id="verificationMessage">We sent a verification link to your email address.</p></div></div><p class="auth-error" id="verificationError" role="alert" hidden></p><button class="btn btn-primary" id="verificationCheck" type="button">I've verified my email</button><button class="btn btn-ghost" id="verificationResend" type="button">Resend verification email</button><button class="auth-mode-toggle" id="verificationSignOut" type="button">Sign out</button></div>`;
+  document.body.appendChild(verificationDialog);
+  document.getElementById('verificationCheck').onclick = checkVerification;
+  document.getElementById('verificationResend').onclick = resendVerification;
+  document.getElementById('verificationSignOut').onclick = signOut;
+  return verificationDialog;
+}
+
+function showVerification(user, message) {
+  closeAuthDialog();
+  const verify = ensureVerificationDialog();
+  document.getElementById('verificationMessage').textContent = message || `We sent a verification link to ${user.email}. Verify the address before entering your TEACHR workspace.`;
+  document.getElementById('verificationError').hidden = true;
+  if (!verify.open) verify.showModal();
+}
+
+async function sendVerification(user) {
+  await sendEmailVerification(user, {
+    url: verificationReturnUrl(),
+    handleCodeInApp: false
+  });
+}
+
+async function resendVerification() {
+  const user = auth.currentUser;
+  const button = document.getElementById('verificationResend');
+  const error = document.getElementById('verificationError');
+  if (!user) return;
+  button.disabled = true;
+  error.hidden = true;
+  try {
+    await sendVerification(user);
+    document.getElementById('verificationMessage').textContent = `A new TEACHR verification email has been sent to ${user.email}.`;
+  } catch (authError) {
+    error.textContent = friendlyAuthError(authError);
+    error.hidden = false;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function checkVerification() {
+  const user = auth.currentUser;
+  const button = document.getElementById('verificationCheck');
+  const error = document.getElementById('verificationError');
+  if (!user) return;
+  button.disabled = true;
+  error.hidden = true;
+  try {
+    await reload(user);
+    if (!user.emailVerified) {
+      error.textContent = 'Your email is not verified yet. Open the TEACHR verification link in your email, then try again.';
+      error.hidden = false;
+      return;
+    }
+    verificationDialog?.close();
+    const profile = await ensureUserProfile(user);
+    renderAuthState(user);
+    publishAuthState(user, profile);
+  } catch (authError) {
+    error.textContent = friendlyAuthError(authError);
+    error.hidden = false;
+  } finally {
+    button.disabled = false;
+  }
 }
 
 function publishAuthState(user, profile = null) {
@@ -162,8 +250,19 @@ function publishAuthState(user, profile = null) {
   }));
 }
 
+function publishVerificationState(user) {
+  state.user = user;
+  state.profile = null;
+  state.status = 'verification-required';
+  state.mode = 'public';
+  document.documentElement.dataset.auth = 'public';
+  window.dispatchEvent(new CustomEvent('teachr:authchange', {
+    detail: { status: 'verification-required', mode: 'public', user: null }
+  }));
+}
+
 function renderAuthState(user) {
-  if (user) {
+  if (user && !requiresVerification(user)) {
     authButton.hidden = true;
     profileButton.hidden = false;
     const displayName = user.displayName || user.email?.split('@')[0] || 'Teacher';
@@ -209,11 +308,17 @@ form?.addEventListener('submit', async event => {
       const displayName = nameInput.value.trim();
       if (displayName) await updateProfile(credential.user, { displayName });
       await ensureUserProfile(credential.user);
+      await sendVerification(credential.user);
+      showVerification(credential.user);
     } else {
       const credential = await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
+      if (requiresVerification(credential.user)) {
+        showVerification(credential.user);
+        return;
+      }
       await ensureUserProfile(credential.user);
+      closeAuthDialog();
     }
-    closeAuthDialog();
   } catch (error) {
     errorBox.textContent = friendlyAuthError(error);
     errorBox.hidden = false;
@@ -231,12 +336,21 @@ signOutButton?.addEventListener('click', async () => {
 });
 
 onAuthStateChanged(auth, async user => {
-  renderAuthState(user);
   if (!user) {
+    renderAuthState(null);
     closeProfileDialog();
+    verificationDialog?.close();
     publishAuthState(null);
     return;
   }
+  if (requiresVerification(user)) {
+    renderAuthState(user);
+    publishVerificationState(user);
+    showVerification(user);
+    return;
+  }
+  renderAuthState(user);
+  verificationDialog?.close();
   try {
     const profile = await ensureUserProfile(user);
     if (profile.suspended && user.email?.toLowerCase() !== 'admin@lawal.org') {
