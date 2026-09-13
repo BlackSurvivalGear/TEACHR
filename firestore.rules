@@ -5,7 +5,7 @@ service cloud.firestore {
     function isSuperadmin() { return signedIn() && request.auth.token.email == 'admin@lawal.org'; }
     function ownProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)); }
     function isAdmin() { return isSuperadmin() || (signedIn() && ownProfile().data.role == 'admin'); }
-    function validUsageTool(toolId) { return toolId in ['lesson','worksheet','quiz','differentiate','curriculum','revision','parent']; }
+    function validUsageTool(toolId) { return toolId in ['lesson','worksheet','quiz','differentiate','curriculum','revision']; }
     function validAdjustmentAudit(data) {
       return data.lastAdminAdjustment is map
         && data.lastAdminAdjustment.action in ['add','reset']

@@ -4,7 +4,7 @@ const nativeFetch = window.fetch.bind(window);
 const projectId = firebaseConfig.projectId;
 const firestoreBase = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents`;
 const firestoreCommit = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents:commit`;
-const toolIds = ['lesson','worksheet','quiz','differentiate','curriculum','revision','parent'];
+const toolIds = ['lesson','worksheet','quiz','differentiate','curriculum','revision'];
 
 function fieldValue(field) {
   if (!field || typeof field !== 'object') return undefined;
@@ -48,7 +48,7 @@ async function readUsageRecords(uid, token){
   if(!profileResponse.ok){const error=await profileResponse.json().catch(()=>({}));throw Object.assign(new Error(error?.error?.message||'Unable to read member profile'),{status:profileResponse.status});}
   if(!usageResponse.ok){const error=await usageResponse.json().catch(()=>({}));throw Object.assign(new Error(error?.error?.message||'Unable to read generation usage'),{status:usageResponse.status});}
   const profileDoc=await profileResponse.json(),usagePayload=await usageResponse.json(),profile=decodeFields(profileDoc.fields),usage={};
-  for(const document of usagePayload.documents||[]){const toolId=decodeURIComponent(document.name.split('/').pop()),record=decodeFields(document.fields),successfulGenerations=Number(record.successfulGenerations)||0,allowance=Number.isInteger(Number(record.allowance))?Number(record.allowance):3;usage[toolId]={...record,successfulGenerations,allowance,remaining:Math.max(0,allowance-successfulGenerations)};}
+  for(const document of usagePayload.documents||[]){const toolId=decodeURIComponent(document.name.split('/').pop());if(!toolIds.includes(toolId))continue;const record=decodeFields(document.fields),successfulGenerations=Number(record.successfulGenerations)||0,allowance=Number.isInteger(Number(record.allowance))?Number(record.allowance):3;usage[toolId]={...record,successfulGenerations,allowance,remaining:Math.max(0,allowance-successfulGenerations)};}
   return {uid,...profile,usage};
 }
 
@@ -68,7 +68,7 @@ async function adjustProductionUsage(options){
   if(tool!=='all'&&!toolIds.includes(tool))return jsonResponse({error:'Select a valid generating tool or all tools'},400);
   if(action==='add'&&(!Number.isInteger(amount)||amount<1||amount>1000))return jsonResponse({error:'Added generations must be an integer from 1 to 1000'},400);
   try{
-    const current=await readUsageRecords(uid,token),selected=tool==='all'?toolIds:[tool],now=new Date().toISOString(),adminUid=String(claims.user_id||claims.sub||''),adminEmail=String(claims.email||'').toLowerCase();
+    const current=await readUsageRecords(uid,token),selected=tool==='all'?toolIds:[tool],now=new Date().toISOString(),adminUid=String(claims.user_id||claims.sub||''),adminEmail=String(claims.email||'');
     const writes=selected.map(toolId=>{
       const record=current.usage[toolId]||{successfulGenerations:0,allowance:3};
       const used=Number(record.successfulGenerations)||0,currentAllowance=Number.isInteger(Number(record.allowance))?Number(record.allowance):3;

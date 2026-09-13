@@ -3,8 +3,9 @@ const usage = require('../generation-usage.js');
 
 assert.equal(usage.FREE_GENERATIONS_PER_TOOL, 3);
 assert.deepEqual(usage.GENERATING_TOOL_IDS, [
-  'lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision', 'parent'
+  'lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision'
 ]);
+assert.equal(usage.GENERATING_TOOL_IDS.includes('parent'), false);
 assert.equal(usage.GENERATING_TOOL_IDS.includes('library'), false);
 
 assert.deepEqual(usage.normaliseUsageRecord('lesson'), {
@@ -22,6 +23,7 @@ assert.equal(usage.hasUnlimitedGenerations({ role: 'admin', plan: 'free' }), tru
 assert.equal(usage.hasUnlimitedGenerations({ role: 'superadmin', plan: 'free' }), true);
 
 assert.equal(usage.usageDocumentPath('user-123', 'quiz'), 'users/user-123/usage/quiz');
+assert.throws(() => usage.createUsageRecord('parent'), /Unknown generating tool/);
 assert.throws(() => usage.createUsageRecord('library'), /Unknown generating tool/);
 assert.throws(() => usage.usageDocumentPath('', 'lesson'), /user ID is required/);
 
@@ -33,6 +35,7 @@ assert.equal(memberSnapshot.unlimited, false);
 assert.equal(memberSnapshot.tools.lesson.remaining, 1);
 assert.equal(memberSnapshot.tools.quiz.remaining, 3, 'missing records must retain the full allowance');
 assert.equal(memberSnapshot.tools.library, undefined, 'the Resource Library must not receive usage state');
+assert.equal(memberSnapshot.tools.parent, undefined, 'Parent Communication must not receive usage state');
 
 const proSnapshot = usage.createUsageSnapshot(
   { role: 'member', plan: 'pro' },

@@ -122,7 +122,7 @@ async function expectCode(promise, code) {
   for (const profile of unlimitedProfiles) {
     const unlimitedFirebase = serialFirebase({ 'users/user-1': { ...profile, accountStatus: 'active' } });
     const unlimited = createUsageEnforcer(unlimitedFirebase);
-    const access = await unlimited.authorise(request(), 'parent');
+    const access = await unlimited.authorise(request(), 'revision');
     assert.equal(access.unlimited, true);
     assert.deepEqual(await unlimited.recordSuccess(access), { unlimited: true, remaining: null });
     assert.equal(unlimitedFirebase.writes.length, 0);

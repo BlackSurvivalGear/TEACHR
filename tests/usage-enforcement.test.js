@@ -78,7 +78,7 @@ async function expectAccessError(promise, status, code) {
     'users/user-1': { role: 'member', plan: 'free', suspended: true }
   });
   const suspended = createUsageEnforcer(suspendedFirebase);
-  await expectAccessError(suspended.authorise(request('valid-token'), 'parent'), 403, 'ACCOUNT_SUSPENDED');
+  await expectAccessError(suspended.authorise(request('valid-token'), 'revision'), 403, 'ACCOUNT_SUSPENDED');
 
   console.log('Server usage enforcement checks passed.');
 })().catch(error => {
