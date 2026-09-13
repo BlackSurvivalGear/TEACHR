@@ -22,8 +22,10 @@
 <div class="app-shell">
 <header class="topbar">
   <a class="brand" href="#home" aria-label="TEACHR home"><img class="brand-logo-dark" src="LOGO.png" alt="TEACHR logo"><img class="brand-logo-light" src="LOGO-LIGHT.png" alt="TEACHR logo"></a>
-  <button class="profile-chip auth-chip" id="authButton" type="button">Sign in</button>
-  <a class="profile-chip admin-link" id="adminLink" href="admin.html" hidden>Admin</a><a class="profile-chip plan-chip" id="planLink" href="upgrade.html" hidden>Member</a><button class="profile-chip" id="profileButton" type="button" hidden><span class="avatar" id="avatar">T</span><span id="profileName">Teacher</span><span aria-hidden="true">⌄</span></button>
+  <div class="topbar-controls">
+    <button class="profile-chip auth-chip" id="authButton" type="button">Sign in</button>
+    <a class="profile-chip admin-link" id="adminLink" href="admin.html" hidden>Admin</a><a class="profile-chip plan-chip" id="planLink" href="upgrade.html" hidden>Member</a><button class="profile-chip" id="profileButton" type="button" hidden><span class="avatar" id="avatar">T</span><span id="profileName">Teacher</span><span aria-hidden="true">⌄</span></button>
+  </div>
 </header>
 <main>
 <section id="home" class="public-hero section-pad"><div class="public-hero-copy"><p class="eyebrow"><span class="pulse"></span> AI WORKSPACE FOR TEACHERS</p><h1>Plan less.<br><span>Teach more.</span></h1><p class="public-hero-text">Create lessons, resources and assessments in one focused teaching workspace.</p><div class="public-hero-actions"><button class="btn btn-primary" id="createAccountButton" type="button">Create a free account <span aria-hidden="true">→</span></button><button class="public-signin" id="heroSignInButton" type="button">Already have an account? Sign in</button></div><p class="public-account-note">Free to create. Start building in minutes.</p></div><div class="public-hero-visual" aria-hidden="true"></div></section>

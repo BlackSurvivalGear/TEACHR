@@ -155,7 +155,7 @@
     .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#e7eef9}
     .ai-table th,.ai-table td{border:1px solid rgba(174,207,244,.25);padding:7px 8px;text-align:left;vertical-align:top;color:#e7eef9}.ai-table th{font-weight:800;color:#ffffff;background:rgba(121,168,220,.18)}
 
-    .theme-toggle{display:inline-flex;align-items:center;margin-right:18px}
+    .theme-toggle{display:inline-flex;align-items:center}
     .theme-switch{display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(155,190,255,.28);border-radius:50%;background:#17365a;color:#ffd166;padding:0;cursor:pointer;flex:0 0 auto;transition:background .2s ease,color .2s ease,transform .2s ease}
     .theme-switch:hover{transform:translateY(-1px);background:#1d456f}
     .theme-switch[aria-checked="true"]{background:#102b49;color:#dce9f8}
@@ -231,8 +231,9 @@
 
   const installThemeToggle = () => {
     const topbar = document.querySelector('.topbar');
+    const controls = topbar?.querySelector('.topbar-controls');
     const profile = document.getElementById('profileButton');
-    if (!topbar || !profile || document.getElementById('themeToggle')) return;
+    if (!topbar || !controls || !profile || document.getElementById('themeToggle')) return;
 
     const stored = localStorage.getItem('teachr-theme');
     const initial = stored === 'light' || stored === 'dark'
@@ -243,7 +244,7 @@
     const wrap = document.createElement('div');
     wrap.className = 'theme-toggle';
     wrap.innerHTML = '<button class="theme-switch" id="themeToggle" type="button" role="switch"></button>';
-    topbar.insertBefore(wrap, profile);
+    controls.appendChild(wrap);
 
     const button = document.getElementById('themeToggle');
     const icons = {
