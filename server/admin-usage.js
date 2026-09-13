@@ -23,6 +23,7 @@ function createAdminUsageService({ auth, db, serverTimestamp }) {
     const email = String(identity.email || profile.email || '').toLowerCase();
     const role = email === 'admin@lawal.org' ? 'superadmin' : profile.role;
     if (!['admin', 'superadmin'].includes(role)) throw new AdminUsageError(403, 'ADMIN_REQUIRED', 'Administrator access is required');
+    if (profile.suspended === true) throw new AdminUsageError(403, 'ADMIN_SUSPENDED', 'Administrator account is suspended');
     return { uid: identity.uid, email, role };
   }
 
@@ -30,6 +31,22 @@ function createAdminUsageService({ auth, db, serverTimestamp }) {
     if (tool === 'all') return GENERATING_TOOL_IDS;
     if (!isGeneratingTool(tool)) throw new AdminUsageError(400, 'INVALID_TOOL', 'Select a valid generating tool or all tools');
     return [tool];
+  }
+
+  async function readUsage(req, targetUid) {
+    await requireAdmin(req);
+    const uid = typeof targetUid === 'string' ? targetUid.trim() : '';
+    if (!uid) throw new AdminUsageError(400, 'TARGET_REQUIRED', 'A target user is required');
+    const targetSnapshot = await db.doc(`users/${uid}`).get();
+    if (!targetSnapshot.exists) throw new AdminUsageError(404, 'TARGET_NOT_FOUND', 'Target user profile was not found');
+    const profile = targetSnapshot.data() || {};
+    const usage = {};
+    for (const toolId of GENERATING_TOOL_IDS) {
+      const snapshot = await db.doc(`users/${uid}/usage/${toolId}`).get();
+      const record = normaliseUsageRecord(toolId, snapshot.exists ? snapshot.data() : null);
+      usage[toolId] = { successfulGenerations: record.successfulGenerations, allowance: record.allowance, remaining: Math.max(0, record.allowance - record.successfulGenerations) };
+    }
+    return { uid, displayName: profile.displayName || '', email: profile.email || '', role: profile.role || 'member', plan: profile.plan || 'free', usage };
   }
 
   async function adjust(req, input = {}) {
@@ -60,7 +77,7 @@ function createAdminUsageService({ auth, db, serverTimestamp }) {
     return { uid: targetUid, action, tool: input.tool, results };
   }
 
-  return Object.freeze({ requireAdmin, adjust });
+  return Object.freeze({ requireAdmin, readUsage, adjust });
 }
 
 module.exports = { AdminUsageError, createAdminUsageService };
