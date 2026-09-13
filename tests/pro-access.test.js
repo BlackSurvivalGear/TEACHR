@@ -14,8 +14,8 @@ const checks = [
   ['Stripe uses subscription mode', backend.includes("mode: 'subscription'") && backend.includes("[recurring][interval]': 'month'")],
   ['backend verifies account metadata', backend.includes("metadata.purpose !== 'teachr_monthly_pro'")],
   ['subscription reconciliation exists', backend.includes('function syncAllSubscriptions()')],
-  ['Apps Script checkout escapes sandbox with base target top', backend.includes('<base target=\\"_top\\">')],
-  ['checkout link explicitly targets top window', backend.includes('target=\\"_top\\"') && backend.includes('rel=\\"noopener\\"')],
+  ['Apps Script checkout escapes sandbox with base target top', backend.includes('<base target="_top">')],
+  ['checkout link explicitly targets top window', backend.includes('target="_top"') && backend.includes('rel="noopener"')],
   ['checkout does not use scripted location redirect', !backend.includes('location.replace(') && !backend.includes('window.location.replace(')]
 ];
 let failed = false;
