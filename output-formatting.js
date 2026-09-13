@@ -155,11 +155,11 @@
     .ai-table-wrap{overflow-x:auto;margin:8px 0}.ai-table{width:100%;border-collapse:collapse;font-size:12px;background:rgba(255,255,255,.06);color:#e7eef9}
     .ai-table th,.ai-table td{border:1px solid rgba(174,207,244,.25);padding:7px 8px;text-align:left;vertical-align:top;color:#e7eef9}.ai-table th{font-weight:800;color:#ffffff;background:rgba(121,168,220,.18)}
 
-    .theme-toggle{display:inline-flex;align-items:center;gap:8px;margin-right:18px;color:#cbd9eb;font-size:11px;font-weight:700;white-space:nowrap}
-    .theme-toggle-label{opacity:.82}.theme-toggle-label.active{opacity:1;color:#fff}
-    .theme-switch{position:relative;width:42px;height:23px;border:1px solid rgba(155,190,255,.28);border-radius:999px;background:#17365a;padding:0;cursor:pointer;flex:0 0 auto}
-    .theme-switch::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .2s ease}
-    .theme-switch[aria-checked="true"]{background:#27aef2}.theme-switch[aria-checked="true"]::after{transform:translateX(19px)}
+    .theme-toggle{display:inline-flex;align-items:center;margin-right:18px}
+    .theme-switch{display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(155,190,255,.28);border-radius:50%;background:#17365a;color:#ffd166;padding:0;cursor:pointer;flex:0 0 auto;transition:background .2s ease,color .2s ease,transform .2s ease}
+    .theme-switch:hover{transform:translateY(-1px);background:#1d456f}
+    .theme-switch[aria-checked="true"]{background:#102b49;color:#dce9f8}
+    .theme-icon{width:20px;height:20px;display:block}
     .theme-switch:focus-visible{outline:3px solid rgba(39,184,255,.35);outline-offset:2px}
 
     /* Refined dark mode: softer input surfaces, clearer labels and placeholders. */
@@ -213,7 +213,8 @@
     html[data-theme="light"] .ai-result-body ul,html[data-theme="light"] .ai-result-body ol,html[data-theme="light"] .ai-result-body li{color:#263b53}
     html[data-theme="light"] .ai-table{background:#fff;color:#263b53}.ai-table th,.ai-table td{color:inherit;border-color:rgba(31,54,82,.18)}
     html[data-theme="light"] .ai-table th{color:#162b43;background:#eaf1f7}
-    html[data-theme="light"] .theme-toggle{color:#26364b}.theme-toggle-label.active{color:inherit}
+    html[data-theme="light"] .theme-switch{background:#fff7df;color:#d88700;border-color:#e4c77c}
+    html[data-theme="light"] .theme-switch:hover{background:#ffefbd}
     html[data-theme="light"] .filter{color:#52657d;background:#fff;border-color:rgba(31,54,82,.14)}
     html[data-theme="light"] footer{color:#61738b;border-top-color:rgba(31,54,82,.12)}
     html[data-theme="light"] footer strong{color:#33485f}
@@ -241,15 +242,20 @@
 
     const wrap = document.createElement('div');
     wrap.className = 'theme-toggle';
-    wrap.innerHTML = '<span class="theme-toggle-label" data-theme-label="light">Light</span><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Switch between light and dark mode"></button><span class="theme-toggle-label" data-theme-label="dark">Dark</span>';
+    wrap.innerHTML = '<button class="theme-switch" id="themeToggle" type="button" role="switch"></button>';
     topbar.insertBefore(wrap, profile);
 
     const button = document.getElementById('themeToggle');
-    const labels = wrap.querySelectorAll('[data-theme-label]');
+    const icons = {
+      light: '<svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>',
+      dark: '<svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+    };
     const apply = theme => {
       document.documentElement.dataset.theme = theme;
       button.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
-      labels.forEach(label => label.classList.toggle('active', label.dataset.themeLabel === theme));
+      button.innerHTML = icons[theme];
+      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      button.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
       localStorage.setItem('teachr-theme', theme);
     };
     button.addEventListener('click', () => apply(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
