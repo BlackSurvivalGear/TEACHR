@@ -1,194 +1,28 @@
 (() => {
-  const launcher = document.getElementById('teachrChatLauncher');
-  const panel = document.getElementById('teachrChatPanel');
-  const close = document.getElementById('teachrChatClose');
-  const minimise = document.getElementById('teachrChatMinimise');
-  const newChat = document.getElementById('teachrChatNew');
-  const form = document.getElementById('teachrChatForm');
-  const input = document.getElementById('teachrChatInput');
-  const messages = document.getElementById('teachrChatMessages');
-  const welcome = document.getElementById('teachrChatWelcome');
-  const send = form?.querySelector('.teachr-chat-send');
-  const note = document.querySelector('.teachr-chat-note');
-  const prompts = [...document.querySelectorAll('[data-chat-prompt]')];
-  if (!launcher || !panel || !form || !input || !messages || !send) return;
-
-  const history = [];
-  let controller = null;
-  let contextEnabled = true;
-
-  function value(id) {
-    const element = document.getElementById(id);
-    if (!element) return '';
-    if (id === 'topic' && element.value === '__custom__') return document.getElementById('customTopic')?.value?.trim() || '';
-    return String(element.value || '').trim();
-  }
-
-  function currentContext() {
-    const selection = {
-      curriculum: value('curriculum'),
-      subject: value('subject'),
-      year: value('year'),
-      topic: value('topic')
-    };
-    const objective = value('lessonObjective');
-    const resolved = window.TEACHR_CURRICULUM?.resolve?.(selection);
-    const objectives = resolved?.objectives || [];
-    let alignmentType = 'Teacher-defined objective';
-    if (resolved?.alignmentLevel === 'verified-objective' && objectives.length) alignmentType = 'Verified curriculum objective';
-    else if (resolved?.alignmentLevel === 'not-applicable') alignmentType = 'Not applicable';
-    else if (resolved?.alignmentLevel === 'key-stage-aligned' || resolved?.alignmentLevel === 'framework-only') alignmentType = 'Key-stage aligned';
-    return { selection, objective, resolved, objectives, alignmentType };
-  }
-
-  function contextLabel(context) {
-    const parts = [context.selection.year, context.selection.subject, context.selection.topic].filter(Boolean);
-    return parts.length ? `Using context: ${parts.join(' · ')}` : 'Using current workspace context';
-  }
-
-  function ensureContextControl() {
-    let bar = document.getElementById('teachrChatContext');
-    if (bar) return bar;
-    bar = document.createElement('div');
-    bar.id = 'teachrChatContext';
-    bar.className = 'teachr-chat-context';
-    bar.innerHTML = '<span class="teachr-chat-context-label"></span><label><input type="checkbox" checked> Use context</label>';
-    panel.querySelector('.teachr-chat-header')?.insertAdjacentElement('afterend', bar);
-    bar.querySelector('input').addEventListener('change', event => {
-      contextEnabled = event.target.checked;
-      refreshContextLabel();
-    });
-    return bar;
-  }
-
-  function refreshContextLabel() {
-    const bar = ensureContextControl();
-    const label = bar.querySelector('.teachr-chat-context-label');
-    label.textContent = contextEnabled ? contextLabel(currentContext()) : 'Context assistance off';
-  }
-
-  function contextPrompt() {
-    if (!contextEnabled) return '';
-    const context = currentContext();
-    const resolved = context.resolved;
-    const verified = context.objectives.length
-      ? context.objectives.map(item => `- ${item.id || 'objective'} [controlled paraphrase] ${item.summary || ''}`).join('\n')
-      : 'None for this exact selection.';
-    return `TEACHR WORKSPACE CONTEXT\nCurriculum: ${context.selection.curriculum || 'not specified'}\nSubject: ${context.selection.subject || 'not specified'}\nYear/stage: ${context.selection.year || 'not specified'}\nTopic: ${context.selection.topic || 'not specified'}\nAlignment type: ${context.alignmentType}\nAlignment detail: ${resolved?.alignmentLabel || resolved?.status || 'not resolved'}\nVerified curriculum objectives:\n${verified}\nTeacher lesson objective: ${context.objective || 'No teacher-defined objective supplied.'}\n\nCONTEXT RULES\n- Use this context only when relevant to the teacher request.\n- Keep verified curriculum objectives separate from teacher-defined objectives.\n- Controlled paraphrases are not statutory quotations.\n- Never present an AI-created objective as an official curriculum statement.\n- If alignment is Not applicable, do not claim National Curriculum objective alignment.\n- Current live workspace selections override stale profile or earlier-form defaults.\n\n`;
-  }
-
-  function openPanel() {
-    if (document.documentElement.dataset.auth !== 'signed-in') return;
-    panel.hidden = false;
-    launcher.setAttribute('aria-expanded', 'true');
-    refreshContextLabel();
-    input.focus();
-  }
-
-  function closePanel() {
-    panel.hidden = true;
-    launcher.setAttribute('aria-expanded', 'false');
-    launcher.focus();
-  }
-
-  function setBusy(busy) {
-    input.disabled = busy;
-    send.disabled = busy;
-    prompts.forEach(button => { button.disabled = busy; });
-    if (busy) {
-      send.textContent = 'Stop';
-      send.disabled = false;
-      send.dataset.mode = 'stop';
-      if (note) note.textContent = 'TEACHR is thinking…';
-    } else {
-      send.textContent = 'Send';
-      send.dataset.mode = 'send';
-      if (note) note.textContent = 'AI assists. The teacher teaches.';
-    }
-  }
-
-  function resetChat() {
-    controller?.abort();
-    controller = null;
-    history.length = 0;
-    messages.replaceChildren();
-    welcome.hidden = false;
-    input.value = '';
-    setBusy(false);
-    refreshContextLabel();
-    input.focus();
-  }
-
-  function addMessage(role, text, extraClass = '') {
-    const bubble = document.createElement('div');
-    bubble.className = `teachr-chat-message ${role}${extraClass ? ` ${extraClass}` : ''}`;
-    bubble.textContent = text;
-    messages.appendChild(bubble);
-    welcome.hidden = true;
-    messages.parentElement.scrollTop = messages.parentElement.scrollHeight;
-    return bubble;
-  }
-
-  function conversationPrompt(message) {
-    const recent = history.slice(-8).map(item => `${item.role === 'user' ? 'Teacher' : 'TEACHR AI'}: ${item.content}`).join('\n\n');
-    const conversation = recent
-      ? `Continue this TEACHR conversation. Respond only to the teacher's latest message.\n\n${recent}\n\nTeacher: ${message}`
-      : message;
-    return `${contextPrompt()}${conversation}`;
-  }
-
-  async function submitMessage(text) {
-    const value = String(text || '').trim();
-    if (!value || controller) return;
-    if (!window.TEACHR_AUTH?.getIdToken || !window.TEACHR_AI?.generate) {
-      addMessage('assistant', 'TEACHR AI is still starting. Try again in a moment.', 'error');
-      return;
-    }
-    refreshContextLabel();
-    addMessage('user', value);
-    input.value = '';
-    controller = new AbortController();
-    setBusy(true);
-    const pending = addMessage('assistant', 'Thinking…', 'pending');
-    try {
-      const token = await window.TEACHR_AUTH.getIdToken();
-      if (!token) throw Object.assign(new Error('Sign in to use TEACHR AI.'), { code: 'AUTH_REQUIRED' });
-      const payload = await window.TEACHR_AI.generate({ token, prompt: conversationPrompt(value), tool: 'chat', signal: controller.signal, includeCurriculum: false });
-      pending.textContent = payload.content.trim();
-      pending.classList.remove('pending');
-      history.push({ role: 'user', content: value }, { role: 'assistant', content: payload.content.trim() });
-    } catch (error) {
-      if (error?.name === 'AbortError') pending.textContent = 'Response stopped.';
-      else {
-        pending.textContent = error?.message || 'TEACHR AI could not complete that request. Please try again.';
-        pending.classList.remove('pending');
-        pending.classList.add('error');
-      }
-    } finally {
-      controller = null;
-      setBusy(false);
-      input.focus();
-    }
-  }
-
-  function stopGeneration() { if (controller) controller.abort(); }
-
-  launcher.addEventListener('click', openPanel);
-  close?.addEventListener('click', closePanel);
-  minimise?.addEventListener('click', closePanel);
-  newChat?.addEventListener('click', resetChat);
-  prompts.forEach(button => button.addEventListener('click', () => { input.value = button.dataset.chatPrompt || button.textContent.trim(); input.focus(); }));
-  ['curriculum', 'subject', 'year', 'topic', 'customTopic', 'lessonObjective'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', refreshContextLabel);
-    document.getElementById(id)?.addEventListener('change', refreshContextLabel);
-  });
-  form.addEventListener('submit', event => { event.preventDefault(); if (send.dataset.mode === 'stop') return stopGeneration(); submitMessage(input.value); });
-  input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); if (!controller) form.requestSubmit(); } });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && !panel.hidden) closePanel(); });
-  window.addEventListener('teachr:authchange', event => { if (event.detail?.mode !== 'signed-in') closePanel(); });
-
-  ensureContextControl();
-  refreshContextLabel();
-  setBusy(false);
-  window.TEACHR_CHAT_PANEL = Object.freeze({ open: openPanel, close: closePanel, reset: resetChat, stop: stopGeneration, context: currentContext, stage: 3 });
+  const launcher=document.getElementById('teachrChatLauncher'),panel=document.getElementById('teachrChatPanel'),close=document.getElementById('teachrChatClose'),minimise=document.getElementById('teachrChatMinimise'),newChat=document.getElementById('teachrChatNew'),form=document.getElementById('teachrChatForm'),input=document.getElementById('teachrChatInput'),messages=document.getElementById('teachrChatMessages'),welcome=document.getElementById('teachrChatWelcome'),send=form?.querySelector('.teachr-chat-send'),note=document.querySelector('.teachr-chat-note'),prompts=[...document.querySelectorAll('[data-chat-prompt]')];
+  if(!launcher||!panel||!form||!input||!messages||!send)return;
+  const history=[];let controller=null,contextEnabled=true,currentConversation=null;
+  function value(id){const element=document.getElementById(id);if(!element)return'';if(id==='topic'&&element.value==='__custom__')return document.getElementById('customTopic')?.value?.trim()||'';return String(element.value||'').trim();}
+  function currentContext(){const selection={curriculum:value('curriculum'),subject:value('subject'),year:value('year'),topic:value('topic')},objective=value('lessonObjective'),resolved=window.TEACHR_CURRICULUM?.resolve?.(selection),objectives=resolved?.objectives||[];let alignmentType='Teacher-defined objective';if(resolved?.alignmentLevel==='verified-objective'&&objectives.length)alignmentType='Verified curriculum objective';else if(resolved?.alignmentLevel==='not-applicable')alignmentType='Not applicable';else if(resolved?.alignmentLevel==='key-stage-aligned'||resolved?.alignmentLevel==='framework-only')alignmentType='Key-stage aligned';return{selection,objective,resolved,objectives,alignmentType};}
+  function contextLabel(context){const parts=[context.selection.year,context.selection.subject,context.selection.topic].filter(Boolean);return parts.length?`Using context: ${parts.join(' · ')}`:'Using current workspace context';}
+  function ensureContextControl(){let bar=document.getElementById('teachrChatContext');if(bar)return bar;bar=document.createElement('div');bar.id='teachrChatContext';bar.className='teachr-chat-context';bar.innerHTML='<span class="teachr-chat-context-label"></span><label><input type="checkbox" checked> Use context</label>';panel.querySelector('.teachr-chat-header')?.insertAdjacentElement('afterend',bar);bar.querySelector('input').addEventListener('change',event=>{contextEnabled=event.target.checked;refreshContextLabel();});return bar;}
+  function refreshContextLabel(){const bar=ensureContextControl();bar.querySelector('.teachr-chat-context-label').textContent=contextEnabled?contextLabel(currentContext()):'Context assistance off';}
+  function contextPrompt(){if(!contextEnabled)return'';const context=currentContext(),resolved=context.resolved,verified=context.objectives.length?context.objectives.map(item=>`- ${item.id||'objective'} [controlled paraphrase] ${item.summary||''}`).join('\n'):'None for this exact selection.';return `TEACHR WORKSPACE CONTEXT\nCurriculum: ${context.selection.curriculum||'not specified'}\nSubject: ${context.selection.subject||'not specified'}\nYear/stage: ${context.selection.year||'not specified'}\nTopic: ${context.selection.topic||'not specified'}\nAlignment type: ${context.alignmentType}\nAlignment detail: ${resolved?.alignmentLabel||resolved?.status||'not resolved'}\nVerified curriculum objectives:\n${verified}\nTeacher lesson objective: ${context.objective||'No teacher-defined objective supplied.'}\n\nCONTEXT RULES\n- Use this context only when relevant to the teacher request.\n- Keep verified curriculum objectives separate from teacher-defined objectives.\n- Controlled paraphrases are not statutory quotations.\n- Never present an AI-created objective as an official curriculum statement.\n- If alignment is Not applicable, do not claim National Curriculum objective alignment.\n- Current live workspace selections override stale profile or earlier-form defaults.\n\n`;}
+  function ensureHistoryUI(){let drawer=document.getElementById('teachrChatHistory');if(drawer)return drawer;drawer=document.createElement('section');drawer.id='teachrChatHistory';drawer.className='teachr-chat-history';drawer.hidden=true;drawer.innerHTML='<div class="teachr-chat-history-head"><strong>Recent Chats</strong><button type="button" data-history-close aria-label="Close recent chats">×</button></div><div class="teachr-chat-history-list"></div>';panel.querySelector('.teachr-chat-body')?.insertAdjacentElement('beforebegin',drawer);drawer.querySelector('[data-history-close]').onclick=()=>drawer.hidden=true;let button=document.createElement('button');button.type='button';button.className='teachr-chat-icon';button.id='teachrChatHistoryButton';button.title='Recent chats';button.setAttribute('aria-label','Recent chats');button.textContent='☰';panel.querySelector('.teachr-chat-header-actions')?.prepend(button);button.onclick=toggleHistory;return drawer;}
+  function makeId(){return `chat_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;}
+  function titleFor(text){const clean=String(text||'').replace(/\s+/g,' ').trim();return clean.length>42?`${clean.slice(0,42)}…`:clean||'New chat';}
+  async function persistConversation(){if(!currentConversation||!window.TEACHR_AUTH?.saveChatConversation)return;currentConversation.messages=history.slice(-40);await window.TEACHR_AUTH.saveChatConversation(currentConversation);}
+  async function loadHistoryList(){const drawer=ensureHistoryUI(),list=drawer.querySelector('.teachr-chat-history-list');list.innerHTML='<p class="teachr-chat-history-empty">Loading…</p>';try{const chats=await window.TEACHR_AUTH?.listChatConversations?.()||[];list.replaceChildren();if(!chats.length){list.innerHTML='<p class="teachr-chat-history-empty">No saved chats yet.</p>';return;}chats.forEach(chat=>{const row=document.createElement('div');row.className='teachr-chat-history-row';const open=document.createElement('button');open.type='button';open.className='teachr-chat-history-open';open.textContent=chat.title||'New chat';open.onclick=()=>openConversation(chat);const rename=document.createElement('button');rename.type='button';rename.className='teachr-chat-history-action';rename.textContent='Rename';rename.onclick=async()=>{const next=prompt('Rename chat',chat.title||'New chat');if(!next?.trim())return;await window.TEACHR_AUTH.saveChatConversation({...chat,title:next.trim()});await loadHistoryList();};const del=document.createElement('button');del.type='button';del.className='teachr-chat-history-action danger';del.textContent='Delete';del.onclick=async()=>{if(!confirm(`Delete “${chat.title||'New chat'}”?`))return;await window.TEACHR_AUTH.deleteChatConversation(chat.id);if(currentConversation?.id===chat.id)resetChat();await loadHistoryList();};row.append(open,rename,del);list.appendChild(row);});}catch(_){list.innerHTML='<p class="teachr-chat-history-empty">Recent chats could not be loaded.</p>';}}
+  async function toggleHistory(){const drawer=ensureHistoryUI();drawer.hidden=!drawer.hidden;if(!drawer.hidden)await loadHistoryList();}
+  function openConversation(chat){controller?.abort();controller=null;history.length=0;messages.replaceChildren();(chat.messages||[]).slice(-40).forEach(item=>{history.push({role:item.role,content:item.content});addMessage(item.role,item.content);});currentConversation={id:chat.id,title:chat.title||'New chat',createdAt:chat.createdAt||new Date().toISOString(),messages:history};welcome.hidden=history.length>0;ensureHistoryUI().hidden=true;setBusy(false);input.focus();}
+  function openPanel(){if(document.documentElement.dataset.auth!=='signed-in')return;panel.hidden=false;launcher.setAttribute('aria-expanded','true');refreshContextLabel();input.focus();}
+  function closePanel(){panel.hidden=true;launcher.setAttribute('aria-expanded','false');launcher.focus();}
+  function setBusy(busy){input.disabled=busy;send.disabled=busy;prompts.forEach(button=>{button.disabled=busy;});if(busy){send.textContent='Stop';send.disabled=false;send.dataset.mode='stop';if(note)note.textContent='TEACHR is thinking…';}else{send.textContent='Send';send.dataset.mode='send';if(note)note.textContent='AI assists. The teacher teaches.';}}
+  function resetChat(){controller?.abort();controller=null;history.length=0;currentConversation=null;messages.replaceChildren();welcome.hidden=false;input.value='';setBusy(false);refreshContextLabel();ensureHistoryUI().hidden=true;input.focus();}
+  function addMessage(role,text,extraClass=''){const bubble=document.createElement('div');bubble.className=`teachr-chat-message ${role}${extraClass?` ${extraClass}`:''}`;bubble.textContent=text;messages.appendChild(bubble);welcome.hidden=true;messages.parentElement.scrollTop=messages.parentElement.scrollHeight;return bubble;}
+  function conversationPrompt(message){const recent=history.slice(-8).map(item=>`${item.role==='user'?'Teacher':'TEACHR AI'}: ${item.content}`).join('\n\n'),conversation=recent?`Continue this TEACHR conversation. Respond only to the teacher's latest message.\n\n${recent}\n\nTeacher: ${message}`:message;return `${contextPrompt()}${conversation}`;}
+  async function submitMessage(text){const request=String(text||'').trim();if(!request||controller)return;if(!window.TEACHR_AUTH?.getIdToken||!window.TEACHR_AI?.generate){addMessage('assistant','TEACHR AI is still starting. Try again in a moment.','error');return;}refreshContextLabel();addMessage('user',request);input.value='';controller=new AbortController();setBusy(true);const pending=addMessage('assistant','Thinking…','pending');try{const token=await window.TEACHR_AUTH.getIdToken();if(!token)throw Object.assign(new Error('Sign in to use TEACHR AI.'),{code:'AUTH_REQUIRED'});const payload=await window.TEACHR_AI.generate({token,prompt:conversationPrompt(request),tool:'chat',signal:controller.signal,includeCurriculum:false});pending.textContent=payload.content.trim();pending.classList.remove('pending');history.push({role:'user',content:request},{role:'assistant',content:payload.content.trim()});if(!currentConversation)currentConversation={id:makeId(),title:titleFor(request),createdAt:new Date().toISOString(),messages:history};await persistConversation();}catch(error){if(error?.name==='AbortError')pending.textContent='Response stopped.';else{pending.textContent=error?.message||'TEACHR AI could not complete that request. Please try again.';pending.classList.remove('pending');pending.classList.add('error');}}finally{controller=null;setBusy(false);input.focus();}}
+  function stopGeneration(){if(controller)controller.abort();}
+  launcher.addEventListener('click',openPanel);close?.addEventListener('click',closePanel);minimise?.addEventListener('click',closePanel);newChat?.addEventListener('click',resetChat);prompts.forEach(button=>button.addEventListener('click',()=>{input.value=button.dataset.chatPrompt||button.textContent.trim();input.focus();}));['curriculum','subject','year','topic','customTopic','lessonObjective'].forEach(id=>{document.getElementById(id)?.addEventListener('input',refreshContextLabel);document.getElementById(id)?.addEventListener('change',refreshContextLabel);});form.addEventListener('submit',event=>{event.preventDefault();if(send.dataset.mode==='stop')return stopGeneration();submitMessage(input.value);});input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();if(!controller)form.requestSubmit();}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)closePanel();});window.addEventListener('teachr:authchange',event=>{if(event.detail?.mode!=='signed-in'){resetChat();closePanel();}});
+  ensureContextControl();ensureHistoryUI();refreshContextLabel();setBusy(false);window.TEACHR_CHAT_PANEL=Object.freeze({open:openPanel,close:closePanel,reset:resetChat,stop:stopGeneration,context:currentContext,history:toggleHistory,stage:5});
 })();
