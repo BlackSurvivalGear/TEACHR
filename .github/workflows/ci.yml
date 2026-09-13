@@ -45,3 +45,5 @@ jobs:
         run: node tests/generation-usage.test.js
       - name: Validate server usage enforcement
         run: node tests/usage-enforcement.test.js
+      - name: Validate Firestore usage rules
+        run: node tests/firestore-usage-rules.test.js
