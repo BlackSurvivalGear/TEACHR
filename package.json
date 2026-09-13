@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/index.js",
     "check": "node --check app.js && node --check server/index.js && node --check teachr-auth.js && node --check pro-paywall.js && node --check upgrade.js && node --check admin.js && node --check < apps-script/Code.gs",
-    "test": "node lesson-builder.test.js && node tests/generation-usage.test.js && node tests/usage-enforcement.test.js && node tests/firestore-usage-rules.test.js && node tests/pro-access.test.js"
+    "test": "node lesson-builder.test.js && node tests/generation-usage.test.js && node tests/usage-service.test.js && node tests/usage-ui.test.js && node tests/generation-client.test.js && node tests/upgrade-experience.test.js && node tests/usage-enforcement.test.js && node tests/stage8-quota-matrix.test.js && node tests/firestore-usage-rules.test.js && node tests/pro-access.test.js"
   },
   "engines": {
     "node": ">=18"
