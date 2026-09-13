@@ -28,6 +28,13 @@ assert.match(admin, /getIdToken\(\)/, 'admin mutations must authenticate to back
 assert.match(admin, /'all','add'/, 'shared all-tools grant must be wired');
 assert.match(admin, /'all','reset'/, 'all-tools reset must be wired');
 assert.match(admin, /confirm\(/, 'quota changes must require confirmation');
+const production = fs.readFileSync(path.join(__dirname, '../admin-production-api.js'), 'utf8');
+assert.match(production, /documents:commit/, 'production adapter must use an atomic Firestore commit');
+assert.match(production, /\/api\/admin\/usage-adjustment/, 'production adapter must intercept quota mutations');
+assert.match(production, /Math\.max\(currentAllowance,used\)\+amount/, 'production grants must preserve history and extend the current entitlement');
+assert.match(production, /action==='reset'\?used\+3/, 'production reset must preserve history and grant three fresh uses');
+assert.match(production, /adminUid/, 'production writes must carry administrator audit identity');
+assert.match(production, /Authorization:token/, 'production writes must use the Firebase ID token so Firestore rules remain authoritative');
 const html = fs.readFileSync(path.join(__dirname, '../admin.html'), 'utf8');
 assert.match(html, /id="bulkAmount"/);
 assert.match(html, /id="grantAll"/);

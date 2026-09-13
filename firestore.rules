@@ -5,6 +5,19 @@ service cloud.firestore {
     function isSuperadmin() { return signedIn() && request.auth.token.email == 'admin@lawal.org'; }
     function ownProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)); }
     function isAdmin() { return isSuperadmin() || (signedIn() && ownProfile().data.role == 'admin'); }
+    function validUsageTool(toolId) { return toolId in ['lesson','worksheet','quiz','differentiate','curriculum','revision','parent']; }
+    function validAdjustmentAudit(data) {
+      return data.lastAdminAdjustment is map
+        && data.lastAdminAdjustment.action in ['add','reset']
+        && data.lastAdminAdjustment.amount is int
+        && data.lastAdminAdjustment.amount >= 1
+        && data.lastAdminAdjustment.amount <= 1000
+        && data.lastAdminAdjustment.adminUid == request.auth.uid
+        && data.lastAdminAdjustment.adminEmail == request.auth.token.email
+        && data.lastAdminAdjustment.reason is string
+        && data.lastAdminAdjustment.reason.size() <= 240
+        && data.lastAdminAdjustment.at is string;
+    }
 
     match /users/{uid} {
       allow read: if signedIn() && (uid == request.auth.uid || isAdmin());
@@ -31,7 +44,32 @@ service cloud.firestore {
         || isAdmin() && !isSuperadmin() && uid != request.auth.uid && resource.data.role in ['member','pro'];
       match /usage/{toolId} {
         allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
-        allow create, update, delete: if false;
+        allow create: if isAdmin()
+          && validUsageTool(toolId)
+          && request.resource.data.keys().hasOnly(['toolId','successfulGenerations','allowance','updatedAt','lastAdminAdjustment'])
+          && request.resource.data.toolId == toolId
+          && request.resource.data.successfulGenerations == 0
+          && request.resource.data.allowance is int
+          && request.resource.data.allowance >= 3
+          && request.resource.data.allowance <= 1003
+          && request.resource.data.updatedAt is timestamp
+          && validAdjustmentAudit(request.resource.data);
+        allow update: if isAdmin()
+          && validUsageTool(toolId)
+          && request.resource.data.keys().hasOnly(['toolId','successfulGenerations','allowance','updatedAt','lastAdminAdjustment'])
+          && request.resource.data.toolId == resource.data.toolId
+          && request.resource.data.toolId == toolId
+          && request.resource.data.successfulGenerations == resource.data.successfulGenerations
+          && request.resource.data.allowance is int
+          && request.resource.data.allowance >= request.resource.data.successfulGenerations
+          && (
+            request.resource.data.allowance == resource.data.successfulGenerations + 3
+            || (request.resource.data.allowance > resource.data.allowance
+              && request.resource.data.allowance <= resource.data.allowance + 1000)
+          )
+          && request.resource.data.updatedAt is timestamp
+          && validAdjustmentAudit(request.resource.data);
+        allow delete: if false;
       }
       match /savedPlaces/{placeId} { allow read, write: if signedIn() && request.auth.uid == uid; }
       match /interests/{interestId} { allow read, write: if signedIn() && request.auth.uid == uid; }
