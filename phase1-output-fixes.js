@@ -204,7 +204,7 @@
   if (typeof originalRenderResult === 'function') {
     window.renderResult = function phase1RenderResult(output, source) {
       const prepared = output && Array.isArray(output.sections)
-        ? { ...output, sections: ensureLessonDesignSections(output.sections) }
+        ? { ...output, sections: source === 'ai' ? normaliseSections(output.sections) : ensureLessonDesignSections(output.sections) }
         : output;
       originalRenderResult(prepared, source);
       installStyles();
@@ -217,6 +217,7 @@
   if (typeof originalBuildPrompt === 'function') {
     window.buildPrompt = function phase1BuildPrompt(data) {
       const base = originalBuildPrompt(data);
+      if (document.querySelector('.tool-card.active')?.dataset.tool !== 'lesson') return base;
       return `${base}
 
 PHASE 1 OUTPUT QUALITY REQUIREMENTS:

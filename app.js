@@ -53,7 +53,8 @@ function buildPrompt(data) {
     curriculum: 'a curriculum sequence with units, weekly objectives, lesson sequence and assessments',
     revision: 'a revision pack containing a concise guide, key vocabulary, flashcards and exam-style practice'
   };
-  return `Create ${descriptions[activeTool]} for ${data.year} ${data.subject} on ${data.topic}. Duration: ${data.duration}. Class profile: ${data.level}. Curriculum: ${data.curriculum}. Questions: ${data.questionCount}. Notes: ${data.notes || 'none'}. Additional instruction: ${data.extraInstruction || 'none'}. ${profilePrompt(profile)} Return concise, teacher-ready sections with headings. Do not invent school policy or student personal data.`;
+  const extraInstruction = activeTool === 'lesson' ? data.extraInstruction : (data.extraInstruction || '').replace(/\n?\[TEACHR LESSON DESIGN\][\s\S]*$/, '').trim();
+  return `Create ${descriptions[activeTool]} for ${data.year} ${data.subject} on ${data.topic}. Duration: ${data.duration}. Class profile: ${data.level}. Curriculum: ${data.curriculum}. Questions: ${data.questionCount}. Notes: ${data.notes || 'none'}. Additional instruction: ${extraInstruction || 'none'}. ${profilePrompt(profile)} Return concise, teacher-ready sections with headings. Do not invent school policy or student personal data.`;
 }
 
 function demoOutput(data) {
