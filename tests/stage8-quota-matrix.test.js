@@ -88,9 +88,10 @@ async function expectCode(promise, code) {
   const enforcementSource = fs.readFileSync('server/usage-enforcement.js', 'utf8');
   const serverSource = fs.readFileSync('server/index.js', 'utf8');
   assert.doesNotMatch(enforcementSource, /localStorage|sessionStorage/);
-  assert.match(enforcementSource, /users\/\$\{identity\.uid\}\/usage\/\$\{toolId\}/);
+  assert.match(enforcementSource, /users\/\$\{uid\}\/usage\/\$\{toolId\}/, 'quota authorisation must still read the authenticated user tool document');
+  assert.match(enforcementSource, /users\/\$\{context\.uid\}\/usage\/\$\{context\.toolId\}/, 'successful generation must still record against the authenticated user tool document');
   assert.ok(
-    serverSource.indexOf('if (!content) return send') < serverSource.indexOf('usageEnforcer.recordSuccess(access)'),
+    serverSource.indexOf('if(!content)return send') < serverSource.indexOf('usageEnforcer.recordSuccess(access)'),
     'usage must only be recorded after valid provider content exists'
   );
 

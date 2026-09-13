@@ -51,13 +51,18 @@ function generationFields_(doc) {
   });
   return result;
 }
-function generationAccess_(uid, tool, transaction) {
+function generationProfile_(uid, transaction) {
   const suffix = transaction ? '?transaction=' + encodeURIComponent(transaction) : '';
-  const userPath = '/users/' + encodeURIComponent(uid);
-  const userDoc = generationFirestore_(userPath + suffix, 'get', undefined, true);
+  const userDoc = generationFirestore_('/users/' + encodeURIComponent(uid) + suffix, 'get', undefined, true);
   if (!userDoc) throw generationError_(403, 'PROFILE_REQUIRED', 'A TEACHR member profile is required.');
   const profile = generationFields_(userDoc);
   if (profile.suspended || profile.accountStatus === 'suspended') throw generationError_(403, 'ACCOUNT_SUSPENDED', 'This TEACHR account is suspended.');
+  return profile;
+}
+function generationAccess_(uid, tool, transaction) {
+  const suffix = transaction ? '?transaction=' + encodeURIComponent(transaction) : '';
+  const userPath = '/users/' + encodeURIComponent(uid);
+  const profile = generationProfile_(uid, transaction);
   const usageDoc = generationFirestore_(userPath + '/usage/' + tool + suffix, 'get', undefined, true);
   const record = TEACHR_GENERATION_USAGE.normaliseUsageRecord(tool, generationFields_(usageDoc));
   const unlimited = TEACHR_GENERATION_USAGE.hasUnlimitedGenerations(profile);
@@ -93,19 +98,23 @@ function recordGenerationSuccess_(uid, tool) {
   }
 }
 function generateResource_(body) {
-  if (!TEACHR_GENERATION_USAGE.isGeneratingTool(body.tool)) throw generationError_(400, 'INVALID_TOOL', 'A valid generating tool is required.');
+  const isChat = body.tool === 'chat';
+  if (!isChat && !TEACHR_GENERATION_USAGE.isGeneratingTool(body.tool)) throw generationError_(400, 'INVALID_TOOL', 'A valid generating tool is required.');
   if (typeof body.prompt !== 'string' || !body.prompt.trim() || body.prompt.length > 12000) throw generationError_(400, 'INVALID_PROMPT', 'Enter a prompt of at most 12,000 characters.');
   const uid = verifyGenerationIdentity_(body.idToken);
-  generationAccess_(uid, body.tool);
+  if (isChat) generationProfile_(uid); else generationAccess_(uid, body.tool);
   const properties = PropertiesService.getScriptProperties();
   const apiKey = properties.getProperty('AI_API_KEY'), model = properties.getProperty('AI_MODEL');
   if (!apiKey || !model) throw generationError_(503, 'AI_NOT_CONFIGURED', 'The AI service is not configured.');
+  const systemPrompt = isChat
+    ? 'You are TEACHR AI, a concise teacher-first conversational assistant. Answer the teacher directly and help with explanations, classroom ideas, questions and adaptations. Do not invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. If the teacher asks for something that depends on missing classroom context, say what is missing rather than inventing it. AI assists. The teacher teaches.'
+    : 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material with clear headings. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. AI assists. The teacher teaches.';
   let response, payload;
   try {
     response = UrlFetchApp.fetch('https://api.openai.com/v1/chat/completions', {
       method: 'post', contentType: 'application/json', headers: { Authorization: 'Bearer ' + apiKey }, muteHttpExceptions: true,
       payload: JSON.stringify({ model, messages: [
-        { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material with clear headings. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. AI assists. The teacher teaches.' },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: body.prompt }
       ] })
     });
@@ -114,6 +123,6 @@ function generateResource_(body) {
   } catch (_) { throw generationError_(502, 'AI_PROVIDER_FAILED', 'The AI provider could not complete this request. Please try again.'); }
   const content = payload?.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || !content.trim()) throw generationError_(502, 'AI_EMPTY_RESPONSE', 'The AI provider returned no content.');
-  const usage = recordGenerationSuccess_(uid, body.tool);
+  const usage = isChat ? null : recordGenerationSuccess_(uid, body.tool);
   return { ok: true, status: 200, content, model, usage };
 }
