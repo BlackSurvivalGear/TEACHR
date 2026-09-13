@@ -12,6 +12,7 @@ assert.doesNotMatch(source, /\b(?:addDoc|deleteDoc|setDoc|updateDoc|writeBatch)\
 assert.match(source, /teachr:authchange/, 'usage must refresh when authentication state changes');
 assert.match(source, /teachr:usagechange/, 'usage state must be published for later UI stages');
 assert.match(source, /createState\('error'/, 'read failures must publish an explicit error state');
+assert.match(source, /applyGenerationResult/, 'successful server usage must update the service snapshot');
 
 const modelPosition = page.indexOf('src="generation-usage.js"');
 const authPosition = page.indexOf('src="teachr-auth.js"');
