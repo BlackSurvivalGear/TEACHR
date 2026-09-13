@@ -1,6 +1,8 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const { getFirebaseAdminServices } = require('./firebase-admin.js');
+const { GenerationAccessError, createUsageEnforcer } = require('./usage-enforcement.js');
 
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -9,6 +11,7 @@ const AI_MODEL = process.env.AI_MODEL || 'gpt-5.6-luna';
 const ROOT = path.resolve(__dirname, '..');
 const MAX_BODY = 100000;
 const UPSTREAM_TIMEOUT_MS = 15000;
+let usageEnforcer;
 
 const PROVIDERS = {
   openai: {
@@ -110,6 +113,21 @@ async function generate(req, res) {
   if (typeof body.prompt !== 'string' || !body.prompt.trim()) return send(res, 400, { error: 'prompt is required' });
   if (body.prompt.length > 12000) return send(res, 400, { error: 'prompt is too long' });
 
+  try {
+    usageEnforcer ||= createUsageEnforcer(getFirebaseAdminServices());
+  } catch (error) {
+    console.error('Firebase Admin configuration error:', error.message);
+    return send(res, 503, { error: 'Generation access control is not configured' });
+  }
+
+  let access;
+  try { access = await usageEnforcer.authorise(req, body.tool); }
+  catch (error) {
+    if (error instanceof GenerationAccessError) return send(res, error.status, { error: error.message, code: error.code });
+    console.error('Generation authorisation failed:', error.message);
+    return send(res, 503, { error: 'Generation access could not be verified' });
+  }
+
   const apiKey = AI_API_KEY;
   if (!apiKey) return send(res, 503, { error: 'AI backend is not configured. Set AI_API_KEY on the server.' });
 
@@ -142,7 +160,14 @@ async function generate(req, res) {
   catch { return send(res, 502, { error: 'AI provider returned invalid JSON' }); }
   const content = payload?.choices?.[0]?.message?.content;
   if (!content) return send(res, 502, { error: 'AI provider returned no content' });
-  return send(res, 200, { content, model });
+  let usage;
+  try { usage = await usageEnforcer.recordSuccess(access); }
+  catch (error) {
+    if (error instanceof GenerationAccessError) return send(res, error.status, { error: error.message, code: error.code });
+    console.error('Generation usage update failed:', error.message);
+    return send(res, 503, { error: 'Generation usage could not be recorded' });
+  }
+  return send(res, 200, { content, model, usage });
 }
 
 const server = http.createServer(async (req, res) => {
