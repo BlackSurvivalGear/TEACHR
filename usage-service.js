@@ -62,11 +62,35 @@ function getRemaining(toolId) {
   return state.tools[toolId]?.remaining;
 }
 
+function applyGenerationResult(toolId, usage) {
+  if (state.status !== 'ready' || !model.isGeneratingTool(toolId) || !usage) return copyState();
+  if (usage.unlimited === true) {
+    publish(createState('ready', { uid: state.uid, unlimited: true, tools: state.tools }));
+    return copyState();
+  }
+  const current = state.tools[toolId];
+  if (!current || !Number.isInteger(usage.remaining) || usage.remaining < 0) return copyState();
+  publish(createState('ready', {
+    uid: state.uid,
+    unlimited: false,
+    tools: {
+      ...state.tools,
+      [toolId]: {
+        ...current,
+        successfulGenerations: Math.max(0, current.allowance - usage.remaining),
+        remaining: Math.min(current.allowance, usage.remaining)
+      }
+    }
+  }));
+  return copyState();
+}
+
 window.addEventListener('teachr:authchange', event => load(event.detail?.user));
 
 window.TEACHR_USAGE = Object.freeze({
   getSnapshot: copyState,
   getRemaining,
+  applyGenerationResult,
   refresh: () => load(window.TEACHR_AUTH?.getAccount?.())
 });
 
