@@ -65,9 +65,15 @@ html[data-theme="light"] #appToolMount .filter.active,html[data-theme="light"] #
 
 /* Light mode is the application default; dark mode is explicit. */
 html[data-theme="dark"] .teachr-app { color:#e9f2fb; background:linear-gradient(180deg,#0a1c31 0%,#0b223d 100%); }
-html[data-theme="dark"] .app-tool-card { color:#eaf3fc !important; background:linear-gradient(145deg,#122a45 0%,#0d2139 100%) !important; border-color:#294563 !important; }
+html[data-theme="dark"] .teachr-app-head h1,
+html[data-theme="dark"] .app-intro h2 { color:#f8fbff !important; text-shadow:0 1px 1px rgba(0,0,0,.16); }
+html[data-theme="dark"] .teachr-app-head>div>p:last-child { color:#b8c9dc !important; }
+html[data-theme="dark"] .app-intro { margin-bottom:32px; }
+html[data-theme="dark"] .app-intro p { color:#b5c7da !important; line-height:1.65; }
+html[data-theme="dark"] .app-tool-grid { gap:24px 20px; }
+html[data-theme="dark"] .app-tool-card { min-height:208px; padding:26px 24px 30px; color:#eaf3fc !important; background:linear-gradient(145deg,#122a45 0%,#0d2139 100%) !important; border-color:#294563 !important; }
 html[data-theme="dark"] .app-tool-card strong { color:#f3f8fd !important; }
-html[data-theme="dark"] .app-tool-card small { color:#aec0d2 !important; }
+html[data-theme="dark"] .app-tool-card small { color:#b8c9da !important; line-height:1.65; margin-top:10px; padding-bottom:28px; }
 html[data-theme="dark"] .app-tool-arrow { color:#65c9fa !important; }
 html[data-theme="dark"] .app-home-button { color:#eaf3fc !important; background:#122a45 !important; border-color:#34516d !important; }
 html[data-theme="dark"] .app-home-button:hover { background:#173451 !important; border-color:#4c6b88 !important; }
