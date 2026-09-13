@@ -22,9 +22,9 @@ assert.match(server, /\/api\/admin\/usage-adjustment/, 'server must expose prote
 assert.match(server, /service\.adjust\(req/, 'mutation endpoint must use admin usage service');
 assert.match(server, /service\.readUsage\(req/, 'usage read endpoint must use admin usage service');
 const admin = fs.readFileSync(path.join(__dirname, '../admin.js'), 'utf8');
-assert.match(admin, /getIdToken\(\)/, 'admin mutations must authenticate to backend');
 assert.match(admin, /tool,'add'/, 'per-tool grant control must be wired');
-assert.match(admin, /tool,'reset'/, 'per-tool reset control must be wired');
+assert.match(admin, /adjustUsage\(reset\.dataset\.reset,'reset'\)/, 'per-tool reset control must pass the selected tool to reset');
+assert.match(admin, /getIdToken\(\)/, 'admin mutations must authenticate to backend');
 assert.match(admin, /'all','add'/, 'shared all-tools grant must be wired');
 assert.match(admin, /'all','reset'/, 'all-tools reset must be wired');
 assert.match(admin, /confirm\(/, 'quota changes must require confirmation');
