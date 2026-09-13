@@ -51,6 +51,8 @@ jobs:
         run: node tests/usage-service.test.js
       - name: Validate generation usage UI
         run: node tests/usage-ui.test.js
+      - name: Validate authenticated generation client
+        run: node tests/generation-client.test.js
       - name: Validate server usage enforcement
         run: node tests/usage-enforcement.test.js
       - name: Validate Firestore usage rules
