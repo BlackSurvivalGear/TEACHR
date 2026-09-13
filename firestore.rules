@@ -29,6 +29,10 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role','plan','suspended','accountStatus','updatedAt']);
       allow delete: if isSuperadmin() && uid != request.auth.uid && resource.data.email != 'admin@lawal.org'
         || isAdmin() && !isSuperadmin() && uid != request.auth.uid && resource.data.role in ['member','pro'];
+      match /usage/{toolId} {
+        allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+        allow create, update, delete: if false;
+      }
       match /savedPlaces/{placeId} { allow read, write: if signedIn() && request.auth.uid == uid; }
       match /interests/{interestId} { allow read, write: if signedIn() && request.auth.uid == uid; }
     }
