@@ -24,6 +24,7 @@ jobs:
           node --check upgrade.js
           node --check teachr-auth.js
           node --check app-shell.js
+          node --check tests/stage8-quota-matrix.test.js
       - name: Validate package metadata
         run: node -e "const p=require('./package.json'); if(p.version!=='1.1.0') process.exit(1); if(!p.scripts.start) process.exit(1)"
       - name: Validate required files
@@ -58,5 +59,11 @@ jobs:
         run: node tests/upgrade-experience.test.js
       - name: Validate server usage enforcement
         run: node tests/usage-enforcement.test.js
+      - name: Validate Stage 8 quota matrix
+        run: node tests/stage8-quota-matrix.test.js
       - name: Validate Firestore usage rules
         run: node tests/firestore-usage-rules.test.js
+      - name: Validate Pro subscription access
+        run: node tests/pro-access.test.js
+      - name: Run complete test suite
+        run: npm test
