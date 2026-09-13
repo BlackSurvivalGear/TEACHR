@@ -9,7 +9,6 @@ const toolConfig = {
   differentiate: { title: 'Differentiation Engine', label: 'Differentiate activity', type: 'DIFFERENTIATION', description: 'Turn one classroom activity into support, core and stretch pathways.' },
   curriculum: { title: 'Curriculum Planner', label: 'Build curriculum map', type: 'CURRICULUM', description: 'Turn a topic into a sequence of units, weeks and lessons.' },
   revision: { title: 'Revision Pack', label: 'Build revision pack', type: 'REVISION PACK', description: 'Create a compact revision guide, flashcards and exam practice.' },
-  parent: { title: 'Parent Message', label: 'Draft message', type: 'PARENT MESSAGE', description: 'Draft clear, professional communication from a teacher brief.' },
   library: { title: 'Resource Library', label: 'Refresh library', type: 'RESOURCE', description: 'Search and reuse the teaching materials you have saved.' }
 };
 
@@ -52,8 +51,7 @@ function buildPrompt(data) {
     quiz: 'an assessment with a balanced mix of recall, application and higher-order questions, plus an answer key',
     differentiate: 'three differentiated versions of the activity: support, core and stretch, with teacher guidance',
     curriculum: 'a curriculum sequence with units, weekly objectives, lesson sequence and assessments',
-    revision: 'a revision pack containing a concise guide, key vocabulary, flashcards and exam-style practice',
-    parent: 'a professional parent message that is clear, constructive, warm and specific'
+    revision: 'a revision pack containing a concise guide, key vocabulary, flashcards and exam-style practice'
   };
   return `Create ${descriptions[activeTool]} for ${data.year} ${data.subject} on ${data.topic}. Duration: ${data.duration}. Class profile: ${data.level}. Curriculum: ${data.curriculum}. Questions: ${data.questionCount}. Notes: ${data.notes || 'none'}. Additional instruction: ${data.extraInstruction || 'none'}. ${profilePrompt(profile)} Return concise, teacher-ready sections with headings. Do not invent school policy or student personal data.`;
 }
@@ -67,8 +65,7 @@ function demoOutput(data) {
     quiz: { title: `${topic} assessment`, summary: `${year} · ${subject} · ${q} questions`, sections: [['Recall', 'Questions checking essential vocabulary and concepts.'], ['Application', 'Questions using realistic classroom scenarios.'], ['Higher order', 'Questions requiring reasoning, justification or transfer.'], ['Coverage', `Map ${q} questions across the key concepts in ${topic}.`], ['Answer key', 'Answers with brief explanations for teacher review.']] },
     differentiate: { title: `${topic} differentiated activity`, summary: `${year} · ${subject} · Support / Core / Stretch`, sections: [['Support', 'Chunk instructions, model the first example, provide a vocabulary bank and sentence starters.'], ['Core', 'Complete the standard activity with a worked example followed by independent practice.'], ['Stretch', 'Add reasoning, transfer and justification questions with reduced scaffolding.'], ['Teacher moves', 'Use questioning to move pupils between pathways as confidence changes.']] },
     curriculum: { title: `${topic} curriculum map`, summary: `${year} · ${subject} · ${data.curriculum}`, sections: [['Unit 1 · Foundations', `Prior knowledge, vocabulary and core concepts for ${topic}.`], ['Unit 2 · Develop', 'Modelled examples, guided practice and common misconceptions.'], ['Unit 3 · Apply', 'Independent application, problem solving and retrieval.'], ['Unit 4 · Assess', 'Low-stakes assessment followed by targeted intervention.'], ['Sequence', 'Each unit can be split into weekly lessons and saved as individual resources.']] },
-    revision: { title: `${topic} revision pack`, summary: `${year} · ${subject} · Exam preparation`, sections: [['Quick guide', `One-page summary of the essential knowledge for ${topic}.`], ['Key vocabulary', 'Definitions and must-remember terminology.'], ['Flashcards', 'Prompt-and-answer cards for retrieval practice.'], ['Exam practice', `${q} exam-style questions progressing in difficulty.`], ['Self-check', 'Traffic-light checklist for confidence and topics needing further revision.']] },
-    parent: { title: `${topic} parent message`, summary: `${year} · ${subject} · Draft communication`, sections: [['Opening', 'A concise, positive introduction explaining why you are getting in touch.'], ['What is going well', `Highlight a specific strength or positive development related to ${topic}.`], ['Next step', 'Explain one clear improvement target and how the pupil can work on it.'], ['Support at home', 'Offer one practical, realistic suggestion without creating unnecessary pressure.'], ['Close', 'Invite questions and close professionally.']] }
+    revision: { title: `${topic} revision pack`, summary: `${year} · ${subject} · Exam preparation`, sections: [['Quick guide', `One-page summary of the essential knowledge for ${topic}.`], ['Key vocabulary', 'Definitions and must-remember terminology.'], ['Flashcards', 'Prompt-and-answer cards for retrieval practice.'], ['Exam practice', `${q} exam-style questions progressing in difficulty.`], ['Self-check', 'Traffic-light checklist for confidence and topics needing further revision.']] }
   };
   return outputs[activeTool] || outputs.lesson;
 }
@@ -137,7 +134,7 @@ els.resourceList.addEventListener('click', event => { const button = event.targe
   const resource = resources[index];
   if (button.dataset.action === 'delete') resources.splice(index, 1);
   if (button.dataset.action === 'duplicate') resources.splice(index, 0, { ...resource, id: Date.now(), title: `${resource.title} copy`, createdAt: new Date().toISOString() });
-  if (button.dataset.action === 'load') { const typeMap = { 'LESSON PLAN':'lesson','WORKSHEET':'worksheet','ASSESSMENT':'quiz','DIFFERENTIATION':'differentiate','CURRICULUM':'curriculum','REVISION PACK':'revision','PARENT MESSAGE':'parent' }; setTool(typeMap[resource.type] || 'lesson'); document.getElementById('topic').value = resource.title.replace(/ (lesson plan|worksheet|assessment|differentiated activity|curriculum map|revision pack|parent message|copy)$/i, ''); document.getElementById('builderPanel').scrollIntoView({ behavior:'smooth', block:'center' }); showToast('Resource loaded into the workspace.'); return; }
+  if (button.dataset.action === 'load') { const typeMap = { 'LESSON PLAN':'lesson','WORKSHEET':'worksheet','ASSESSMENT':'quiz','DIFFERENTIATION':'differentiate','CURRICULUM':'curriculum','REVISION PACK':'revision' }; setTool(typeMap[resource.type] || 'lesson'); document.getElementById('topic').value = resource.title.replace(/ (lesson plan|worksheet|assessment|differentiated activity|curriculum map|revision pack|copy)$/i, ''); document.getElementById('builderPanel').scrollIntoView({ behavior:'smooth', block:'center' }); showToast('Resource loaded into the workspace.'); return; }
   localStorage.setItem(RESOURCE_KEY, JSON.stringify(resources)); renderLibrary(); updateStats(); showToast(button.dataset.action === 'delete' ? 'Resource deleted.' : 'Resource duplicated.');
 });
 els.clearLibrary.addEventListener('click', () => { if (!getResources().length) return; if (confirm('Clear all saved resources from this browser?')) { localStorage.removeItem(RESOURCE_KEY); renderLibrary(); updateStats(); showToast('Library cleared.'); } });
