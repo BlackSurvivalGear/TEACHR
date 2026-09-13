@@ -37,3 +37,7 @@ Every request must include `Authorization: Bearer <Firebase ID token>`. The back
 Use Application Default Credentials in managed hosting. For other environments, set `FIREBASE_SERVICE_ACCOUNT_JSON` to the service-account JSON encoded on one line. Never commit credentials.
 
 The backend uses an OpenAI-compatible chat-completions contract by default. Override `AI_BASE_URL` for another compatible provider.
+
+Production hosting now uses Google Apps Script. See `apps-script/README.md` for
+its generation deployment steps. This Node server remains available for local
+development; localhost clients continue using `/api/generate`.

@@ -78,10 +78,7 @@ function parseAISections(content) {
 async function generateWithAI(data) {
   const token = await window.TEACHR_AUTH?.getIdToken?.();
   if (!token) throw Object.assign(new Error('Sign in to generate resources.'), { code: 'AUTH_REQUIRED' });
-  const response = await fetch('/api/generate', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: buildPrompt(data), tool: activeTool, profile: getProfile(), inputs: data }) });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw Object.assign(new Error(payload.error || `AI service returned ${response.status}`), { code: payload.code, status: response.status });
-  if (!payload.content) throw new Error('AI service returned no content');
+  const payload = await window.TEACHR_AI.generate({ token, prompt: buildPrompt(data), tool: activeTool });
   return {
     output: { title: `${data.topic} ${toolConfig[activeTool].type.toLowerCase()}`, summary: `${data.year} · ${data.subject} · AI generated`, sections: parseAISections(payload.content) },
     usage: payload.usage

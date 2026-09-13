@@ -1,0 +1,27 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('generation-client.js', 'utf8');
+(async () => {
+  const endpoint = 'https://script.google.com/macros/s/test-deployment/exec';
+  let sent, reply = { ok: true, content: 'Lesson', usage: { remaining: 2 } };
+  const window = { location: { hostname: 'teachr.uk' }, TEACHR_PAYMENT: { appsScriptUrl: endpoint }, fetch: async (url, options) => { sent = { url, options }; return { ok: true, status: 200, json: async () => reply }; } };
+  vm.runInNewContext(source, { window });
+  const input = { token: 'firebase-token', prompt: 'Fractions', tool: 'lesson' };
+  assert.equal((await window.TEACHR_AI.generate(input)).content, 'Lesson');
+  assert.equal(sent.url, endpoint); assert.equal(sent.options.headers['Content-Type'], 'text/plain;charset=UTF-8'); assert.equal(sent.options.headers.Authorization, undefined);
+  assert.equal(sent.options.credentials, 'omit'); assert.equal(sent.options.redirect, 'follow');
+  assert.equal(JSON.parse(sent.options.body).idToken, input.token); assert.ok(!sent.url.includes(input.token));
+  reply = { ok: false, status: 429, code: 'FREE_LIMIT_REACHED', error: 'Upgrade required' };
+  await assert.rejects(window.TEACHR_AI.generate(input), error => error.code === 'FREE_LIMIT_REACHED' && error.status === 429);
+  reply = { content: 'Not an Apps Script response' };
+  await assert.rejects(window.TEACHR_AI.generate(input));
+  window.TEACHR_PAYMENT.appsScriptUrl = 'https://untrusted.example/exec';
+  await assert.rejects(window.TEACHR_AI.generate(input), /not configured/);
+  window.location.hostname = 'localhost'; reply = { content: 'Local lesson', usage: { remaining: 2 } };
+  await window.TEACHR_AI.generate(input); assert.equal(sent.url, '/api/generate'); assert.equal(sent.options.headers.Authorization, 'Bearer firebase-token');
+  const page = fs.readFileSync('index.html', 'utf8');
+  assert.ok(page.indexOf('src="payment-config.js"') < page.indexOf('src="generation-client.js"'));
+  assert.ok(page.indexOf('src="generation-client.js"') < page.indexOf('src="app.js"'));
+  console.log('Apps Script browser transport tests passed');
+})().catch(error => { console.error(error); process.exitCode = 1; });

@@ -9,7 +9,8 @@ const usage = fs.readFileSync(path.join(root, 'usage-service.js'), 'utf8');
 const page = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 assert.match(auth, /getIdToken: \(forceRefresh = false\)/, 'auth must expose Firebase ID tokens');
-assert.match(app, /Authorization': `Bearer \$\{token\}`/, 'generation requests must authenticate with a bearer token');
+const transport = fs.readFileSync(path.join(root, 'generation-client.js'), 'utf8');
+assert.match(transport, /Authorization': `Bearer \$\{token\}`/, 'generation requests must authenticate with a bearer token');
 assert.match(app, /payload\.usage/, 'the client must consume authoritative server usage');
 assert.match(app, /applyGenerationResult/, 'successful generation must update the visible allowance');
 assert.match(app, /TEACHR_USAGE\?\.refresh/, 'successful generation must reconcile usage with Firestore');
