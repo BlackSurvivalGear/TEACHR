@@ -1,0 +1,83 @@
+/* Minimal signed-out TEACHR homepage. Authenticated application styles are unchanged. */
+html:not([data-auth="signed-in"]) .public-app-content,
+html:not([data-auth="signed-in"]) footer {
+  display: none !important;
+}
+
+.public-hero {
+  min-height: calc(100vh - 92px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, .8fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 100px);
+  padding-top: clamp(64px, 9vh, 110px);
+  padding-bottom: clamp(64px, 9vh, 110px);
+}
+
+.public-hero-copy { max-width: 720px; }
+.public-hero h1 {
+  margin: 0;
+  font-size: clamp(54px, 7.4vw, 104px);
+  line-height: .94;
+  letter-spacing: -.065em;
+}
+.public-hero h1 span {
+  color: transparent;
+  background: linear-gradient(90deg, #28b8f4 0%, #f7c33f 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.public-hero-text {
+  max-width: 610px;
+  margin: 28px 0 0;
+  color: #afbed2;
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.65;
+}
+.public-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 34px;
+}
+.public-hero-actions .btn { padding: 15px 22px; }
+.public-signin {
+  border: 0;
+  background: transparent;
+  color: #dce8f7;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.public-signin:hover { color: #fff; }
+.public-account-note {
+  margin: 14px 0 0;
+  color: #7186a4;
+  font-size: 11px;
+}
+.public-hero-visual {
+  min-height: min(580px, 65vh);
+  background: url("HERO.png") center bottom / contain no-repeat;
+  filter: drop-shadow(0 28px 40px rgba(0, 0, 0, .3));
+}
+
+html[data-auth="signed-in"] .public-hero { display: none; }
+
+@media (max-width: 850px) {
+  .public-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .public-hero-copy { margin: 0 auto; }
+  .public-hero-text { margin-left: auto; margin-right: auto; }
+  .public-hero-actions { justify-content: center; }
+  .public-hero-visual { min-height: 400px; }
+}
+
+@media (max-width: 620px) {
+  .public-hero { padding: 54px 20px 0; gap: 22px; }
+  .public-hero h1 { font-size: clamp(50px, 16vw, 68px); }
+  .public-hero-actions { flex-direction: column; gap: 6px; }
+  .public-hero-actions .btn { width: 100%; }
+  .public-hero-visual { min-height: 330px; }
+}
