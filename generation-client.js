@@ -11,16 +11,25 @@
     };
   }
 
+  function teacherObjective() {
+    return root.document?.getElementById('lessonObjective')?.value?.trim() || '';
+  }
+
   function curriculumContext(inputs) {
     const registry = root.TEACHR_CURRICULUM;
     if (!registry) return '';
     const resolved = registry.resolve(inputs);
     if (!resolved?.jurisdiction) return '';
-    const objectives = resolved.objectives?.length
-      ? resolved.objectives.map(item => `- ${item.id} [${item.status}] ${item.domain}: ${item.summary}`).join('\n')
-      : 'No structured objectives are available for this selection. Do not invent statutory wording or claim objective-level alignment.';
+
+    const verifiedObjectives = resolved.objectives?.length
+      ? resolved.objectives.map(item => `- ${item.id} [controlled paraphrase] ${item.domain}: ${item.summary}`).join('\n')
+      : 'None for this exact topic/stage selection.';
     const domains = resolved.domains?.length ? resolved.domains.join(', ') : 'not resolved';
-    return `\n\nTEACHR CURRICULUM CONTEXT\nJurisdiction: ${resolved.jurisdiction}\nFramework: ${resolved.framework}\nSubject: ${resolved.subject}\nTeacher year: ${resolved.year || 'not specified'}\nKey stage: ${resolved.keyStage || 'not resolved'}\nTopic: ${resolved.topic || 'not specified'}\nCurriculum status: ${resolved.status}\nRelevant curriculum domains: ${domains}\nTEACHR curriculum objectives:\n${objectives}\n\nCURRICULUM RULES\n- The selected subject, year and topic above override unrelated profile defaults or stale form context.\n- Use only curriculum objectives supplied for this exact selection.\n- Do not carry objectives, vocabulary or subject content from a previous selection.\n- Do not invent statutory requirements or claim objective-level alignment when none is supplied.\n- Keep all generated content relevant to the selected subject and topic.`;
+    const alignment = resolved.alignmentLabel || resolved.status || 'Not resolved';
+    const reason = resolved.alignmentReason || 'No additional precision metadata available.';
+    const lessonObjective = teacherObjective();
+
+    return `\n\nTEACHR CURRICULUM CONTEXT\nJurisdiction: ${resolved.jurisdiction}\nFramework: ${resolved.framework}\nSubject: ${resolved.subject}\nTeacher year: ${resolved.year || 'not specified'}\nKey stage: ${resolved.keyStage || 'not resolved'}\nTopic: ${resolved.topic || 'not specified'}\nAlignment status: ${alignment}\nAlignment reason: ${reason}\nRelevant curriculum domains: ${domains}\n\nVERIFIED CURRICULUM OBJECTIVES\n${verifiedObjectives}\n\nTEACHER LESSON OBJECTIVE\n${lessonObjective || 'No teacher lesson objective supplied.'}\n\nCURRICULUM PRECISION RULES\n- Keep verified curriculum objectives and the teacher lesson objective conceptually separate.\n- A TEACHR controlled paraphrase is not statutory wording and must not be presented as a quotation from the curriculum.\n- Only claim objective-level curriculum alignment when VERIFIED CURRICULUM OBJECTIVES contains an objective.\n- If alignment is Key-stage aligned, say the material is appropriate to the registered subject/key stage but do not claim a topic-specific statutory objective.\n- If alignment is Not applicable at this key stage, do not describe the lesson as National Curriculum objective-aligned for that subject/stage.\n- The selected subject, year and topic override unrelated profile defaults or stale form context.\n- Do not carry objectives, vocabulary or subject content from a previous selection.\n- Do not invent statutory requirements, programme-of-study wording, attainment claims or source quotations.\n- Keep all generated content relevant to the selected subject and topic.`;
   }
 
   function toolPrompt(prompt, tool) {

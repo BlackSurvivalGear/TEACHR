@@ -16,7 +16,8 @@
     .curriculum-alignment-status{font-size:9px;color:#7f98b6;border:1px solid rgba(155,190,255,.14);border-radius:999px;padding:5px 8px;white-space:nowrap}.curriculum-objective-list{display:grid;gap:8px}
     .curriculum-objective{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 12px;border:1px solid rgba(155,190,255,.1);border-radius:11px;background:rgba(255,255,255,.025)}
     .curriculum-objective-copy{min-width:0}.curriculum-objective-copy span{display:block;color:#6f87a5;font-size:9px;font-weight:800;letter-spacing:.04em;margin-bottom:3px}.curriculum-objective-copy p{margin:0;color:#a7b9d0;font-size:11px;line-height:1.5}
-    .use-curriculum-objective{flex:0 0 auto;border:1px solid rgba(83,170,255,.22);background:rgba(39,184,255,.08);color:#82c8ff;border-radius:9px;padding:7px 9px;font-size:9px;font-weight:800}.curriculum-empty{margin:0;color:#7e94b0;font-size:11px}
+    .curriculum-precision-note{margin:0 0 8px;color:#8ea7c4;font-size:10px;line-height:1.45}.curriculum-source-note{margin:2px 0 0;color:#7188a4;font-size:9px;line-height:1.45}
+    .use-curriculum-objective{flex:0 0 auto;border:1px solid rgba(83,170,255,.22);background:rgba(39,184,255,.08);color:#82c8ff;border-radius:9px;padding:7px 9px;font-size:9px;font-weight:800}.curriculum-empty{margin:0;color:#7e94b0;font-size:11px;line-height:1.5}
     @media(max-width:620px){.curriculum-alignment{grid-column:auto}.curriculum-objective{align-items:start;flex-direction:column}.use-curriculum-objective{width:100%}.curriculum-alignment-head{flex-direction:column}}
   `;
   document.head.appendChild(style);
@@ -32,7 +33,7 @@
 
   const alignment = document.createElement('div');
   alignment.className = 'curriculum-alignment';
-  alignment.innerHTML = `<div class="curriculum-alignment-head"><div><span class="curriculum-alignment-label">CURRICULUM ALIGNMENT</span><strong id="curriculumAlignmentTitle">Select a subject and topic</strong></div><span id="curriculumAlignmentStatus" class="curriculum-alignment-status">Waiting for selection</span></div><div id="curriculumObjectiveList" class="curriculum-objective-list"></div>`;
+  alignment.innerHTML = `<div class="curriculum-alignment-head"><div><span class="curriculum-alignment-label">CURRICULUM PRECISION V2</span><strong id="curriculumAlignmentTitle">Select a subject and topic</strong></div><span id="curriculumAlignmentStatus" class="curriculum-alignment-status">Waiting for selection</span></div><div id="curriculumObjectiveList" class="curriculum-objective-list"></div>`;
   topic.closest('.field')?.insertAdjacentElement('afterend', alignment);
   const title = alignment.querySelector('#curriculumAlignmentTitle');
   const status = alignment.querySelector('#curriculumAlignmentStatus');
@@ -68,18 +69,26 @@
   function renderAlignment(resolved) {
     const objectives = resolved?.objectives || [];
     const ks = resolved?.keyStage || keyStage();
-    title.textContent = `${resolved.subject} · ${ks}`;
-    status.textContent = resolved.status === 'verified-source-structure' ? 'DfE structure matched' : resolved.status || 'Not resolved';
+    title.textContent = `${resolved.subject} · ${ks || 'stage not resolved'}`;
+    status.textContent = resolved.alignmentLabel || (resolved.status === 'verified-source-structure' ? 'DfE structure matched' : resolved.status || 'Not resolved');
+
+    const note = resolved.alignmentReason ? `<p class="curriculum-precision-note">${resolved.alignmentReason}</p>` : '';
+    const sourceNote = `<p class="curriculum-source-note">Verified objectives are TEACHR controlled paraphrases of the registered curriculum source, not statutory quotations.</p>`;
+
     if (!objectives.length) {
-      list.innerHTML = `<p class="curriculum-empty">No structured objective is available for this selection. TEACHR will not invent curriculum alignment.</p>`;
+      const message = resolved.alignmentLevel === 'not-applicable'
+        ? 'No objective will be auto-filled. TEACHR will treat any lesson objective as teacher-defined rather than National Curriculum objective-aligned.'
+        : 'No topic-specific verified objective is available for this selection. TEACHR will not invent curriculum alignment.';
+      list.innerHTML = `${note}<p class="curriculum-empty">${message}</p>${sourceNote}`;
       return;
     }
-    list.innerHTML = objectives.map((item,index) => `<div class="curriculum-objective"><div class="curriculum-objective-copy"><span>${item.id} · ${item.domain}</span><p>${item.summary}</p></div><button type="button" class="use-curriculum-objective" data-objective-index="${index}">Use for learning objective</button></div>`).join('');
+
+    list.innerHTML = `${note}${objectives.map((item,index) => `<div class="curriculum-objective"><div class="curriculum-objective-copy"><span>VERIFIED · ${item.id} · ${item.domain}</span><p>${item.summary}</p></div><button type="button" class="use-curriculum-objective" data-objective-index="${index}">Use as teacher lesson objective</button></div>`).join('')}${sourceNote}`;
     list.querySelectorAll('.use-curriculum-objective').forEach(button => button.addEventListener('click', () => {
       const item = objectives[Number(button.dataset.objectiveIndex)];
       if (item) { setAutoObjective(item.summary); objective.focus(); }
     }));
-    if (!objective.value.trim()) setAutoObjective(objectives[0].summary);
+    if (!objective.value.trim() && resolved.alignmentLevel === 'verified-objective') setAutoObjective(objectives[0].summary);
   }
 
   async function resolveCurriculum() {
@@ -87,7 +96,7 @@
     const nextKey = currentKey();
     if (selectionKey && nextKey !== selectionKey) clearAutoObjective();
     selectionKey = nextKey;
-    if (!isEngland()) { clearAlignment('Curriculum alignment is available for England — National Curriculum'); return; }
+    if (!isEngland()) { clearAlignment('Precision V2 currently verifies England — National Curriculum'); return; }
     const registry = window.TEACHR_CURRICULUM;
     if (!registry) { clearAlignment('Curriculum registry unavailable'); return; }
     try {
