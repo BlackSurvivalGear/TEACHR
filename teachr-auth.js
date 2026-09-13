@@ -37,6 +37,7 @@ const profileButton = document.getElementById('profileButton');
 const profileName = document.getElementById('profileName');
 const avatar = document.getElementById('avatar');
 const dialog = document.getElementById('authDialog');
+const profileDialog = document.getElementById('profileDialog');
 const form = document.getElementById('authForm');
 const title = document.getElementById('authTitle');
 const subtitle = document.getElementById('authSubtitle');
@@ -213,6 +214,7 @@ form?.addEventListener('submit', async event => {
 });
 
 signOutButton?.addEventListener('click', async () => {
+  if (profileDialog?.open) profileDialog.close();
   try {
     await firebaseSignOut(auth);
   } catch {
@@ -222,7 +224,11 @@ signOutButton?.addEventListener('click', async () => {
 
 onAuthStateChanged(auth, async user => {
   renderAuthState(user);
-  if (!user) { publishAuthState(null); return; }
+  if (!user) {
+    if (profileDialog?.open) profileDialog.close();
+    publishAuthState(null);
+    return;
+  }
   try {
     const profile = await ensureUserProfile(user);
     if (profile.suspended && user.email?.toLowerCase() !== 'admin@lawal.org') {
