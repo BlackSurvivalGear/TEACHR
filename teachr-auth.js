@@ -241,6 +241,7 @@ window.TEACHR_AUTH = Object.freeze({
   auth,
   db,
   getUser: () => state.user,
+  getIdToken: (forceRefresh = false) => state.user?.getIdToken(forceRefresh),
   getAccount: () => state.user ? {
     uid: state.user.uid,
     email: state.user.email || '',
