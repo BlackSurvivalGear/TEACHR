@@ -21,6 +21,14 @@ function jsonResponse(payload,status=200){ return new Response(JSON.stringify(pa
 function bearer(options){ return new Headers(options?.headers || {}).get('Authorization') || ''; }
 function uidFromUrl(url){ return new URL(url,location.href).searchParams.get('uid') || ''; }
 function usageDocumentName(uid,toolId){ return `projects/${projectId}/databases/(default)/documents/users/${uid}/usage/${toolId}`; }
+function tokenClaims(token){
+  try {
+    const jwt=token.replace(/^Bearer\s+/i,''),payload=jwt.split('.')[1];
+    if(!payload)return {};
+    const normalised=payload.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(payload.length/4)*4,'=');
+    return JSON.parse(atob(normalised));
+  } catch { return {}; }
+}
 function mapField(value){
   const fields={};
   for(const [key,item] of Object.entries(value)){
@@ -53,18 +61,19 @@ async function readProductionUsage(url,options){
 async function adjustProductionUsage(options){
   const token=bearer(options); if(!token)return jsonResponse({error:'Administrator sign-in is required'},401);
   let input; try{input=JSON.parse(options.body||'{}');}catch{return jsonResponse({error:'Invalid request body'},400);}
-  const uid=String(input.uid||'').trim(),action=input.action,tool=input.tool,amount=Number(input.amount);
+  const uid=String(input.uid||'').trim(),action=input.action,tool=input.tool,amount=Number(input.amount),claims=tokenClaims(token);
   if(!uid)return jsonResponse({error:'A target user is required'},400);
+  if(!claims.user_id && !claims.sub)return jsonResponse({error:'Administrator session is invalid or expired'},401);
   if(!['add','reset'].includes(action))return jsonResponse({error:'Action must be add or reset'},400);
   if(tool!=='all'&&!toolIds.includes(tool))return jsonResponse({error:'Select a valid generating tool or all tools'},400);
   if(action==='add'&&(!Number.isInteger(amount)||amount<1||amount>1000))return jsonResponse({error:'Added generations must be an integer from 1 to 1000'},400);
   try{
-    const current=await readUsageRecords(uid,token),selected=tool==='all'?toolIds:[tool],now=new Date().toISOString();
+    const current=await readUsageRecords(uid,token),selected=tool==='all'?toolIds:[tool],now=new Date().toISOString(),adminUid=String(claims.user_id||claims.sub||''),adminEmail=String(claims.email||'').toLowerCase();
     const writes=selected.map(toolId=>{
       const record=current.usage[toolId]||{successfulGenerations:0,allowance:3};
       const used=Number(record.successfulGenerations)||0,currentAllowance=Number.isInteger(Number(record.allowance))?Number(record.allowance):3;
       const newAllowance=action==='reset'?used+3:Math.max(currentAllowance,used)+amount;
-      const audit={action,amount:action==='reset'?3:amount,adminUid:'firebase-authenticated-admin',reason:String(input.reason||'Admin dashboard adjustment').slice(0,240),at:now};
+      const audit={action,amount:action==='reset'?3:amount,adminUid,adminEmail,reason:String(input.reason||'Admin dashboard adjustment').slice(0,240),at:now};
       return {update:{name:usageDocumentName(uid,toolId),fields:{toolId:{stringValue:toolId},successfulGenerations:{integerValue:String(used)},allowance:{integerValue:String(newAllowance)},updatedAt:{timestampValue:now},lastAdminAdjustment:mapField(audit)}},updateMask:{fieldPaths:['toolId','successfulGenerations','allowance','updatedAt','lastAdminAdjustment']}};
     });
     const response=await nativeFetch(firestoreCommit,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({writes})});
