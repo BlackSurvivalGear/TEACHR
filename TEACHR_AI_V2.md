@@ -33,7 +33,7 @@ Production architecture:
 
 - GitHub Pages: TEACHR website and teaching workspace
 - Firebase: authentication, verified-user identity, Firestore profile/usage state
-- Vercel: secure TEACHR AI API
+- Google Apps Script: secure TEACHR AI API (replaces the proposed Vercel hosting)
 - OpenAI GPT: generation provider
 
 The normal teacher interface exposes only TEACHR. Provider/model controls are reserved for a future Admin AI System.
@@ -57,7 +57,7 @@ Assistant follow-up messages within an active resource session should not consum
 - Record this architecture specification in the repository.
 
 ### Stage 2 — Production GPT backend
-- Deploy a secure Vercel generation API.
+- Deploy a secure Apps Script generation API.
 - Verify Firebase ID tokens server-side.
 - Keep provider credentials in server environment variables only.
 - Preserve Member/Pro/Admin/Superadmin access and quota enforcement.
