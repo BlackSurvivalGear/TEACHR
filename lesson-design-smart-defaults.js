@@ -53,12 +53,19 @@
   }
 
   function deriveVocabulary() {
-    const text = `${cleanTopic(contextTopic())} ${objective.value}`
+    const topicPhrase = cleanTopic(contextTopic()).toLowerCase();
+    const objectiveWords = String(objective.value || '')
       .toLowerCase()
       .replace(/[^a-z0-9' -]/g, ' ')
       .split(/\s+/)
       .filter(word => word.length >= 5 && !STOP_WORDS.has(word));
-    return [...new Set(text)].slice(0, 8).join(' · ');
+
+    const terms = [];
+    if (topicPhrase) terms.push(topicPhrase);
+    objectiveWords.forEach(word => {
+      if (!topicPhrase.split(/\s+/).includes(word)) terms.push(word);
+    });
+    return [...new Set(terms)].slice(0, 8).join(' · ');
   }
 
   function derivePriorKnowledge() {
