@@ -1,6 +1,5 @@
 /* Minimal signed-out TEACHR homepage. Authenticated application styles are unchanged. */
-html:not([data-auth="signed-in"]) .public-app-content,
-html:not([data-auth="signed-in"]) footer {
+html[data-auth="signed-in"] .site-footer {
   display: none !important;
 }
 
@@ -44,6 +43,19 @@ html:not([data-auth="signed-in"]) footer {
   font-size: clamp(17px, 2vw, 21px);
   line-height: 1.65;
 }
+.public-about {
+  max-width: 680px;
+  margin-top: 24px;
+  color: #8fa3bd;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.public-about p { margin: 0 0 12px; }
+.public-about strong { color: #dce8f7; }
+.public-principle {
+  margin-top: 18px !important;
+  font-size: 17px;
+}
 .public-hero-actions {
   display: flex;
   align-items: center;
@@ -70,6 +82,27 @@ html:not([data-auth="signed-in"]) footer {
   background: url("HERO.png") center bottom / contain no-repeat;
   filter: drop-shadow(0 28px 40px rgba(0, 0, 0, .3));
 }
+.site-footer {
+  border-top: 1px solid rgba(148, 163, 184, .14);
+  padding: 28px clamp(20px, 5vw, 72px);
+}
+.site-footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: #7186a4;
+  font-size: 12px;
+}
+.site-footer-brand {
+  color: #dce8f7;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-decoration: none;
+}
+.site-footer p { margin: 0; }
+.site-footer-copy { margin-left: auto !important; }
 
 html[data-auth="signed-in"] .public-hero { display: none; }
 
@@ -79,7 +112,7 @@ html[data-auth="signed-in"] .public-hero { display: none; }
     text-align: center;
   }
   .public-hero-copy { margin: 0 auto; }
-  .public-hero-text { margin-left: auto; margin-right: auto; }
+  .public-hero-text, .public-about { margin-left: auto; margin-right: auto; }
   .public-hero-actions { justify-content: center; }
   .public-hero-visual { min-height: 400px; }
 }
@@ -88,7 +121,10 @@ html[data-auth="signed-in"] .public-hero { display: none; }
   .topbar-controls { gap: 8px; }
   .public-hero { padding: 54px 20px 0; gap: 22px; }
   .public-hero h1 { font-size: clamp(50px, 16vw, 68px); }
+  .public-about { font-size: 13px; }
   .public-hero-actions { flex-direction: column; gap: 6px; }
   .public-hero-actions .btn { width: 100%; }
   .public-hero-visual { min-height: 330px; }
+  .site-footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+  .site-footer-copy { margin-left: 0 !important; }
 }
