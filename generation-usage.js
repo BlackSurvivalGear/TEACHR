@@ -5,7 +5,7 @@
   if (root) root.TEACHR_GENERATION_USAGE = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createGenerationUsageModel() {
   const FREE_GENERATIONS_PER_TOOL = 3;
-  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision','parent']);
+  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision']);
   const UNLIMITED_ROLES = Object.freeze(['pro', 'admin', 'superadmin']);
   const nonNegativeInteger = (value, fallback = 0) => { const n = Number(value); return Number.isInteger(n) && n >= 0 ? n : fallback; };
   function isGeneratingTool(toolId) { return GENERATING_TOOL_IDS.includes(toolId); }
