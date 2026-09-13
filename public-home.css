@@ -4,6 +4,16 @@ html:not([data-auth="signed-in"]) footer {
   display: none !important;
 }
 
+.topbar-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.topbar-controls > [hidden] { display: none !important; }
+
 .public-hero {
   min-height: calc(100vh - 92px);
   display: grid;
@@ -75,6 +85,7 @@ html[data-auth="signed-in"] .public-hero { display: none; }
 }
 
 @media (max-width: 620px) {
+  .topbar-controls { gap: 8px; }
   .public-hero { padding: 54px 20px 0; gap: 22px; }
   .public-hero h1 { font-size: clamp(50px, 16vw, 68px); }
   .public-hero-actions { flex-direction: column; gap: 6px; }
