@@ -1,6 +1,37 @@
-/* TEACHR generation allowance presentation and client-side guidance. */
+/* TEACHR generation allowance presentation and client-side upgrade guidance. */
 (function initialiseUsageUi() {
   const generatingTools = new Set(window.TEACHR_GENERATION_USAGE?.GENERATING_TOOL_IDS || []);
+  const DRAFT_KEY = 'teachr-upgrade-draft-v1';
+
+  function activeToolId() {
+    return document.querySelector('.tool-card.active')?.dataset.tool || 'lesson';
+  }
+
+  function formValues() {
+    const form = document.getElementById('builderForm');
+    return form ? Object.fromEntries(new FormData(form).entries()) : {};
+  }
+
+  function saveDraft() {
+    const toolId = activeToolId();
+    if (!generatingTools.has(toolId)) return;
+    try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ toolId, values: formValues(), savedAt: Date.now() })); } catch {}
+  }
+
+  function restoreDraft() {
+    let draft;
+    try { draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null'); } catch { return; }
+    if (!draft?.toolId || !draft?.values || !generatingTools.has(draft.toolId)) return;
+    const card = document.querySelector(`.tool-card[data-tool="${draft.toolId}"]`);
+    card?.click();
+    const form = document.getElementById('builderForm');
+    if (!form) return;
+    Object.entries(draft.values).forEach(([name, value]) => {
+      const field = form.elements.namedItem(name);
+      if (field && 'value' in field) field.value = value;
+    });
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
+  }
 
   function ensureSummary() {
     const intro = document.querySelector('#appDashboard .app-intro');
@@ -42,6 +73,25 @@
     return status;
   }
 
+  function updateGenerateAction(snapshot) {
+    const toolId = activeToolId();
+    const usage = snapshot.tools?.[toolId];
+    const label = document.getElementById('generateLabel');
+    if (!label || !generatingTools.has(toolId)) return;
+    const exhausted = snapshot.status === 'ready' && !snapshot.unlimited && usage?.remaining === 0;
+    if (exhausted) {
+      label.textContent = 'Upgrade to continue';
+      saveDraft();
+      return;
+    }
+    const config = {
+      lesson: 'Generate lesson', worksheet: 'Generate worksheet', quiz: 'Generate assessment',
+      differentiate: 'Differentiate activity', curriculum: 'Build curriculum map',
+      revision: 'Build revision pack', parent: 'Draft message'
+    };
+    label.textContent = config[toolId] || 'Generate';
+  }
+
   function renderToolCards(snapshot) {
     document.querySelectorAll('.app-tool-card[data-tool]').forEach(card => {
       const toolId = card.dataset.tool;
@@ -64,7 +114,7 @@
   function renderActiveTool(snapshot) {
     const status = ensureBuilderStatus();
     if (!status) return;
-    const toolId = document.querySelector('.tool-card.active')?.dataset.tool;
+    const toolId = activeToolId();
     const usage = snapshot.tools?.[toolId];
     status.className = 'builder-usage-status';
     if (snapshot.status === 'loading') status.textContent = 'Checking your generation allowance…';
@@ -74,10 +124,11 @@
     } else if (snapshot.status === 'ready' && snapshot.unlimited) status.textContent = 'Unlimited generations with Pro TEACHR.';
     else if (snapshot.status === 'ready' && usage) {
       status.textContent = usage.remaining === 0
-        ? 'No free generations remaining for this tool. Upgrade to continue.'
+        ? 'Free limit reached. Pro unlocks unlimited generations across every TEACHR tool.'
         : `${usage.remaining} of ${usage.allowance} free generations remaining for this tool.`;
       status.classList.toggle('usage-exhausted', usage.remaining === 0);
     } else status.textContent = '';
+    updateGenerateAction(snapshot);
   }
 
   function render(snapshot) {
@@ -92,9 +143,14 @@
   }
 
   window.addEventListener('teachr:usagechange', event => render(event.detail || {}));
+  document.addEventListener('input', event => { if (event.target.closest('#builderForm')) saveDraft(); });
+  document.addEventListener('change', event => { if (event.target.closest('#builderForm')) saveDraft(); });
   document.addEventListener('click', event => {
     if (!event.target.closest('.app-tool-card[data-tool]')) return;
     queueMicrotask(() => renderActiveTool(window.TEACHR_USAGE?.getSnapshot?.() || {}));
+  });
+  window.addEventListener('teachr:authchange', event => {
+    if (event.detail?.status === 'signed-in') queueMicrotask(restoreDraft);
   });
 
   const style = document.createElement('style');
