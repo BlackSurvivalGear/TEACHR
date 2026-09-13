@@ -16,7 +16,6 @@ jobs:
           node --check server/index.js
           node --check server/firebase-admin.js
           node --check server/usage-enforcement.js
-          node --check ai-provider.js
           node --check output-formatting.js
           node --check generation-usage.js
           node --check usage-service.js
@@ -33,11 +32,11 @@ jobs:
           test -f styles.css
           test -f app.js
           test -f app-shell.js
-          test -f ai-provider.js
           test -f output-formatting.js
           test -f generation-usage.js
           test -f usage-service.js
           test -f usage-ui.js
+          test -f TEACHR_AI_V2.md
           test -f LOGO.png
           test -f server/index.js
           test -f server/.env.example
@@ -47,6 +46,8 @@ jobs:
           grep -q "Assessment" index.html
           grep -q "/api/generate" app.js
           grep -q "teachrApp" app-shell.js
+          ! grep -q "Parent Message" index.html
+          ! grep -q "data-tool=\"parent\"" index.html
       - name: Validate generation usage model
         run: node tests/generation-usage.test.js
       - name: Validate frontend usage service
