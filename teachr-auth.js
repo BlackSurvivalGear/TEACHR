@@ -37,6 +37,7 @@ const profileButton = document.getElementById('profileButton');
 const profileName = document.getElementById('profileName');
 const avatar = document.getElementById('avatar');
 const dialog = document.getElementById('authDialog');
+const profileDialog = document.getElementById('profileDialog');
 const form = document.getElementById('authForm');
 const title = document.getElementById('authTitle');
 const subtitle = document.getElementById('authSubtitle');
@@ -130,6 +131,15 @@ function closeAuthDialog() {
   if (dialog.open) dialog.close();
 }
 
+function closeProfileDialog() {
+  if (profileDialog?.open) profileDialog.close();
+}
+
+async function signOut() {
+  closeProfileDialog();
+  return firebaseSignOut(auth);
+}
+
 function publishAuthState(user, profile = null) {
   state.user = user || null;
   state.profile = user ? (profile || {}) : null;
@@ -214,7 +224,7 @@ form?.addEventListener('submit', async event => {
 
 signOutButton?.addEventListener('click', async () => {
   try {
-    await firebaseSignOut(auth);
+    await signOut();
   } catch {
     window.dispatchEvent(new CustomEvent('teachr:autherror', { detail: { message: 'Sign out could not be completed.' } }));
   }
@@ -222,11 +232,15 @@ signOutButton?.addEventListener('click', async () => {
 
 onAuthStateChanged(auth, async user => {
   renderAuthState(user);
-  if (!user) { publishAuthState(null); return; }
+  if (!user) {
+    closeProfileDialog();
+    publishAuthState(null);
+    return;
+  }
   try {
     const profile = await ensureUserProfile(user);
     if (profile.suspended && user.email?.toLowerCase() !== 'admin@lawal.org') {
-      await firebaseSignOut(auth);
+      await signOut();
       window.alert('This TEACHR account is suspended. Please contact support.');
       return;
     }
@@ -251,5 +265,5 @@ window.TEACHR_AUTH = Object.freeze({
   getMode: () => state.mode,
   openSignIn: () => openAuthDialog('signin'),
   openCreateAccount: () => openAuthDialog('create'),
-  signOut: () => firebaseSignOut(auth)
+  signOut
 });
