@@ -8,7 +8,7 @@ assert.equal(adjusted.allowance, 8);
 assert.equal(usage.remainingGenerations('lesson', adjusted), 5);
 const resetAllowance = adjusted.successfulGenerations + usage.FREE_GENERATIONS_PER_TOOL;
 assert.equal(resetAllowance - adjusted.successfulGenerations, 3);
-assert.deepEqual(usage.GENERATING_TOOL_IDS, ['lesson','worksheet','quiz','differentiate','curriculum','revision','parent']);
+assert.deepEqual(usage.GENERATING_TOOL_IDS, ['lesson','worksheet','quiz','differentiate','curriculum','revision']);
 const service = fs.readFileSync(path.join(__dirname, '../server/admin-usage.js'), 'utf8');
 assert.match(service, /\['admin', 'superadmin'\]\.includes\(role\)/);
 assert.match(service, /tool === 'all'/);
@@ -27,6 +27,8 @@ assert.match(admin, /adjustUsage\(reset\.dataset\.reset,'reset'\)/, 'per-tool re
 assert.match(admin, /getIdToken\(\)/, 'admin mutations must authenticate to backend');
 assert.match(admin, /'all','add'/, 'shared all-tools grant must be wired');
 assert.match(admin, /'all','reset'/, 'all-tools reset must be wired');
+assert.match(admin, /all six tools/, 'bulk quota controls must describe the six-tool model');
+assert.doesNotMatch(admin, /Parent Message|parent:'Parent Message'/, 'parent communication must be removed from admin usage controls');
 assert.match(admin, /confirm\(/, 'quota changes must require confirmation');
 const production = fs.readFileSync(path.join(__dirname, '../admin-production-api.js'), 'utf8');
 assert.match(production, /documents:commit/, 'production adapter must use an atomic Firestore commit');
@@ -35,6 +37,7 @@ assert.match(production, /Math\.max\(currentAllowance,used\)\+amount/, 'producti
 assert.match(production, /action==='reset'\?used\+3/, 'production reset must preserve history and grant three fresh uses');
 assert.match(production, /adminUid/, 'production writes must carry administrator audit identity');
 assert.match(production, /Authorization:token/, 'production writes must use the Firebase ID token so Firestore rules remain authoritative');
+assert.doesNotMatch(production, /'parent'/, 'production quota adapter must not expose parent communication');
 const html = fs.readFileSync(path.join(__dirname, '../admin.html'), 'utf8');
 assert.match(html, /id="bulkAmount"/);
 assert.match(html, /id="grantAll"/);
