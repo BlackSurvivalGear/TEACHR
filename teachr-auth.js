@@ -30,6 +30,8 @@ const state = {
 };
 
 const authButton = document.getElementById('authButton');
+const createAccountButton = document.getElementById('createAccountButton');
+const heroSignInButton = document.getElementById('heroSignInButton');
 const profileButton = document.getElementById('profileButton');
 const profileName = document.getElementById('profileName');
 const avatar = document.getElementById('avatar');
@@ -166,6 +168,8 @@ function renderAuthState(user) {
 }
 
 authButton?.addEventListener('click', () => openAuthDialog('signin'));
+createAccountButton?.addEventListener('click', () => openAuthDialog('create'));
+heroSignInButton?.addEventListener('click', () => openAuthDialog('signin'));
 modeButton?.addEventListener('click', () => setCreateMode(!createMode));
 
 googleButton?.addEventListener('click', async () => {
