@@ -58,11 +58,30 @@
     return `users/${uid}/usage/${toolId}`;
   }
 
+  function createUsageSnapshot(profile = {}, records = []) {
+    const unlimited = hasUnlimitedGenerations(profile);
+    const recordsByTool = new Map(
+      (Array.isArray(records) ? records : [])
+        .filter(record => isGeneratingTool(record?.toolId))
+        .map(record => [record.toolId, record])
+    );
+    const tools = Object.fromEntries(GENERATING_TOOL_IDS.map(toolId => {
+      const record = normaliseUsageRecord(toolId, recordsByTool.get(toolId));
+      return [toolId, {
+        successfulGenerations: record.successfulGenerations,
+        allowance: record.allowance,
+        remaining: unlimited ? null : remainingGenerations(toolId, record)
+      }];
+    }));
+    return { unlimited, tools };
+  }
+
   return Object.freeze({
     FREE_GENERATIONS_PER_TOOL,
     GENERATING_TOOL_IDS,
     UNLIMITED_ROLES,
     createUsageRecord,
+    createUsageSnapshot,
     hasUnlimitedGenerations,
     isGeneratingTool,
     normaliseUsageRecord,
