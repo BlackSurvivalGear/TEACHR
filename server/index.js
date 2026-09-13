@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { getFirebaseAdminServices } = require('./firebase-admin.js');
 const { GenerationAccessError, createUsageEnforcer } = require('./usage-enforcement.js');
+const { AdminUsageError, createAdminUsageService } = require('./admin-usage.js');
 
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -11,186 +12,15 @@ const AI_MODEL = process.env.AI_MODEL || 'gpt-5.6-luna';
 const ROOT = path.resolve(__dirname, '..');
 const MAX_BODY = 100000;
 const UPSTREAM_TIMEOUT_MS = 15000;
-let usageEnforcer;
+let usageEnforcer, adminUsageService;
 
-const PROVIDERS = {
-  openai: {
-    name: 'OpenAI',
-    modelsUrl: 'https://api.openai.com/v1/models',
-    chatUrl: 'https://api.openai.com/v1/chat/completions'
-  },
-  google: { name: 'Google Gemini' },
-  anthropic: { name: 'Anthropic Claude' }
-};
-
-function send(res, status, data, type = 'application/json') {
-  res.writeHead(status, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store' });
-  res.end(type === 'application/json' ? JSON.stringify(data) : data);
-}
-
-function readBody(req) {
-  return new Promise((resolve, reject) => {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk;
-      if (body.length > MAX_BODY) {
-        reject(new Error('Request too large'));
-        req.destroy();
-      }
-    });
-    req.on('end', () => {
-      try { resolve(JSON.parse(body || '{}')); }
-      catch { reject(new Error('Invalid JSON')); }
-    });
-    req.on('error', reject);
-  });
-}
-
-async function fetchUpstream(url, options) {
-  return fetch(url, { ...options, signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
-}
-
-async function testProvider(req, res) {
-  const body = await readBody(req);
-  const provider = PROVIDERS[body.provider];
-  if (!provider) return send(res, 400, { error: 'Unknown AI provider' });
-  if (body.provider !== 'openai') return send(res, 501, { error: `${provider.name} provider is not implemented yet` });
-
-  const apiKey = typeof body.apiKey === 'string' && body.apiKey.trim() ? body.apiKey.trim() : AI_API_KEY;
-  if (!apiKey) return send(res, 400, { error: 'API key is required' });
-
-  let upstream;
-  try {
-    upstream = await fetchUpstream(provider.modelsUrl, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${apiKey}` }
-    });
-  } catch (error) {
-    const message = error?.name === 'TimeoutError'
-      ? 'OpenAI request timed out. Check your internet connection and try again.'
-      : 'Could not reach OpenAI. Check your internet connection and try again.';
-    return send(res, 502, { error: message });
-  }
-
-  const raw = await upstream.text();
-  if (!upstream.ok) {
-    return send(res, upstream.status, {
-      error: upstream.status === 401 || upstream.status === 403
-        ? 'OpenAI rejected the API key. Check that the key is valid and active.'
-        : 'OpenAI model request failed',
-      detail: raw.slice(0, 300)
-    });
-  }
-
-  let payload;
-  try { payload = JSON.parse(raw); }
-  catch { return send(res, 502, { error: 'OpenAI returned invalid JSON' }); }
-
-  const models = Array.isArray(payload.data) ? payload.data.map(item => item.id).filter(Boolean) : [];
-  const availableModels = models
-    .filter(id => /^gpt-/i.test(id))
-    .sort((a, b) => a.localeCompare(b));
-  const requestedModel = typeof body.model === 'string' ? body.model.trim() : '';
-  const modelAvailable = !requestedModel || models.includes(requestedModel);
-  if (requestedModel && !modelAvailable) {
-    return send(res, 400, {
-      error: `Model ${requestedModel} is not available to this API key`,
-      availableModels
-    });
-  }
-
-  return send(res, 200, {
-    ok: true,
-    provider: provider.name,
-    model: requestedModel || null,
-    modelAvailable,
-    availableModels: availableModels.slice(0, 100)
-  });
-}
-
-async function generate(req, res) {
-  const body = await readBody(req);
-  if (typeof body.prompt !== 'string' || !body.prompt.trim()) return send(res, 400, { error: 'prompt is required' });
-  if (body.prompt.length > 12000) return send(res, 400, { error: 'prompt is too long' });
-
-  try {
-    usageEnforcer ||= createUsageEnforcer(getFirebaseAdminServices());
-  } catch (error) {
-    console.error('Firebase Admin configuration error:', error.message);
-    return send(res, 503, { error: 'Generation access control is not configured' });
-  }
-
-  let access;
-  try { access = await usageEnforcer.authorise(req, body.tool); }
-  catch (error) {
-    if (error instanceof GenerationAccessError) return send(res, error.status, { error: error.message, code: error.code });
-    console.error('Generation authorisation failed:', error.message);
-    return send(res, 503, { error: 'Generation access could not be verified' });
-  }
-
-  const apiKey = AI_API_KEY;
-  if (!apiKey) return send(res, 503, { error: 'AI backend is not configured. Set AI_API_KEY on the server.' });
-
-  const model = body.model || AI_MODEL;
-  let upstream;
-  try {
-    upstream = await fetchUpstream(PROVIDERS.openai.chatUrl, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        temperature: 0.4,
-        messages: [
-          { role: 'system', content: 'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.' },
-          { role: 'user', content: body.prompt }
-        ]
-      })
-    });
-  } catch (error) {
-    const message = error?.name === 'TimeoutError'
-      ? 'AI provider request timed out. Try again.'
-      : 'Could not reach the AI provider. Check the server connection and try again.';
-    return send(res, 502, { error: message });
-  }
-
-  const raw = await upstream.text();
-  if (!upstream.ok) return send(res, upstream.status, { error: 'AI provider request failed', detail: raw.slice(0, 500) });
-  let payload;
-  try { payload = JSON.parse(raw); }
-  catch { return send(res, 502, { error: 'AI provider returned invalid JSON' }); }
-  const content = payload?.choices?.[0]?.message?.content;
-  if (!content) return send(res, 502, { error: 'AI provider returned no content' });
-  let usage;
-  try { usage = await usageEnforcer.recordSuccess(access); }
-  catch (error) {
-    if (error instanceof GenerationAccessError) return send(res, error.status, { error: error.message, code: error.code });
-    console.error('Generation usage update failed:', error.message);
-    return send(res, 503, { error: 'Generation usage could not be recorded' });
-  }
-  return send(res, 200, { content, model, usage });
-}
-
-const server = http.createServer(async (req, res) => {
-  try {
-    const route = (req.url || '').split('?')[0];
-    if (req.method === 'POST' && route === '/api/ai/test') return await testProvider(req, res);
-    if (req.method === 'POST' && route === '/api/generate') return await generate(req, res);
-    if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error: 'Method not allowed' });
-
-    const requested = decodeURIComponent(route || '/');
-    const relative = requested === '/' ? 'index.html' : requested.replace(/^\/+/, '');
-    const filePath = path.resolve(ROOT, relative);
-    if (!filePath.startsWith(ROOT + path.sep)) return send(res, 403, { error: 'Forbidden' });
-    if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) return send(res, 404, { error: 'Not found' });
-
-    const ext = path.extname(filePath).toLowerCase();
-    const types = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.svg':'image/svg+xml', '.ico':'image/x-icon' };
-    res.writeHead(200, { 'Content-Type': `${types[ext] || 'application/octet-stream'}; charset=utf-8`, 'Cache-Control': 'no-store' });
-    if (req.method === 'HEAD') return res.end();
-    fs.createReadStream(filePath).pipe(res);
-  } catch (error) {
-    send(res, 500, { error: error.message || 'Server error' });
-  }
-});
-
-server.listen(PORT, HOST, () => console.log(`TEACHR running at http://${HOST}:${PORT}`));
+const PROVIDERS = { openai:{name:'OpenAI',modelsUrl:'https://api.openai.com/v1/models',chatUrl:'https://api.openai.com/v1/chat/completions'}, google:{name:'Google Gemini'}, anthropic:{name:'Anthropic Claude'} };
+function send(res,status,data,type='application/json'){res.writeHead(status,{'Content-Type':`${type}; charset=utf-8`,'Cache-Control':'no-store'});res.end(type==='application/json'?JSON.stringify(data):data)}
+function readBody(req){return new Promise((resolve,reject)=>{let body='';req.on('data',chunk=>{body+=chunk;if(body.length>MAX_BODY){reject(new Error('Request too large'));req.destroy()}});req.on('end',()=>{try{resolve(JSON.parse(body||'{}'))}catch{reject(new Error('Invalid JSON'))}});req.on('error',reject)})}
+async function fetchUpstream(url,options){return fetch(url,{...options,signal:AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)})}
+function getAdminUsageService(){adminUsageService ||= createAdminUsageService(getFirebaseAdminServices());return adminUsageService}
+async function adminUsage(req,res,route){try{const service=getAdminUsageService();if(req.method==='GET'){const url=new URL(req.url,'http://localhost');return send(res,200,await service.readUsage(req,url.searchParams.get('uid')))}if(req.method==='POST'&&route==='/api/admin/usage-adjustment')return send(res,200,await service.adjust(req,await readBody(req)));return send(res,405,{error:'Method not allowed'})}catch(error){if(error instanceof AdminUsageError)return send(res,error.status,{error:error.message,code:error.code});console.error('Admin usage request failed:',error.message);return send(res,503,{error:'Admin generation usage could not be updated'})}}
+async function testProvider(req,res){const body=await readBody(req),provider=PROVIDERS[body.provider];if(!provider)return send(res,400,{error:'Unknown AI provider'});if(body.provider!=='openai')return send(res,501,{error:`${provider.name} provider is not implemented yet`});const apiKey=typeof body.apiKey==='string'&&body.apiKey.trim()?body.apiKey.trim():AI_API_KEY;if(!apiKey)return send(res,400,{error:'API key is required'});let upstream;try{upstream=await fetchUpstream(provider.modelsUrl,{method:'GET',headers:{Authorization:`Bearer ${apiKey}`}})}catch(error){return send(res,502,{error:error?.name==='TimeoutError'?'OpenAI request timed out. Check your internet connection and try again.':'Could not reach OpenAI. Check your internet connection and try again.'})}const raw=await upstream.text();if(!upstream.ok)return send(res,upstream.status,{error:upstream.status===401||upstream.status===403?'OpenAI rejected the API key. Check that the key is valid and active.':'OpenAI model request failed',detail:raw.slice(0,300)});let payload;try{payload=JSON.parse(raw)}catch{return send(res,502,{error:'OpenAI returned invalid JSON'})}const models=Array.isArray(payload.data)?payload.data.map(item=>item.id).filter(Boolean):[],availableModels=models.filter(id=>/^gpt-/i.test(id)).sort((a,b)=>a.localeCompare(b)),requestedModel=typeof body.model==='string'?body.model.trim():'';if(requestedModel&&!models.includes(requestedModel))return send(res,400,{error:`Model ${requestedModel} is not available to this API key`,availableModels});return send(res,200,{ok:true,provider:provider.name,model:requestedModel||null,modelAvailable:true,availableModels:availableModels.slice(0,100)})}
+async function generate(req,res){const body=await readBody(req);if(typeof body.prompt!=='string'||!body.prompt.trim())return send(res,400,{error:'prompt is required'});if(body.prompt.length>12000)return send(res,400,{error:'prompt is too long'});try{usageEnforcer ||= createUsageEnforcer(getFirebaseAdminServices())}catch(error){console.error('Firebase Admin configuration error:',error.message);return send(res,503,{error:'Generation access control is not configured'})}let access;try{access=await usageEnforcer.authorise(req,body.tool)}catch(error){if(error instanceof GenerationAccessError)return send(res,error.status,{error:error.message,code:error.code});return send(res,503,{error:'Generation access could not be verified'})}if(!AI_API_KEY)return send(res,503,{error:'AI backend is not configured. Set AI_API_KEY on the server.'});let upstream;try{upstream=await fetchUpstream(PROVIDERS.openai.chatUrl,{method:'POST',headers:{Authorization:`Bearer ${AI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:body.model||AI_MODEL,temperature:.4,messages:[{role:'system',content:'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. Use clear headings and concise sections. A teacher remains responsible for final review.'},{role:'user',content:body.prompt}]})})}catch(error){return send(res,502,{error:error?.name==='TimeoutError'?'AI provider request timed out. Try again.':'Could not reach the AI provider. Check the server connection and try again.'})}const raw=await upstream.text();if(!upstream.ok)return send(res,upstream.status,{error:'AI provider request failed',detail:raw.slice(0,500)});let payload;try{payload=JSON.parse(raw)}catch{return send(res,502,{error:'AI provider returned invalid JSON'})}const content=payload?.choices?.[0]?.message?.content;if(!content)return send(res,502,{error:'AI provider returned no content'});let usage;try{usage=await usageEnforcer.recordSuccess(access)}catch(error){if(error instanceof GenerationAccessError)return send(res,error.status,{error:error.message,code:error.code});return send(res,503,{error:'Generation usage could not be recorded'})}return send(res,200,{content,model:body.model||AI_MODEL,usage})}
+const server=http.createServer(async(req,res)=>{try{const route=(req.url||'').split('?')[0];if(route==='/api/admin/usage'||route==='/api/admin/usage-adjustment')return await adminUsage(req,res,route);if(req.method==='POST'&&route==='/api/ai/test')return await testProvider(req,res);if(req.method==='POST'&&route==='/api/generate')return await generate(req,res);if(req.method!=='GET'&&req.method!=='HEAD')return send(res,405,{error:'Method not allowed'});const requested=decodeURIComponent(route||'/'),relative=requested==='/'?'index.html':requested.replace(/^\/+/,''),filePath=path.resolve(ROOT,relative);if(!filePath.startsWith(ROOT+path.sep))return send(res,403,{error:'Forbidden'});if(!fs.existsSync(filePath)||fs.statSync(filePath).isDirectory())return send(res,404,{error:'Not found'});const ext=path.extname(filePath).toLowerCase(),types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon'};res.writeHead(200,{'Content-Type':`${types[ext]||'application/octet-stream'}; charset=utf-8`,'Cache-Control':'no-store'});if(req.method==='HEAD')return res.end();fs.createReadStream(filePath).pipe(res)}catch(error){send(res,500,{error:error.message||'Server error'})}});
+server.listen(PORT,HOST,()=>console.log(`TEACHR running at http://${HOST}:${PORT}`));
