@@ -37,6 +37,10 @@
     return String(prompt || '').replace(/\n?\[TEACHR LESSON DESIGN\][\s\S]*?(?=\n\nTEACHR CURRICULUM CONTEXT|$)/, '').trim();
   }
 
+  function diagnosticError(message, details = {}) {
+    return Object.assign(new Error(message), { diagnostic: details, ...details });
+  }
+
   root.TEACHR_AI = Object.freeze({
     async generate({ token, prompt, tool, signal, includeCurriculum = tool !== 'chat' }) {
       if (!token) throw Object.assign(new Error('Sign in to generate resources.'), { code: 'AUTH_REQUIRED' });
@@ -49,18 +53,44 @@
       const local = ['localhost', '127.0.0.1', '[::1]'].includes(root.location.hostname);
       const url = local ? '/api/generate' : root.TEACHR_PAYMENT?.appsScriptUrl;
       if (!local && !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url || '')) {
-        throw new Error('The generation service is not configured.');
+        throw diagnosticError('The generation service is not configured.', { code: 'TRANSPORT_CONFIG', stage: 'configuration' });
       }
-      const response = await root.fetch(url, {
-        method: 'POST', credentials: 'omit', redirect: 'follow', signal,
-        headers: local ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'text/plain;charset=UTF-8' },
-        body: JSON.stringify(local ? { prompt: finalPrompt, tool } : { action: 'generate', idToken: token, prompt: finalPrompt, tool })
+      let response;
+      try {
+        response = await root.fetch(url, {
+          method: 'POST', credentials: 'omit', redirect: 'follow', signal,
+          headers: local ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify(local ? { prompt: finalPrompt, tool } : { action: 'generate', idToken: token, prompt: finalPrompt, tool })
+        });
+      } catch (error) {
+        if (error?.name === 'AbortError') throw error;
+        throw diagnosticError('Generation transport failed before a response was received.', {
+          code: 'TRANSPORT_FETCH_FAILED', stage: 'fetch', cause: error?.message || String(error)
+        });
+      }
+      const raw = await response.text().catch(error => {
+        throw diagnosticError('Generation response could not be read.', {
+          code: 'TRANSPORT_READ_FAILED', stage: 'response-read', status: response.status, cause: error?.message || String(error)
+        });
       });
-      const payload = await response.json().catch(() => { throw new Error('The generation service returned an invalid response.'); });
-      if (!response.ok || payload?.ok === false) {
-        throw Object.assign(new Error(payload?.error || 'Generation failed.'), { code: payload?.code, status: payload?.status || response.status });
+      let payload;
+      try {
+        payload = JSON.parse(raw);
+      } catch (_) {
+        throw diagnosticError('The generation service returned an invalid response.', {
+          code: 'TRANSPORT_INVALID_JSON', stage: 'response-json', status: response.status,
+          responsePreview: raw.slice(0, 240)
+        });
       }
-      if (!payload || typeof payload.content !== 'string' || !payload.content.trim() || (!local && payload.ok !== true)) throw new Error('AI service returned no content.');
+      if (!response.ok || payload?.ok === false) {
+        throw Object.assign(new Error(payload?.error || 'Generation failed.'), {
+          code: payload?.code || 'GENERATION_FAILED', status: payload?.status || response.status,
+          diagnostic: { stage: 'apps-script', httpStatus: response.status, backendCode: payload?.code || null }
+        });
+      }
+      if (!payload || typeof payload.content !== 'string' || !payload.content.trim() || (!local && payload.ok !== true)) {
+        throw diagnosticError('AI service returned no content.', { code: 'EMPTY_CONTENT', stage: 'response-validation', status: response.status });
+      }
       return payload;
     }
   });
