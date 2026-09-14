@@ -1,1 +1,0 @@
-Automated regression coverage is provided by `tests/vle-dashboard-card.test.js` and `.github/workflows/vle-dashboard-card.yml`. Live authenticated verification is still required after merge/deployment.
