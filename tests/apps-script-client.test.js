@@ -5,7 +5,7 @@ const source = fs.readFileSync('generation-client.js', 'utf8');
 (async () => {
   const endpoint = 'https://script.google.com/macros/s/test-deployment/exec';
   let sent, reply = { ok: true, content: 'Lesson', usage: { remaining: 2 } };
-  const window = { location: { hostname: 'teachr.uk' }, TEACHR_PAYMENT: { appsScriptUrl: endpoint }, fetch: async (url, options) => { sent = { url, options }; return { ok: true, status: 200, json: async () => reply }; } };
+  const window = { location: { hostname: 'teachr.uk' }, TEACHR_PAYMENT: { appsScriptUrl: endpoint }, fetch: async (url, options) => { sent = { url, options }; return { ok: true, status: 200, text: async () => JSON.stringify(reply) }; } };
   vm.runInNewContext(source, { window });
   const input = { token: 'firebase-token', prompt: 'Fractions', tool: 'lesson' };
   assert.equal((await window.TEACHR_AI.generate(input)).content, 'Lesson');
