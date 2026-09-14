@@ -1,0 +1,12 @@
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('ai-chat-panel.js','utf8');
+const css=fs.readFileSync('ai-chat-panel.css','utf8');
+assert(js.includes("link.href='upgrade.html'"),'chat limit must link to existing upgrade page');
+assert(js.includes("error?.code==='CHAT_LIMIT_REACHED'"),'upgrade CTA must be limited to chat quota errors');
+assert(js.includes("navigator.clipboard.writeText(text)"),'AI responses must support clipboard copy');
+assert(js.includes("if(role==='assistant'&&extraClass!=='pending'&&extraClass!=='error')addCopyControl"),'copy control must be restricted to successful assistant responses');
+assert(js.includes("(chat.messages||[]).slice(-40).forEach"),'saved conversations must render through addMessage and retain copy controls');
+assert(css.includes('.teachr-chat-copy'),'clipboard control must be styled');
+assert(css.includes('.teachr-chat-upgrade'),'upgrade CTA must be styled');
+console.log('chat UX checks passed');
