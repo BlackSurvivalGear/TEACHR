@@ -18,8 +18,9 @@ assert(chat.includes('Controlled paraphrases are not statutory quotations.'), 'c
 assert(chat.includes('Never present an AI-created objective as an official curriculum statement.'), 'chat must prohibit fabricated official objectives');
 assert(chat.includes('contextEnabled'), 'chat must allow contextual assistance to be disabled');
 assert(chat.includes('Using context:'), 'chat must visibly report the current context');
-assert(chat.includes('includeCurriculum: false'), 'chat must avoid duplicate transport-level curriculum injection');
-assert(chat.includes('stage: 3'), 'chat API must report Stage 3');
+assert(/includeCurriculum\s*:\s*false/.test(chat), 'chat must avoid duplicate transport-level curriculum injection');
+const stageMatch = chat.match(/stage\s*:\s*(\d+)/);
+assert(stageMatch && Number(stageMatch[1]) >= 3, 'chat API must preserve Stage 3 context capabilities in later stages');
 assert(css.includes('.teachr-chat-context'), 'chat context indicator must be styled');
 
 console.log('AI chat Stage 3 context awareness tests passed');
