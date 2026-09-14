@@ -1,2 +1,0 @@
-Verification target: node tests/chat-ux.test.js
-Expected: chat UX checks passed
