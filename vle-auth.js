@@ -2,7 +2,9 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/fireba
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { firebaseConfig } from './firebase-config.js';
 
-const app = initializeApp(firebaseConfig, 'teachr-vle');
+// Use the default Firebase app name so Auth reads the same persisted session
+// created by teachr-auth.js on the main TEACHR workspace.
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const content = document.getElementById('vleContent');
 const locked = document.getElementById('vleLocked');
