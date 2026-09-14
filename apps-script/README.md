@@ -45,6 +45,48 @@ Stripe GET handlers and subscription reconciliation remain unchanged. The new
    and the daily reconciliation trigger still work. Local mocks cannot verify
    Google's CORS behavior, authorization, actual Firestore transactions or billing.
 
+### Ask TEACHR / AI Chat deployment sync
+
+Ask TEACHR uses the same `/exec` web app as the six generators, but its server path
+also depends on **ChatUsage.gs**. A deployment that contains `Generation.gs` but
+not the current `ChatUsage.gs` can leave the six generators working while chat
+fails with the generic `Generation service is unavailable. Please try again.`
+response.
+
+For every Apps Script AI deployment, treat these repository files as one deployable
+backend set and synchronise all of them before creating the new Apps Script version:
+
+- `Code.gs` — existing Stripe/subscription GET handlers and shared `CONFIG`.
+- `Generation.gs` — the single generation `doPost`, Firebase identity verification,
+  provider call, and routing between generator and chat usage.
+- `GenerationUsage.gs` — the six generating-tool allowance implementation.
+- `ChatUsage.gs` — Ask TEACHR's independent 10-message free allowance and success
+  recording.
+- `appsscript.json` — required Apps Script OAuth scopes.
+
+Do not create a second Apps Script project and do not change `payment-config.js`
+when synchronising an existing deployment. In the existing TEACHR Apps Script
+project, add/update the files above, then use **Deploy → Manage deployments → Edit
+→ New version → Deploy** so the current `/exec` URL remains stable.
+
+Before redeploying, confirm Script Properties still contain `AI_API_KEY`, `AI_MODEL`
+and the existing Stripe configuration. After redeploying, test in this order:
+
+1. Lesson Builder still returns AI content.
+2. Ask TEACHR returns AI content for a signed-in, verified member.
+3. A successful Ask TEACHR response increments only `users/{uid}/usage/chat`.
+4. Ask TEACHR failures consume no chat allowance.
+5. Generator usage remains independent from chat usage.
+6. Pro/Admin/Superadmin chat remains unlimited.
+7. Stripe checkout and subscription reconciliation still work.
+
+If Ask TEACHR still returns the generic availability message after a complete sync,
+inspect the Apps Script execution log for the failing `doPost`. Known chat errors
+(`AUTH_REQUIRED`, `INVALID_TOKEN`, `EMAIL_NOT_VERIFIED`, `PROFILE_REQUIRED`,
+`CHAT_LIMIT_REACHED`, `AI_NOT_CONFIGURED`, `AI_PROVIDER_FAILED`,
+`AI_EMPTY_RESPONSE`, `USAGE_UNAVAILABLE`) should reach the client with their
+specific messages; the generic message indicates an unexpected server exception.
+
 The production client uses the existing `TEACHR_PAYMENT.appsScriptUrl`. Firebase
 ID tokens travel in a JSON body sent as `text/plain` to avoid a CORS preflight;
 no token is placed in a URL. Redirects are followed and Google cookies are omitted.
