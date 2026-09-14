@@ -1,79 +1,58 @@
-/* TEACHR brand system — warm, welcoming, teacher-first */
-:root { --brand-navy:#0b1f3a; --brand-navy-deep:#06152b; --brand-blue:#159fe8; --brand-sky:#36bdf6; --brand-gold:#f7b928; --brand-orange:#ef7b22; --brand-coral:#f97316; --brand-indigo:#6366f1; --brand-emerald:#10b981; --brand-rose:#f43f5e; --brand-teal:#14b8a6; --brand-cream:#fffaf0; --brand-surface:#fff; --brand-text:#10233f; --brand-muted:#667892; --brand-line:#dce4ee; --brand-shadow:0 18px 50px rgba(16,35,63,.10); }
-.brand-logo { width:132px !important; height:auto; display:block; }
-.brand-logo-light { display:none !important; }
-.brand-logo-dark { display:block; }
-html[data-theme="light"] .brand-logo-dark { display:none !important; }
-html[data-theme="light"] .brand-logo-light { display:block !important; }
-body { background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transparent 25%),radial-gradient(circle at 5% 42%,rgba(21,159,232,.16),transparent 30%),linear-gradient(135deg,#06152b 0%,#0b1f3a 52%,#081a31 100%); color:#f8fbff; }
-.topbar { background:rgba(6,21,43,.88); border-bottom:1px solid rgba(255,255,255,.10); }
-.topnav a { color:#aabbd1; } .topnav a:hover { color:#fff; }
-.eyebrow { color:#65c9fa; }
-.hero h1 span { background:linear-gradient(90deg,#28b8f4 0%,#f7c33f 78%); -webkit-background-clip:text; background-clip:text; }
-.btn-primary { background:linear-gradient(135deg,#159fe8 0%,#f4ad25 100%); box-shadow:0 14px 34px rgba(21,159,232,.24); }
-.btn-primary:hover { box-shadow:0 18px 40px rgba(247,185,40,.24); }
-.btn-ghost { color:#e8f1fb; border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.06); }
-.glass { background:linear-gradient(145deg,rgba(17,43,75,.94),rgba(7,25,48,.94)); border-color:rgba(128,196,241,.17); }
-.teachr-app { color:var(--brand-text); background:linear-gradient(180deg,#fbfaf7 0%,#f4f7fb 100%); border-radius:0; }
-.teachr-app-head h1 { color:var(--brand-text); } .teachr-app-head>div>p:last-child { color:#6d7d93; }
-.app-home-button { color:var(--brand-navy); background:#fff; border-color:#d9e2ed; box-shadow:0 8px 22px rgba(16,35,63,.06); }
-.app-home-button:hover { border-color:#b9c9db; background:#fffdf9; }
-.app-intro h2 { color:var(--brand-text); } .app-intro p { color:#6f8098; }
-.app-tool-grid { gap:18px; }
-.app-tool-card { min-height:188px; color:var(--brand-text); background:#fff; border:1px solid #dce5ef; box-shadow:0 10px 30px rgba(16,35,63,.07); }
-.app-tool-card:hover { transform:translateY(-4px); border-color:#9ec9e8; box-shadow:0 18px 42px rgba(16,35,63,.12); }
-.app-tool-card strong { color:var(--brand-text); } .app-tool-card small { color:#6d7e96; } .app-tool-arrow { color:#159fe8; }
-.app-tool-icon { box-shadow:inset 0 0 0 1px rgba(255,255,255,.28); }
-.app-tool-icon.blue,.tool-icon.blue { background:#e5f5ff; color:#118ed2; } .app-tool-icon.purple,.tool-icon.purple { background:#eee9ff; color:#7355e8; } .app-tool-icon.cyan,.tool-icon.cyan { background:#e3f8ff; color:#129fc5; } .app-tool-icon.violet,.tool-icon.violet { background:#eee9ff; color:#7756e7; } .app-tool-icon.green,.tool-icon.green { background:#e3f8ef; color:#0a9a6a; } .app-tool-icon.orange,.tool-icon.orange { background:#fff1dc; color:#df8217; } .app-tool-icon.pink,.tool-icon.pink { background:#ffe7ee; color:#e4486c; } .app-tool-icon.teal,.tool-icon.teal { background:#e1f8f5; color:#079f91; }
-#appToolMount { color:var(--brand-text); } #appToolMount>.builder { background:#fff; border:1px solid #dce5ef; box-shadow:var(--brand-shadow); color:var(--brand-text); }
-#appToolMount .builder-header h3,#appToolMount .section-heading h2,#appToolMount .result h4 { color:var(--brand-text); } #appToolMount .builder-description,#appToolMount .section-sub,#appToolMount .result-sub { color:#718199; }
-#appToolMount .online { color:#718199; border-color:#dce5ef; background:#fbfcfe; } #appToolMount .field label { color:#51657f; } #appToolMount .field label span { color:#8a98aa; }
-#appToolMount .field input,#appToolMount .field select,#appToolMount .field textarea { background:#fff; color:var(--brand-text); border-color:#cbd8e6; }
-#appToolMount .field input:focus,#appToolMount .field select:focus,#appToolMount .field textarea:focus { border-color:#49afe2; box-shadow:0 0 0 3px rgba(21,159,232,.10); }
-#appToolMount .result { border-color:#e2e8f0; } #appToolMount .result-item { background:#fbfcfe; border-color:#dce5ef; } #appToolMount .result-item p { color:#64758c; }
-#appToolMount .library-actions input { background:#fff; color:var(--brand-text); border-color:#cbd8e6; } #appToolMount .filter { background:#fff; color:#64758c; border-color:#d7e1eb; } #appToolMount .filter.active,#appToolMount .filter:hover { color:#0b6eaa; border-color:#9dd4f2; background:#eaf7ff; }
-#appToolMount .resource-card { background:#fff; border-color:#dce5ef; box-shadow:0 8px 24px rgba(16,35,63,.05); } #appToolMount .resource-card p { color:#6d7e96; } #appToolMount .resource-preview span { background:#f5f8fb; border-color:#e0e7ef; color:#60738c; } #appToolMount .resource-actions button { color:#0c8dcc; }
-#appToolMount .lesson-design,#appToolMount .ai-engine,#appToolMount .lesson-builder-section,#appToolMount .builder-section { border-color:#d9e2ec !important; }
+/* TEACHR brand system — centralised semantic colour system */
+:root {
+  --brand-navy:#0b1f3a; --brand-navy-deep:#06152b; --brand-blue:#159fe8; --brand-sky:#36bdf6;
+  --brand-gold:#f7b928; --brand-orange:#ef7b22; --brand-indigo:#6366f1; --brand-emerald:#10b981;
+  --brand-surface:#ffffff; --brand-text:#10233f; --brand-muted:#52657d; --brand-line:#d7e1eb;
+  --workspace-bg:#f4f7fb; --workspace-surface:#ffffff; --workspace-surface-soft:#f8fafc;
+  --workspace-text:#10233f; --workspace-muted:#52657d; --workspace-subtle:#6b7d93; --workspace-line:#d7e1eb;
+  --workspace-input:#ffffff; --workspace-accent:#0b79b7; --workspace-shadow:0 18px 50px rgba(16,35,63,.10);
+}
+html[data-theme="dark"] {
+  --workspace-bg:#08192d; --workspace-surface:#0e2540; --workspace-surface-soft:#122c49;
+  --workspace-text:#f4f8fc; --workspace-muted:#c0cede; --workspace-subtle:#9fb2c8; --workspace-line:#35516d;
+  --workspace-input:#123452; --workspace-accent:#69c9f7; --workspace-shadow:0 18px 50px rgba(0,0,0,.24);
+}
+.brand-logo{width:132px!important;height:auto;display:block}.brand-logo-light{display:none!important}.brand-logo-dark{display:block}
+html[data-theme="light"] .brand-logo-dark{display:none!important}html[data-theme="light"] .brand-logo-light{display:block!important}
+body{background:radial-gradient(circle at 78% 8%,rgba(247,185,40,.13),transparent 25%),radial-gradient(circle at 5% 42%,rgba(21,159,232,.16),transparent 30%),linear-gradient(135deg,#06152b 0%,#0b1f3a 52%,#081a31 100%);color:#f8fbff}
+.topbar{background:rgba(6,21,43,.92);border-bottom:1px solid rgba(255,255,255,.10);min-height:92px;height:92px;padding-top:4px}.topnav a{color:#b7c6d8}.topnav a:hover{color:#fff}.eyebrow{color:#65c9fa}
+.brand{display:flex;align-items:center;height:100%;min-width:150px}.brand img{width:132px!important;height:auto!important;max-height:84px;object-fit:contain;display:block}
+.btn-primary{background:linear-gradient(135deg,#159fe8 0%,#f4ad25 100%);box-shadow:0 14px 34px rgba(21,159,232,.24)}.btn-ghost{color:#e8f1fb;border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+.glass{background:linear-gradient(145deg,rgba(17,43,75,.94),rgba(7,25,48,.94));border-color:rgba(128,196,241,.17)}
+.hero-card{display:none!important}.hero-card-wrap{min-height:500px;height:500px;position:relative;isolation:isolate}.hero-card-wrap::before{content:"";position:absolute;inset:0;background:url("HERO.png") center bottom/contain no-repeat;z-index:2;filter:drop-shadow(0 24px 35px rgba(0,0,0,.28))}.hero-card-wrap .orb{z-index:1}
 
-/* Asset corrections */
-.topbar { min-height:92px; height:92px; padding-top:4px; }
-.brand { display:flex; align-items:center; height:100%; min-width:150px; }
-.brand img { width:132px !important; height:auto !important; max-height:84px; object-fit:contain; display:block; }
-.hero-card { display:none !important; }
-.hero-card-wrap { min-height:500px; height:500px; position:relative; isolation:isolate; }
-.hero-card-wrap::before { content:""; position:absolute; inset:0; background:url("HERO.png") center bottom / contain no-repeat; z-index:2; filter:drop-shadow(0 24px 35px rgba(0,0,0,.28)); }
-.hero-card-wrap .orb { z-index:1; }
-@media(max-width:900px){.topbar{height:82px;min-height:82px}.brand img{width:118px !important;max-height:74px}.brand{min-width:125px}.hero-card-wrap{min-height:420px;height:420px}}
+/* Workspace: every surface and text colour derives from semantic theme tokens. */
+.teachr-app{color:var(--workspace-text)!important;background:var(--workspace-bg)!important;border-radius:0}
+.teachr-app-head h1,.app-intro h2{color:var(--workspace-text)!important}.teachr-app-head>div>p:last-child,.app-intro p{color:var(--workspace-muted)!important}
+.app-home-button{color:var(--workspace-text)!important;background:var(--workspace-surface)!important;border-color:var(--workspace-line)!important;box-shadow:0 8px 22px rgba(16,35,63,.06)}
+.app-home-button:hover{background:var(--workspace-surface-soft)!important;border-color:var(--workspace-accent)!important}
+.app-tool-grid{gap:18px}.app-tool-card{min-height:188px;color:var(--workspace-text)!important;background:var(--workspace-surface)!important;border:1px solid var(--workspace-line)!important;box-shadow:var(--workspace-shadow)!important}
+.app-tool-card:hover,.app-tool-card.active{background:var(--workspace-surface-soft)!important;border-color:var(--workspace-accent)!important}.app-tool-card strong{color:var(--workspace-text)!important}.app-tool-card small{color:var(--workspace-muted)!important}.app-tool-arrow{color:var(--workspace-accent)!important}
+.app-tool-icon.blue,.tool-icon.blue{background:#e5f5ff;color:#0879b2}.app-tool-icon.purple,.tool-icon.purple{background:#eee9ff;color:#6745d8}.app-tool-icon.cyan,.tool-icon.cyan{background:#e3f8ff;color:#087e9e}.app-tool-icon.violet,.tool-icon.violet{background:#eee9ff;color:#6848d5}.app-tool-icon.green,.tool-icon.green{background:#e3f8ef;color:#087c57}.app-tool-icon.orange,.tool-icon.orange{background:#fff1dc;color:#a95b08}.app-tool-icon.pink,.tool-icon.pink{background:#ffe7ee;color:#b92d52}.app-tool-icon.teal,.tool-icon.teal{background:#e1f8f5;color:#087c72}
 
-/* Dashboard cards — warm application palette */
-.app-tool-card { background:linear-gradient(145deg,#fffdf8 0%,#fff8eb 100%) !important; border:1px solid #eadfcf !important; box-shadow:0 10px 28px rgba(120,82,34,.08) !important; }
-.app-tool-card:hover,.app-tool-card.active { background:linear-gradient(145deg,#fffaf0 0%,#fff3dc 100%) !important; border-color:#e9c98f !important; box-shadow:0 18px 40px rgba(120,82,34,.13) !important; }
-.app-tool-card strong { color:#132b48 !important; }
-.app-tool-card small { color:#66758a !important; }
-.app-tool-arrow { color:#d48617 !important; }
-.app-home-button { color:#17304d !important; background:#fffdf8 !important; border-color:#dfd2bf !important; }
-.app-home-button:hover { background:#fff7e9 !important; border-color:#e4bf78 !important; }
+/* Generator workspace: remove fixed white surfaces and fixed light-mode text. */
+#appToolMount{color:var(--workspace-text)!important}
+#appToolMount>.builder{background:var(--workspace-surface)!important;border:1px solid var(--workspace-line)!important;box-shadow:var(--workspace-shadow)!important;color:var(--workspace-text)!important}
+#appToolMount .builder-header h3,#appToolMount .section-heading h2,#appToolMount .result h4,#appToolMount .result-item b,#appToolMount .result-item strong,#appToolMount .result-item h1,#appToolMount .result-item h2,#appToolMount .result-item h3,#appToolMount .result-item h4,#appToolMount .result-item h5,#appToolMount .result-item h6{color:var(--workspace-text)!important}
+#appToolMount .builder-description,#appToolMount .section-sub,#appToolMount .result-sub,#appToolMount .result-item p,#appToolMount .result-item li,#appToolMount .result-item td,#appToolMount .result-item th,#appToolMount .result-item span{color:var(--workspace-muted)!important}
+#appToolMount .field label{color:var(--workspace-text)!important}#appToolMount .field label span{color:var(--workspace-subtle)!important}
+#appToolMount .field input,#appToolMount .field select,#appToolMount .field textarea,#appToolMount .library-actions input{background:var(--workspace-input)!important;color:var(--workspace-text)!important;border-color:var(--workspace-line)!important}
+#appToolMount .field input::placeholder,#appToolMount .field textarea::placeholder,#appToolMount .library-actions input::placeholder{color:var(--workspace-subtle)!important;opacity:1}
+#appToolMount .field input:focus,#appToolMount .field select:focus,#appToolMount .field textarea:focus{border-color:var(--workspace-accent)!important;box-shadow:0 0 0 3px rgba(21,159,232,.13)}
+#appToolMount .online,#appToolMount .result,#appToolMount .result-item,#appToolMount .resource-card,#appToolMount .resource-preview span,#appToolMount .filter{background:var(--workspace-surface-soft)!important;color:var(--workspace-muted)!important;border-color:var(--workspace-line)!important}
+#appToolMount .result table{background:var(--workspace-surface)!important;color:var(--workspace-text)!important;border-color:var(--workspace-line)!important}#appToolMount .result th,#appToolMount .result td{border-color:var(--workspace-line)!important}
+#appToolMount .resource-card h4,#appToolMount .empty strong{color:var(--workspace-text)!important}#appToolMount .resource-card p,#appToolMount .empty{color:var(--workspace-muted)!important}
+#appToolMount .filter.active,#appToolMount .filter:hover{color:var(--workspace-accent)!important;border-color:var(--workspace-accent)!important;background:var(--workspace-surface)!important}
+#appToolMount .resource-actions button,#appToolMount .text-btn,.app-breadcrumb button{color:var(--workspace-accent)!important}.app-breadcrumb,.app-breadcrumb span{color:var(--workspace-muted)!important}
 
-/* Warm workspace surfaces. Keep Lesson Design and AI Engine panel treatments intact. */
-html[data-theme="light"] #appToolMount>.builder { background:linear-gradient(180deg,#fffdf9 0%,#fffaf2 100%); border-color:#eadfcf; box-shadow:0 18px 44px rgba(120,82,34,.08); }
-html[data-theme="light"] #appToolMount .online { color:#665f55; background:#fff8ea; border-color:#ead8b9; }
-html[data-theme="light"] #appToolMount .result { background:#fffdf9; border-color:#eadfcf; }
-html[data-theme="light"] #appToolMount .result-item { background:#fffaf2; border-color:#eadfcf; }
-html[data-theme="light"] #appToolMount .resource-card { background:linear-gradient(145deg,#fffdf9 0%,#fff8eb 100%); border-color:#eadfcf; box-shadow:0 10px 28px rgba(120,82,34,.07); }
-html[data-theme="light"] #appToolMount .resource-preview span { background:#fff4df; border-color:#ead8b9; color:#6c6255; }
-html[data-theme="light"] #appToolMount .filter.active,html[data-theme="light"] #appToolMount .filter:hover { background:#fff1d7; border-color:#e5bf79; color:#8a5b10; }
+/* Curriculum objective and generated lesson output must follow the active theme. */
+#appToolMount .curriculum-objective-panel,#appToolMount .curriculum-precision-panel,#appToolMount [class*="curriculum-objective"],#appToolMount [class*="curriculum-precision"]{background:var(--workspace-surface-soft)!important;color:var(--workspace-text)!important;border-color:var(--workspace-line)!important}
+#appToolMount .curriculum-objective-panel *,#appToolMount .curriculum-precision-panel *{color:inherit}
+#appToolMount .result-item{overflow:hidden}#appToolMount .result-item table{width:100%;border-collapse:collapse}
 
-/* Light mode is the application default; dark mode is explicit. */
-html[data-theme="dark"] .teachr-app { color:#e9f2fb; background:linear-gradient(180deg,#0a1c31 0%,#0b223d 100%); }
-html[data-theme="dark"] .teachr-app-head h1,
-html[data-theme="dark"] .app-intro h2 { color:#f8fbff !important; text-shadow:0 1px 1px rgba(0,0,0,.16); }
-html[data-theme="dark"] .teachr-app-head>div>p:last-child { color:#b8c9dc !important; }
-html[data-theme="dark"] .app-intro { margin-bottom:32px; }
-html[data-theme="dark"] .app-intro p { color:#b5c7da !important; line-height:1.65; }
-html[data-theme="dark"] .app-tool-grid { gap:24px 20px; }
-html[data-theme="dark"] .app-tool-card { min-height:208px; padding:26px 24px 30px; color:#eaf3fc !important; background:linear-gradient(145deg,#122a45 0%,#0d2139 100%) !important; border-color:#294563 !important; }
-html[data-theme="dark"] .app-tool-card strong { color:#f3f8fd !important; }
-html[data-theme="dark"] .app-tool-card small { color:#b8c9da !important; line-height:1.65; margin-top:10px; padding-bottom:28px; }
-html[data-theme="dark"] .app-tool-arrow { color:#65c9fa !important; }
-html[data-theme="dark"] .app-home-button { color:#eaf3fc !important; background:#122a45 !important; border-color:#34516d !important; }
-html[data-theme="dark"] .app-home-button:hover { background:#173451 !important; border-color:#4c6b88 !important; }
+/* Dark mode uses dark panels rather than white cards, eliminating the large white workspace. */
+html[data-theme="dark"] #appToolMount .lesson-design-panel,html[data-theme="dark"] #appToolMount #aiProviderPanel{background:var(--workspace-surface-soft)!important;border-color:var(--workspace-line)!important;color:var(--workspace-text)!important}
+html[data-theme="dark"] #appToolMount .lesson-design-panel .lesson-design-head strong,html[data-theme="dark"] #appToolMount .lesson-design-panel .lesson-design-head span,html[data-theme="dark"] #appToolMount .lesson-design-panel .field label,html[data-theme="dark"] #appToolMount #aiProviderPanel .aip-head strong,html[data-theme="dark"] #appToolMount #aiProviderPanel .aip-head span,html[data-theme="dark"] #appToolMount #aiProviderPanel .aip-note,html[data-theme="dark"] #appToolMount #aiProviderPanel .field label{color:var(--workspace-text)!important}
+html[data-theme="dark"] #appToolMount .lesson-design-panel .field input,html[data-theme="dark"] #appToolMount .lesson-design-panel .field select,html[data-theme="dark"] #appToolMount .lesson-design-panel .field textarea,html[data-theme="dark"] #appToolMount #aiProviderPanel .field input,html[data-theme="dark"] #appToolMount #aiProviderPanel .field select{background:var(--workspace-input)!important;color:var(--workspace-text)!important;border-color:var(--workspace-line)!important}
+
+@media(max-width:900px){.topbar{height:82px;min-height:82px}.brand img{width:118px!important;max-height:74px}.brand{min-width:125px}.hero-card-wrap{min-height:420px;height:420px}}
