@@ -1,0 +1,19 @@
+name: VLE dashboard card
+
+on:
+  pull_request:
+    paths:
+      - 'app-shell.js'
+      - 'tests/vle-dashboard-card.test.js'
+      - '.github/workflows/vle-dashboard-card.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --check app-shell.js
+      - run: node tests/vle-dashboard-card.test.js
