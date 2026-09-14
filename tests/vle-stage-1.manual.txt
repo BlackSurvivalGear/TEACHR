@@ -1,1 +1,0 @@
-Sign in; open VLE; exercise all filters; verify placeholders; return to workspace; smoke-test existing generators and Resource Library; confirm usage unchanged.
