@@ -1,0 +1,1 @@
+Stage 6 live Credit synchronization audit: the existing shared generation path already applies the authoritative server usage result and refreshes universal Credit state for all six primary generators. Regression coverage is in tests/live-credit-sync.test.js.
