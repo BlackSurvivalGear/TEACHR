@@ -13,7 +13,10 @@ assert(chatUsage.includes('TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile)'), '
 assert(chatUsage.includes('recordChatSuccess_'), 'successful chat responses must be recorded transactionally');
 assert(generation.includes("if(isChat)chatUsageAccess_(uid);else creditAccess_(uid)"), 'chat access must be checked independently from universal Credits before provider use');
 assert(generation.includes('const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid)'), 'chat success must not consume universal Credits');
-assert(creditModel.includes("GENERATING_TOOL_IDS: Object.freeze(['lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision'])"), 'chat must remain outside the six Credit-consuming tools');
-assert(!creditModel.includes("'chat'"), 'chat must not become a Credit-consuming generating tool');
+const toolIdsMatch = creditModel.match(/const\s+GENERATING_TOOL_IDS\s*=\s*Object\.freeze\(\[([^\]]+)\]\)/);
+assert(toolIdsMatch, 'universal Credit model must define the generating tool IDs');
+const creditToolIds = [...toolIdsMatch[1].matchAll(/['"]([^'"]+)['"]/g)].map(match => match[1]);
+assert.deepStrictEqual(creditToolIds, ['lesson','worksheet','quiz','differentiate','curriculum','revision'], 'only the six primary generators may consume universal Credits');
+assert(!creditToolIds.includes('chat'), 'chat must remain outside the six Credit-consuming tools');
 
 console.log('AI chat Stage 4 independent usage-control tests passed');
