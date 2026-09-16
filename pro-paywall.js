@@ -1,6 +1,6 @@
 (function () {
   let hasPro = false;
-  let usageState = { status: 'signed-out', tools: {} };
+  let usageState = { status: 'signed-out', unlimited: false, creditsRemaining: undefined };
   const form = document.getElementById('builderForm');
   const planLink = document.getElementById('planLink');
   const adminLink = document.getElementById('adminLink');
@@ -36,17 +36,16 @@
   }
 
   form?.addEventListener('submit', (event) => {
-    if (hasPro) return;
-    const tool = activeTool();
-    const remaining = usageState.tools?.[tool]?.remaining;
-    if (usageState.status === 'ready' && remaining > 0) return;
+    if (hasPro || usageState.unlimited === true) return;
+    if (usageState.status === 'ready' && Number.isInteger(usageState.creditsRemaining) && usageState.creditsRemaining > 0) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     if (usageState.status !== 'ready') {
-      notify('Please wait while TEACHR checks your free generations.');
+      notify('Please wait while TEACHR checks your Credits.');
       window.TEACHR_USAGE?.refresh?.();
       return;
     }
+    const tool = activeTool();
     const returnTo = `index.html?tool=${encodeURIComponent(tool)}#workspace`;
     window.location.href = `upgrade.html?return=${encodeURIComponent(returnTo)}`;
   }, true);
