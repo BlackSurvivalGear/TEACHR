@@ -10,7 +10,11 @@ assert.match(ui, /Pro unlocks unlimited generations across every TEACHR tool/, '
 assert.match(ui, /sessionStorage\.setItem\(DRAFT_KEY/, 'completed form must be preserved before upgrade');
 assert.match(ui, /sessionStorage\.getItem\(DRAFT_KEY/, 'preserved form must be restored after returning');
 assert.match(ui, /Object\.entries\(draft\.values\)/, 'all named form values must be restored');
-assert.match(gate, /upgrade\.html\?return=/, 'exhausted tool must carry a safe return target into upgrade');
+assert.match(gate, /creditsRemaining/, 'upgrade gate must use the universal Credit balance');
+assert.match(gate, /usageState\.unlimited === true/, 'unlimited accounts must bypass the Credit gate');
+assert.match(gate, /usageState\.creditsRemaining > 0/, 'free members with Credits must be allowed to generate');
+assert.doesNotMatch(gate, /usageState\.tools/, 'legacy per-tool usage state must not control the upgrade gate');
+assert.match(gate, /upgrade\.html\?return=/, 'zero-Credit tool must carry a safe return target into upgrade');
 assert.match(upgrade, /watchForActivation/, 'upgrade page must watch for confirmed subscription activation');
 assert.match(upgrade, /getDoc\(doc\(db, 'users', user\.uid\)\)/, 'activation must be confirmed from the authoritative user profile');
 assert.match(upgrade, /location\.replace\(returnTo\)/, 'confirmed activation must restore the prior workspace automatically');
