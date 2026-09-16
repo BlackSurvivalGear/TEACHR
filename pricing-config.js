@@ -7,7 +7,9 @@
       billing: 'one-time',
       credits: 18,
       creditType: 'starter',
-      rollover: false
+      rollover: false,
+      chats: 10,
+      chatBilling: 'lifetime'
     }),
     payg: Object.freeze({
       id: 'payg',
@@ -16,7 +18,9 @@
       billing: 'one-time',
       credits: 10,
       creditType: 'purchased',
-      rollover: true
+      rollover: true,
+      chats: 20,
+      chatBilling: 'top-up'
     }),
     standard: Object.freeze({
       id: 'standard',
@@ -25,7 +29,9 @@
       billing: 'month',
       credits: 25,
       creditType: 'monthly',
-      rollover: false
+      rollover: false,
+      chats: 50,
+      chatBilling: 'month'
     }),
     pro: Object.freeze({
       id: 'pro',
@@ -34,7 +40,9 @@
       billing: 'month',
       credits: 55,
       creditType: 'monthly',
-      rollover: false
+      rollover: false,
+      chats: 100,
+      chatBilling: 'month'
     }),
     premium: Object.freeze({
       id: 'premium',
@@ -43,7 +51,9 @@
       billing: 'month',
       credits: 135,
       creditType: 'monthly',
-      rollover: false
+      rollover: false,
+      chats: null,
+      chatBilling: 'unlimited'
     })
   });
 
