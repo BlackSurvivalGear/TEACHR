@@ -15,6 +15,7 @@ jobs:
           node --check generation-client.js
           node --check < apps-script/Generation.gs
           node --check < apps-script/GenerationUsage.gs
+          node --check < apps-script/CreditUsage.gs
           node --check app.js
           node --check server/index.js
           node --check server/firebase-admin.js
@@ -39,6 +40,7 @@ jobs:
           test -f generation-usage.js
           test -f usage-service.js
           test -f usage-ui.js
+          test -f apps-script/CreditUsage.gs
           test -f TEACHR_AI_V2.md
           test -f LOGO.png
           test -f server/index.js
@@ -53,6 +55,8 @@ jobs:
           ! grep -q "data-tool=\"parent\"" index.html
       - name: Validate generation usage model
         run: node tests/generation-usage.test.js
+      - name: Validate universal credit model
+        run: node tests/credit-usage.test.js
       - name: Validate frontend usage service
         run: node tests/usage-service.test.js
       - name: Validate generation usage UI
