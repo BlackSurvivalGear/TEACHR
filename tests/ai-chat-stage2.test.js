@@ -22,7 +22,8 @@ assert(apps.includes("const isChat=body.tool==='chat'"), 'Apps Script must recog
 assert(apps.includes('generationProfile_(uid'), 'chat usage enforcement must still resolve an active TEACHR member profile');
 assert(apps.includes('if(isChat)chatUsageAccess_(uid);else creditAccess_(uid)'), 'chat must use its independent cap instead of universal TEACHR Credits');
 assert(apps.includes('const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid)'), 'successful chat must record only its independent chat usage');
-assert(chatUsage.includes('const TEACHR_CHAT_FREE_MESSAGES = 10'), 'free members must have a 10-message TEACHR AI chat cap');
+assert(/const\s+TEACHR_CHAT_FREE_MESSAGES\s*=\s*10\s*;/.test(chatUsage), 'free members must have a 10-message TEACHR AI chat cap');
+assert(/persistentAllowance\s*:\s*intOr_\(raw\.persistentAllowance\s*,\s*TEACHR_CHAT_FREE_MESSAGES\)/.test(chatUsage), 'free chat allowance must default to the persistent 10-message entitlement');
 assert(!/daily|per day|24 hour|resetAt|resetDate/i.test(chatUsage.replace(/does not reset daily/gi, '')), 'free chat cap must not contain a daily reset mechanism');
 assert(apps.includes('You are TEACHR AI, a concise teacher-first conversational assistant.'), 'chat must use its dedicated system prompt');
 
