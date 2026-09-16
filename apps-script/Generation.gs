@@ -6,5 +6,38 @@ function generationFirestore_(suffix,method,body,missingAllowed) { const options
 function generationFields_(doc) { const result={}; Object.keys(doc?.fields||{}).forEach(key=>{const value=doc.fields[key];if('stringValue'in value)result[key]=value.stringValue;else if('booleanValue'in value)result[key]=value.booleanValue;else if('integerValue'in value)result[key]=Number(value.integerValue);}); return result; }
 function generationProfile_(uid,transaction) { const suffix=transaction?'?transaction='+encodeURIComponent(transaction):''; const userDoc=generationFirestore_('/users/'+encodeURIComponent(uid)+suffix,'get',undefined,true); if(!userDoc)throw generationError_(403,'PROFILE_REQUIRED','A TEACHR member profile is required.'); const profile=generationFields_(userDoc); if(profile.suspended||profile.accountStatus==='suspended')throw generationError_(403,'ACCOUNT_SUSPENDED','This TEACHR account is suspended.'); return profile; }
 function creditAccess_(uid,transaction) { const suffix=transaction?'?transaction='+encodeURIComponent(transaction):''; const userPath='/users/'+encodeURIComponent(uid); const profile=generationProfile_(uid,transaction); const unlimited=TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile); const creditDoc=generationFirestore_(userPath+'/credits/balance'+suffix,'get',undefined,true); const record=TEACHR_CREDIT_USAGE.normaliseCreditRecord(generationFields_(creditDoc)); if(!unlimited&&record.balance<1)throw generationError_(429,'FREE_LIMIT_REACHED','Your free TEACHR Credits are used. Upgrade to continue.'); return{unlimited,balance:unlimited?null:record.balance,record}; }
-function recordGenerationSuccess_(uid) { for(let attempt=0;attempt<3;attempt++){const transaction=generationFirestore_(':beginTransaction','post',{}).transaction;if(!transaction)throw generationError_(503,'USAGE_UNAVAILABLE','Generation usage could not be recorded.');let committed=false;try{const access=creditAccess_(uid,transaction);const next=TEACHR_CREDIT_USAGE.afterSuccessfulGeneration(generationProfile_(uid,transaction),access.record);const writes=access.unlimited?[]:[{update:{name:'projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents/users/'+uid+'/credits/balance,fields:{balance:{integerValue:String(next.record.balance)},initialAllocation:{integerValue:String(next.record.initialAllocation)},totalGranted:{integerValue:String(next.record.totalGranted)},totalConsumed:{integerValue:String(next.record.totalConsumed)},schemaVersion:{integerValue:String(next.record.schemaVersion)},migrated:{booleanValue:next.record.migrated===true}}},updateMask:{fieldPaths:['balance','initialAllocation','totalGranted','totalConsumed','schemaVersion','migrated']},updateTransforms:[{fieldPath:'updatedAt',setToServerValue:'REQUEST_TIME'}]}];generationFirestore_(':commit','post',{transaction,writes});committed=true;return{unlimited:access.unlimited,creditsRemaining:access.unlimited?null:next.record.balance};}catch(error){if(!error.retryable||attempt===2)throw error;}finally{if(!committed){try{generationFirestore_(':rollback','post',{transaction});}catch(_){}}}} }
+function recordGenerationSuccess_(uid) {
+  for(let attempt=0;attempt<3;attempt++){
+    const transaction=generationFirestore_(':beginTransaction','post',{}).transaction;
+    if(!transaction)throw generationError_(503,'USAGE_UNAVAILABLE','Generation usage could not be recorded.');
+    let committed=false;
+    try{
+      const profile=generationProfile_(uid,transaction);
+      const access=creditAccess_(uid,transaction);
+      const next=TEACHR_CREDIT_USAGE.afterSuccessfulGeneration(profile,access.record);
+      const writes=access.unlimited?[]:[{
+        update:{
+          name:'projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents/users/'+uid+'/credits/balance',
+          fields:{
+            balance:{integerValue:String(next.record.balance)},
+            initialAllocation:{integerValue:String(next.record.initialAllocation)},
+            totalGranted:{integerValue:String(next.record.totalGranted)},
+            totalConsumed:{integerValue:String(next.record.totalConsumed)},
+            schemaVersion:{integerValue:String(next.record.schemaVersion)},
+            migrated:{booleanValue:next.record.migrated===true}
+          }
+        },
+        updateMask:{fieldPaths:['balance','initialAllocation','totalGranted','totalConsumed','schemaVersion','migrated']},
+        updateTransforms:[{fieldPath:'updatedAt',setToServerValue:'REQUEST_TIME'}]
+      }];
+      generationFirestore_(':commit','post',{transaction,writes});
+      committed=true;
+      return{unlimited:access.unlimited,creditsRemaining:access.unlimited?null:next.record.balance};
+    }catch(error){
+      if(!error.retryable||attempt===2)throw error;
+    }finally{
+      if(!committed){try{generationFirestore_(':rollback','post',{transaction});}catch(_){}}
+    }
+  }
+}
 function generateResource_(body) { const isChat=body.tool==='chat'; if(!isChat&&!TEACHR_CREDIT_USAGE.GENERATING_TOOL_IDS.includes(body.tool))throw generationError_(400,'INVALID_TOOL','A valid generating tool is required.'); if(typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>12000)throw generationError_(400,'INVALID_PROMPT','Enter a prompt of at most 12,000 characters.'); const uid=verifyGenerationIdentity_(body.idToken); if(isChat)chatUsageAccess_(uid);else creditAccess_(uid); const properties=PropertiesService.getScriptProperties(); const apiKey=properties.getProperty('AI_API_KEY'),model=properties.getProperty('AI_MODEL'); if(!apiKey||!model)throw generationError_(503,'AI_NOT_CONFIGURED','The AI service is not configured.'); const systemPrompt=isChat?'You are TEACHR AI, a concise teacher-first conversational assistant. Answer the teacher directly and help with explanations, classroom ideas, questions and adaptations. Do not invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. If the teacher asks for something that depends on missing classroom context, say what is missing rather than inventing it. AI assists. The teacher teaches.':'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material with clear headings. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. AI assists. The teacher teaches.'; let response,payload; try{response=UrlFetchApp.fetch('https://api.openai.com/v1/chat/completions',{method:'post',contentType:'application/json',headers:{Authorization:'Bearer '+apiKey},muteHttpExceptions:true,payload:JSON.stringify({model,messages:[{role:'system',content:systemPrompt},{role:'user',content:body.prompt}]})});if(response.getResponseCode()!==200)throw new Error('Provider failure');payload=JSON.parse(response.getContentText());}catch(_){throw generationError_(502,'AI_PROVIDER_FAILED','The AI provider could not complete this request. Please try again.');} const content=payload?.choices?.[0]?.message?.content;if(typeof content!=='string'||!content.trim())throw generationError_(502,'AI_EMPTY_RESPONSE','The AI provider returned no content.'); const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid); return{ok:true,status:200,content,model,usage}; }
