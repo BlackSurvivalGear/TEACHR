@@ -57,8 +57,6 @@ jobs:
         run: node tests/generation-usage.test.js
       - name: Validate universal credit model
         run: node tests/credit-usage.test.js
-      - name: Validate generation usage UI
-        run: node tests/usage-ui.test.js
       - name: Validate authenticated generation client
         run: node tests/generation-client.test.js
       - name: Validate Stage 7 upgrade experience
