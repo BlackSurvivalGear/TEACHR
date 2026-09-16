@@ -114,7 +114,7 @@ async function expectCode(promise, code) {
   assert.match(billingSource, /role:\{stringValue:'member'\},plan:\{stringValue:plan\}/, 'paid subscriptions must remain member roles and store entitlement in plan');
   assert.match(billingSource, /setBillingProfile_\(record\.uid,'free'/, 'inactive subscriptions must return the billing plan to free');
   assert.match(billingSource, /applyMonthlyRenewal\(record,plan\)/, 'subscription renewal must reset the monthly Credit bucket');
-  assert.match(creditSource, /UNLIMITED_ROLES = Object\.freeze\(\['admin', 'superadmin'\]\)/, 'only Admin and Superadmin may bypass generation Credits');
+  assert.match(creditSource, /UNLIMITED_ROLES\s*=\s*Object\.freeze\(\[\s*'admin'\s*,\s*'superadmin'\s*\]\)/, 'only Admin and Superadmin may bypass generation Credits');
   assert.doesNotMatch(billingSource, /role:\{stringValue:'pro'\}/, 'Pro must not be restored as an unlimited role');
 
   console.log('Stage 8 quota matrix checks passed.');
