@@ -4,6 +4,7 @@ const assert = require('assert');
 const chat = fs.readFileSync('ai-chat-panel.js', 'utf8');
 const transport = fs.readFileSync('generation-client.js', 'utf8');
 const apps = fs.readFileSync('apps-script/Generation.gs', 'utf8');
+const chatUsage = fs.readFileSync('apps-script/ChatUsage.gs', 'utf8');
 const css = fs.readFileSync('ai-chat-panel.css', 'utf8');
 
 assert(/tool\s*:\s*'chat'/.test(chat), 'chat panel must call the dedicated chat tool');
@@ -19,8 +20,10 @@ assert(transport.includes("tool === 'lesson' || tool === 'chat'"), 'shared trans
 assert(transport.includes("includeCurriculum = tool !== 'chat'"), 'chat must default to no duplicate transport-level curriculum injection');
 assert(apps.includes("const isChat=body.tool==='chat'"), 'Apps Script must recognise the dedicated chat route');
 assert(apps.includes('generationProfile_(uid'), 'chat usage enforcement must still resolve an active TEACHR member profile');
-assert(apps.includes('if(isChat)chatUsageAccess_(uid);else generationAccess_(uid,body.tool)'), 'chat must use its independent access path instead of a six-tool allowance');
-assert(apps.includes('const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid,body.tool)'), 'successful chat must record only its independent chat usage');
+assert(apps.includes('if(isChat)chatUsageAccess_(uid);else creditAccess_(uid)'), 'chat must use its independent cap instead of universal TEACHR Credits');
+assert(apps.includes('const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid)'), 'successful chat must record only its independent chat usage');
+assert(chatUsage.includes('const TEACHR_CHAT_FREE_MESSAGES = 10'), 'free members must have a 10-message TEACHR AI chat cap');
+assert(!/daily|per day|24 hour|resetAt|resetDate/i.test(chatUsage.replace(/does not reset daily/gi, '')), 'free chat cap must not contain a daily reset mechanism');
 assert(apps.includes('You are TEACHR AI, a concise teacher-first conversational assistant.'), 'chat must use its dedicated system prompt');
 
 console.log('AI chat Stage 2 connection tests passed');
