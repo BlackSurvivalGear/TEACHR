@@ -1,45 +1,10 @@
-/* TEACHR AI Chat is separate from universal TEACHR Credits. Free members receive a 10-message account cap; it does not reset daily. */
-const TEACHR_CHAT_FREE_MESSAGES = 10;
-
-function chatUsageAccess_(uid, transaction) {
-  const suffix = transaction ? '?transaction=' + encodeURIComponent(transaction) : '';
-  const profile = generationProfile_(uid, transaction);
-  const unlimited = TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile);
-  const usageDoc = generationFirestore_('/users/' + encodeURIComponent(uid) + '/usage/chat' + suffix, 'get', undefined, true);
-  const fields = generationFields_(usageDoc);
-  const successfulMessages = Number.isInteger(fields.successfulMessages) && fields.successfulMessages >= 0 ? fields.successfulMessages : 0;
-  const allowance = Number.isInteger(fields.allowance) && fields.allowance >= 0 ? fields.allowance : TEACHR_CHAT_FREE_MESSAGES;
-  const remaining = Math.max(0, allowance - successfulMessages);
-  if (!unlimited && remaining === 0) throw generationError_(429, 'CHAT_LIMIT_REACHED', 'Your 10 free TEACHR AI messages are used. Upgrade to Pro to continue.');
-  return { unlimited, remaining: unlimited ? null : remaining, successfulMessages, allowance };
-}
-
-function recordChatSuccess_(uid) {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const transaction = generationFirestore_(':beginTransaction', 'post', {}).transaction;
-    if (!transaction) throw generationError_(503, 'USAGE_UNAVAILABLE', 'AI Chat usage could not be recorded.');
-    let committed = false;
-    try {
-      const access = chatUsageAccess_(uid, transaction);
-      const writes = access.unlimited ? [] : [{
-        update: {
-          name: 'projects/' + CONFIG.FIREBASE_PROJECT_ID + '/databases/(default)/documents/users/' + uid + '/usage/chat',
-          fields: {
-            toolId: { stringValue: 'chat' },
-            successfulMessages: { integerValue: String(access.successfulMessages + 1) },
-            allowance: { integerValue: String(access.allowance) }
-          }
-        },
-        updateMask: { fieldPaths: ['toolId', 'successfulMessages', 'allowance'] },
-        updateTransforms: [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }]
-      }];
-      generationFirestore_(':commit', 'post', { transaction, writes });
-      committed = true;
-      return { unlimited: access.unlimited, allowance: access.unlimited ? null : access.allowance, remaining: access.unlimited ? null : access.remaining - 1 };
-    } catch (error) {
-      if (!error.retryable || attempt === 2) throw error;
-    } finally {
-      if (!committed) { try { generationFirestore_(':rollback', 'post', { transaction }); } catch (_) { /* best effort */ } }
-    }
-  }
-}
+/* TEACHR AI Chat is separate from generation Credits. Monthly chat resets; free/PAYG chat is persistent. */
+const TEACHR_CHAT_FREE_MESSAGES=10;
+const TEACHR_CHAT_MONTHLY=Object.freeze({standard:50,pro:100});
+function chatUsageAccess_(uid,transaction){const suffix=transaction?'?transaction='+encodeURIComponent(transaction):'',profile=generationProfile_(uid,transaction),role=String(profile.role||'').toLowerCase(),plan=String(profile.plan||'').toLowerCase(),unlimited=['admin','superadmin'].includes(role)||plan==='premium',doc=generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat'+suffix,'get',undefined,true),raw=generationFields_(doc),monthlyAllowance=intOr_(raw.monthlyAllowance,0),monthlyUsed=intOr_(raw.monthlyUsed,0),persistentAllowance=intOr_(raw.persistentAllowance,TEACHR_CHAT_FREE_MESSAGES),persistentUsed=intOr_(raw.persistentUsed,intOr_(raw.successfulMessages,0)),monthlyRemaining=Math.max(0,monthlyAllowance-monthlyUsed),persistentRemaining=Math.max(0,persistentAllowance-persistentUsed),remaining=monthlyRemaining+persistentRemaining;if(!unlimited&&remaining===0)throw generationError_(429,'CHAT_LIMIT_REACHED','Your Ask TEACHR chat allowance is used. Add Credits or choose a plan to continue.');return{unlimited,monthlyAllowance,monthlyUsed,persistentAllowance,persistentUsed,monthlyRemaining,persistentRemaining,remaining:unlimited?null:remaining};}
+function recordChatSuccess_(uid){for(let attempt=0;attempt<3;attempt++){const transaction=generationFirestore_(':beginTransaction','post',{}).transaction;if(!transaction)throw generationError_(503,'USAGE_UNAVAILABLE','AI Chat usage could not be recorded.');let committed=false;try{const a=chatUsageAccess_(uid,transaction);let monthlyUsed=a.monthlyUsed,persistentUsed=a.persistentUsed;if(!a.unlimited){if(a.monthlyRemaining>0)monthlyUsed++;else persistentUsed++;}const writes=a.unlimited?[]:[chatWrite_(uid,monthlyUsed,persistentUsed,a.monthlyAllowance,a.persistentAllowance)];generationFirestore_(':commit','post',{transaction,writes});committed=true;return{unlimited:a.unlimited,allowance:a.unlimited?null:a.monthlyAllowance+a.persistentAllowance,remaining:a.unlimited?null:a.remaining-1};}catch(error){if(!error.retryable||attempt===2)throw error;}finally{if(!committed){try{generationFirestore_(':rollback','post',{transaction});}catch(_){}}}}}
+function addPersistentChatAllowance_(uid,amount){if(!Number.isInteger(amount)||amount<1)throw new Error('Invalid chat allowance.');updateChatEntitlement_(uid,function(a){a.persistentAllowance+=amount;return a;});}
+function resetMonthlyChatAllowance_(uid,plan){if(plan==='premium')return;const allowance=TEACHR_CHAT_MONTHLY[plan]||0;updateChatEntitlement_(uid,function(a){a.monthlyAllowance=allowance;a.monthlyUsed=0;return a;});}
+function updateChatEntitlement_(uid,mutator){const doc=generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat','get',undefined,true),raw=generationFields_(doc),a={monthlyAllowance:intOr_(raw.monthlyAllowance,0),monthlyUsed:intOr_(raw.monthlyUsed,0),persistentAllowance:intOr_(raw.persistentAllowance,TEACHR_CHAT_FREE_MESSAGES),persistentUsed:intOr_(raw.persistentUsed,intOr_(raw.successfulMessages,0))},next=mutator(a);generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat?updateMask.fieldPaths=toolId&updateMask.fieldPaths=monthlyAllowance&updateMask.fieldPaths=monthlyUsed&updateMask.fieldPaths=persistentAllowance&updateMask.fieldPaths=persistentUsed','patch',{fields:{toolId:{stringValue:'chat'},monthlyAllowance:{integerValue:String(next.monthlyAllowance)},monthlyUsed:{integerValue:String(next.monthlyUsed)},persistentAllowance:{integerValue:String(next.persistentAllowance)},persistentUsed:{integerValue:String(next.persistentUsed)}}});}
+function chatWrite_(uid,monthlyUsed,persistentUsed,monthlyAllowance,persistentAllowance){return{update:{name:'projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents/users/'+uid+'/usage/chat',fields:{toolId:{stringValue:'chat'},monthlyAllowance:{integerValue:String(monthlyAllowance)},monthlyUsed:{integerValue:String(monthlyUsed)},persistentAllowance:{integerValue:String(persistentAllowance)},persistentUsed:{integerValue:String(persistentUsed)}}},updateMask:{fieldPaths:['toolId','monthlyAllowance','monthlyUsed','persistentAllowance','persistentUsed']},updateTransforms:[{fieldPath:'updatedAt',setToServerValue:'REQUEST_TIME'}]};}
+function intOr_(value,fallback){return Number.isInteger(value)&&value>=0?value:fallback;}
