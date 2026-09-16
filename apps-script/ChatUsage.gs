@@ -1,45 +1,8 @@
-/* TEACHR AI Chat is separate from universal TEACHR Credits. Free members receive a 10-message account cap; it does not reset daily. */
-const TEACHR_CHAT_FREE_MESSAGES = 10;
-
-function chatUsageAccess_(uid, transaction) {
-  const suffix = transaction ? '?transaction=' + encodeURIComponent(transaction) : '';
-  const profile = generationProfile_(uid, transaction);
-  const unlimited = TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile);
-  const usageDoc = generationFirestore_('/users/' + encodeURIComponent(uid) + '/usage/chat' + suffix, 'get', undefined, true);
-  const fields = generationFields_(usageDoc);
-  const successfulMessages = Number.isInteger(fields.successfulMessages) && fields.successfulMessages >= 0 ? fields.successfulMessages : 0;
-  const allowance = Number.isInteger(fields.allowance) && fields.allowance >= 0 ? fields.allowance : TEACHR_CHAT_FREE_MESSAGES;
-  const remaining = Math.max(0, allowance - successfulMessages);
-  if (!unlimited && remaining === 0) throw generationError_(429, 'CHAT_LIMIT_REACHED', 'Your 10 free TEACHR AI messages are used. Upgrade to Pro to continue.');
-  return { unlimited, remaining: unlimited ? null : remaining, successfulMessages, allowance };
-}
-
-function recordChatSuccess_(uid) {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const transaction = generationFirestore_(':beginTransaction', 'post', {}).transaction;
-    if (!transaction) throw generationError_(503, 'USAGE_UNAVAILABLE', 'AI Chat usage could not be recorded.');
-    let committed = false;
-    try {
-      const access = chatUsageAccess_(uid, transaction);
-      const writes = access.unlimited ? [] : [{
-        update: {
-          name: 'projects/' + CONFIG.FIREBASE_PROJECT_ID + '/databases/(default)/documents/users/' + uid + '/usage/chat',
-          fields: {
-            toolId: { stringValue: 'chat' },
-            successfulMessages: { integerValue: String(access.successfulMessages + 1) },
-            allowance: { integerValue: String(access.allowance) }
-          }
-        },
-        updateMask: { fieldPaths: ['toolId', 'successfulMessages', 'allowance'] },
-        updateTransforms: [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }]
-      }];
-      generationFirestore_(':commit', 'post', { transaction, writes });
-      committed = true;
-      return { unlimited: access.unlimited, allowance: access.unlimited ? null : access.allowance, remaining: access.unlimited ? null : access.remaining - 1 };
-    } catch (error) {
-      if (!error.retryable || attempt === 2) throw error;
-    } finally {
-      if (!committed) { try { generationFirestore_(':rollback', 'post', { transaction }); } catch (_) { /* best effort */ } }
-    }
-  }
-}
+/* TEACHR AI Chat is separate from generation Credits. */
+const TEACHR_CHAT_FREE_MESSAGES=10;
+const TEACHR_CHAT_MONTHLY=Object.freeze({standard:50,pro:100});
+function chatUsageAccess_(uid,transaction){const suffix=transaction?'?transaction='+encodeURIComponent(transaction):'',profile=generationProfile_(uid,transaction),role=String(profile.role||'').toLowerCase(),plan=String(profile.plan||'').toLowerCase(),unlimited=['admin','superadmin'].includes(role)||plan==='premium';const usageDoc=generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat'+suffix,'get',undefined,true),fields=generationFields_(usageDoc),successfulMessages=Number.isInteger(fields.successfulMessages)&&fields.successfulMessages>=0?fields.successfulMessages:0,monthlyAllowance=Number.isInteger(fields.monthlyAllowance)&&fields.monthlyAllowance>=0?fields.monthlyAllowance:0,persistentAllowance=Number.isInteger(fields.persistentAllowance)&&fields.persistentAllowance>=0?fields.persistentAllowance:TEACHR_CHAT_FREE_MESSAGES,allowance=monthlyAllowance+persistentAllowance,remaining=Math.max(0,allowance-successfulMessages);if(!unlimited&&remaining===0)throw generationError_(429,'CHAT_LIMIT_REACHED','Your Ask TEACHR chat allowance is used. Add Credits or choose a plan to continue.');return{unlimited,remaining:unlimited?null:remaining,successfulMessages,monthlyAllowance,persistentAllowance,allowance};}
+function recordChatSuccess_(uid){for(let attempt=0;attempt<3;attempt++){const transaction=generationFirestore_(':beginTransaction','post',{}).transaction;if(!transaction)throw generationError_(503,'USAGE_UNAVAILABLE','AI Chat usage could not be recorded.');let committed=false;try{const access=chatUsageAccess_(uid,transaction),writes=access.unlimited?[]:[{update:{name:'projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents/users/'+uid+'/usage/chat',fields:{toolId:{stringValue:'chat'},successfulMessages:{integerValue:String(access.successfulMessages+1)},monthlyAllowance:{integerValue:String(access.monthlyAllowance)},persistentAllowance:{integerValue:String(access.persistentAllowance)}}},updateMask:{fieldPaths:['toolId','successfulMessages','monthlyAllowance','persistentAllowance']},updateTransforms:[{fieldPath:'updatedAt',setToServerValue:'REQUEST_TIME'}]}];generationFirestore_(':commit','post',{transaction,writes});committed=true;return{unlimited:access.unlimited,allowance:access.unlimited?null:access.allowance,remaining:access.unlimited?null:access.remaining-1};}catch(error){if(!error.retryable||attempt===2)throw error;}finally{if(!committed){try{generationFirestore_(':rollback','post',{transaction});}catch(_){}}}}}
+function addPersistentChatAllowance_(uid,amount){updateChatEntitlement_(uid,function(fields){return{monthlyAllowance:fields.monthlyAllowance,persistentAllowance:fields.persistentAllowance+amount,successfulMessages:fields.successfulMessages};});}
+function resetMonthlyChatAllowance_(uid,plan){if(plan==='premium')return;const allowance=TEACHR_CHAT_MONTHLY[plan]||0;updateChatEntitlement_(uid,function(fields){const persistentUsed=Math.min(fields.successfulMessages,fields.persistentAllowance),monthlyUsed=Math.max(0,fields.successfulMessages-persistentUsed);return{monthlyAllowance:allowance,persistentAllowance:fields.persistentAllowance,successfulMessages:persistentUsed};});}
+function updateChatEntitlement_(uid,mutator){const doc=generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat','get',undefined,true),raw=generationFields_(doc),fields={successfulMessages:Number.isInteger(raw.successfulMessages)?raw.successfulMessages:0,monthlyAllowance:Number.isInteger(raw.monthlyAllowance)?raw.monthlyAllowance:0,persistentAllowance:Number.isInteger(raw.persistentAllowance)?raw.persistentAllowance:TEACHR_CHAT_FREE_MESSAGES},next=mutator(fields);generationFirestore_('/users/'+encodeURIComponent(uid)+'/usage/chat?updateMask.fieldPaths=toolId&updateMask.fieldPaths=successfulMessages&updateMask.fieldPaths=monthlyAllowance&updateMask.fieldPaths=persistentAllowance','patch',{fields:{toolId:{stringValue:'chat'},successfulMessages:{integerValue:String(next.successfulMessages)},monthlyAllowance:{integerValue:String(next.monthlyAllowance)},persistentAllowance:{integerValue:String(next.persistentAllowance)}}});}
