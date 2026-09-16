@@ -1,10 +1,10 @@
-/* TEACHR AI Chat usage is intentionally separate from the six generator allowances. */
+/* TEACHR AI Chat is separate from universal TEACHR Credits. Free members receive a 10-message account cap; it does not reset daily. */
 const TEACHR_CHAT_FREE_MESSAGES = 10;
 
 function chatUsageAccess_(uid, transaction) {
   const suffix = transaction ? '?transaction=' + encodeURIComponent(transaction) : '';
   const profile = generationProfile_(uid, transaction);
-  const unlimited = TEACHR_GENERATION_USAGE.hasUnlimitedGenerations(profile);
+  const unlimited = TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile);
   const usageDoc = generationFirestore_('/users/' + encodeURIComponent(uid) + '/usage/chat' + suffix, 'get', undefined, true);
   const fields = generationFields_(usageDoc);
   const successfulMessages = Number.isInteger(fields.successfulMessages) && fields.successfulMessages >= 0 ? fields.successfulMessages : 0;
