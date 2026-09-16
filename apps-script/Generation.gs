@@ -5,7 +5,7 @@ function verifyGenerationIdentity_(idToken) { if(typeof idToken!=='string'||!idT
 function generationFirestore_(suffix,method,body,missingAllowed) { const options={method:method||'get',headers:{Authorization:'Bearer '+ScriptApp.getOAuthToken()},muteHttpExceptions:true}; if(body!==undefined){options.contentType='application/json';options.payload=JSON.stringify(body);} const response=UrlFetchApp.fetch('https://firestore.googleapis.com/v1/projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents'+suffix,options); const status=response.getResponseCode(); if(status===404&&missingAllowed)return null; if(status>=300){const error=generationError_(503,'USAGE_UNAVAILABLE','Generation usage could not be verified.');error.retryable=status===409;throw error;} return JSON.parse(response.getContentText()||'{}'); }
 function generationFields_(doc) { const result={}; Object.keys(doc?.fields||{}).forEach(key=>{const value=doc.fields[key];if('stringValue'in value)result[key]=value.stringValue;else if('booleanValue'in value)result[key]=value.booleanValue;else if('integerValue'in value)result[key]=Number(value.integerValue);}); return result; }
 function generationProfile_(uid,transaction) { const suffix=transaction?'?transaction='+encodeURIComponent(transaction):''; const userDoc=generationFirestore_('/users/'+encodeURIComponent(uid)+suffix,'get',undefined,true); if(!userDoc)throw generationError_(403,'PROFILE_REQUIRED','A TEACHR member profile is required.'); const profile=generationFields_(userDoc); if(profile.suspended||profile.accountStatus==='suspended')throw generationError_(403,'ACCOUNT_SUSPENDED','This TEACHR account is suspended.'); return profile; }
-function creditAccess_(uid,transaction) { const suffix=transaction?'?transaction='+encodeURIComponent(transaction):''; const userPath='/users/'+encodeURIComponent(uid); const profile=generationProfile_(uid,transaction); const unlimited=TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile); const creditDoc=generationFirestore_(userPath+'/credits/balance'+suffix,'get',undefined,true); const record=TEACHR_CREDIT_USAGE.normaliseCreditRecord(generationFields_(creditDoc)); if(!unlimited&&record.balance<1)throw generationError_(429,'FREE_LIMIT_REACHED','Your free TEACHR Credits are used. Upgrade to continue.'); return{unlimited,balance:unlimited?null:record.balance,record}; }
+function creditAccess_(uid,transaction) { const suffix=transaction?'?transaction='+encodeURIComponent(transaction):''; const userPath='/users/'+encodeURIComponent(uid); const profile=generationProfile_(uid,transaction); const unlimited=TEACHR_CREDIT_USAGE.hasUnlimitedCredits(profile); const creditDoc=generationFirestore_(userPath+'/credits/balance'+suffix,'get',undefined,true); const record=TEACHR_CREDIT_USAGE.normaliseCreditRecord(generationFields_(creditDoc)); if(!unlimited&&record.balance<1)throw generationError_(429,'CREDIT_LIMIT_REACHED','Your TEACHR Credits are used. Add Credits or choose a plan to continue.'); return{unlimited,balance:unlimited?null:record.balance,record}; }
 function recordGenerationSuccess_(uid) {
   for(let attempt=0;attempt<3;attempt++){
     const transaction=generationFirestore_(':beginTransaction','post',{}).transaction;
@@ -20,6 +20,9 @@ function recordGenerationSuccess_(uid) {
           name:'projects/'+CONFIG.FIREBASE_PROJECT_ID+'/databases/(default)/documents/users/'+uid+'/credits/balance',
           fields:{
             balance:{integerValue:String(next.record.balance)},
+            monthlyCredits:{integerValue:String(next.record.monthlyCredits)},
+            starterCredits:{integerValue:String(next.record.starterCredits)},
+            purchasedCredits:{integerValue:String(next.record.purchasedCredits)},
             initialAllocation:{integerValue:String(next.record.initialAllocation)},
             totalGranted:{integerValue:String(next.record.totalGranted)},
             totalConsumed:{integerValue:String(next.record.totalConsumed)},
@@ -27,12 +30,12 @@ function recordGenerationSuccess_(uid) {
             migrated:{booleanValue:next.record.migrated===true}
           }
         },
-        updateMask:{fieldPaths:['balance','initialAllocation','totalGranted','totalConsumed','schemaVersion','migrated']},
+        updateMask:{fieldPaths:['balance','monthlyCredits','starterCredits','purchasedCredits','initialAllocation','totalGranted','totalConsumed','schemaVersion','migrated']},
         updateTransforms:[{fieldPath:'updatedAt',setToServerValue:'REQUEST_TIME'}]
       }];
       generationFirestore_(':commit','post',{transaction,writes});
       committed=true;
-      return{unlimited:access.unlimited,creditsRemaining:access.unlimited?null:next.record.balance};
+      return{unlimited:access.unlimited,creditsRemaining:access.unlimited?null:next.record.balance,consumedFrom:access.unlimited?null:next.consumedFrom};
     }catch(error){
       if(!error.retryable||attempt===2)throw error;
     }finally{
