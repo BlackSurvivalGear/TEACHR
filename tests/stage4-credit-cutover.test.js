@@ -1,0 +1,11 @@
+const assert=require('assert');const fs=require('fs');const path=require('path');
+const credits=require('../apps-script/CreditUsage.gs');
+assert.equal(credits.createCreditRecord().balance,18);
+assert.equal(credits.afterSuccessfulGeneration({role:'member',plan:'free'},credits.createCreditRecord(18)).balance,17);
+assert.throws(()=>credits.afterSuccessfulGeneration({role:'member',plan:'free'},credits.createCreditRecord(0)),/No TEACHR Credits remaining/);
+assert.equal(credits.afterSuccessfulGeneration({role:'pro',plan:'pro'},credits.createCreditRecord(7)).record.balance,7);
+const generation=fs.readFileSync(path.join(__dirname,'../apps-script/Generation.gs'),'utf8');
+assert.match(generation,/creditAccess_\(uid/);assert.match(generation,/TEACHR_CREDIT_USAGE\.afterSuccessfulGeneration/);assert.match(generation,/creditsRemaining/);assert.doesNotMatch(generation,/\/usage\/\'+tool/);
+const service=fs.readFileSync(path.join(__dirname,'../usage-service.js'),'utf8');assert.match(service,/'credits','balance'/);assert.doesNotMatch(service,/collection\(/);
+const ui=fs.readFileSync(path.join(__dirname,'../usage-ui.js'),'utf8');assert.match(ui,/TEACHR Credits/);assert.match(ui,/creditsRemaining/);
+console.log('stage4 universal Credit cutover tests passed');
