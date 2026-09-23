@@ -9,6 +9,7 @@ const toolConfig = {
   differentiate: { title: 'Differentiation Engine', label: 'Differentiate activity', type: 'DIFFERENTIATION', description: 'Turn one classroom activity into support, core and stretch pathways.' },
   curriculum: { title: 'Curriculum Planner', label: 'Build curriculum map', type: 'CURRICULUM', description: 'Turn a topic into a sequence of units, weeks and lessons.' },
   revision: { title: 'Revision Pack', label: 'Build revision pack', type: 'REVISION PACK', description: 'Create a compact revision guide, flashcards and exam practice.' },
+  presentation: { title: 'Presentation Builder', label: 'Create Google Slides', type: 'PRESENTATION', description: 'Create a classroom-ready lesson deck and open an editable copy in Google Slides.' },
   library: { title: 'Resource Library', label: 'Refresh library', type: 'RESOURCE', description: 'Search and reuse the teaching materials you have saved.' }
 };
 
@@ -51,7 +52,8 @@ function buildPrompt(data) {
     quiz: 'an assessment with a balanced mix of recall, application and higher-order questions, plus an answer key',
     differentiate: 'three differentiated versions of the activity: support, core and stretch, with teacher guidance',
     curriculum: 'a curriculum sequence with units, weekly objectives, lesson sequence and assessments',
-    revision: 'a revision pack containing a concise guide, key vocabulary, flashcards and exam-style practice'
+    revision: 'a revision pack containing a concise guide, key vocabulary, flashcards and exam-style practice',
+    presentation: 'a classroom presentation of 10 to 12 concise slides with a title, learning objectives, starter, key vocabulary, teacher explanation, worked example, guided activity, independent activity, differentiation, knowledge check and plenary. Use Markdown headings for each slide and keep each slide concise'
   };
   return `Create ${descriptions[activeTool]} for ${data.year} ${data.subject} on ${data.topic}. Duration: ${data.duration}. Class profile: ${data.level}. Curriculum: ${data.curriculum}. Questions: ${data.questionCount}. Notes: ${data.notes || 'none'}. Additional instruction: ${data.extraInstruction || 'none'}. ${profilePrompt(profile)} Return concise, teacher-ready sections with headings. Do not invent school policy or student personal data.`;
 }
@@ -81,13 +83,14 @@ async function generateWithAI(data) {
   const payload = await window.TEACHR_AI.generate({ token, prompt: buildPrompt(data), tool: activeTool });
   return {
     output: { title: `${data.topic} ${toolConfig[activeTool].type.toLowerCase()}`, summary: `${data.year} · ${data.subject} · AI generated`, sections: parseAISections(payload.content) },
-    usage: payload.usage
+    usage: payload.usage,
+    slidesCopyUrl: payload.slidesCopyUrl || null
   };
 }
 
-function renderResult(output, source) {
+function renderResult(output, source, slidesCopyUrl) {
   els.result.hidden = false; const badge = source === 'ai' ? 'AI GENERATED' : 'DEMO MODE';
-  els.result.innerHTML = `<div class="result-head"><div><p class="eyebrow">${badge}</p><h4>${escapeHtml(output.title)}</h4><span class="result-sub">${escapeHtml(output.summary)}</span></div><div class="result-actions"><button class="btn btn-ghost" id="printResult" type="button">Print / PDF</button><button class="btn btn-primary" id="saveResult" type="button">Save to library</button></div></div><div class="result-grid">${output.sections.map(([heading, body]) => `<div class="result-item"><b>${escapeHtml(heading)}</b><p>${escapeHtml(body)}</p></div>`).join('')}</div>`;
+  els.result.innerHTML = `<div class="result-head"><div><p class="eyebrow">${badge}</p><h4>${escapeHtml(output.title)}</h4><span class="result-sub">${escapeHtml(output.summary)}</span></div><div class="result-actions"><button class="btn btn-ghost" id="printResult" type="button">Print / PDF</button>${slidesCopyUrl ? `<a class="btn btn-primary" id="openSlidesCopy" href="${escapeHtml(slidesCopyUrl)}" target="_blank" rel="noopener">Open Editable Google Slides</a>` : ``}<button class="btn btn-primary" id="saveResult" type="button">Save to library</button></div></div><div class="result-grid">${output.sections.map(([heading, body]) => `<div class="result-item"><b>${escapeHtml(heading)}</b><p>${escapeHtml(body)}</p></div>`).join('')}</div>`;
   document.getElementById('saveResult').addEventListener('click', () => { saveResource({ id: Date.now(), type: toolConfig[activeTool].type, title: output.title, summary: output.summary, sections: output.sections, createdAt: new Date().toISOString() }); showToast('Saved to your resource library.'); });
   document.getElementById('printResult').addEventListener('click', () => window.print());
 }
@@ -101,7 +104,7 @@ async function handleSubmit(event) {
     window.TEACHR_USAGE?.applyGenerationResult?.(activeTool, result.usage);
     window.TEACHR_USAGE?.refresh?.();
     els.engineStatus.textContent = 'AI connected';
-    renderResult(result.output, 'ai');
+    renderResult(result.output, 'ai', result.slidesCopyUrl);
     showToast('AI resource generated.');
   } catch (error) {
     els.engineStatus.textContent = 'Generation unavailable';
@@ -131,7 +134,7 @@ els.resourceList.addEventListener('click', event => { const button = event.targe
   const resource = resources[index];
   if (button.dataset.action === 'delete') resources.splice(index, 1);
   if (button.dataset.action === 'duplicate') resources.splice(index, 0, { ...resource, id: Date.now(), title: `${resource.title} copy`, createdAt: new Date().toISOString() });
-  if (button.dataset.action === 'load') { const typeMap = { 'LESSON PLAN':'lesson','WORKSHEET':'worksheet','ASSESSMENT':'quiz','DIFFERENTIATION':'differentiate','CURRICULUM':'curriculum','REVISION PACK':'revision' }; setTool(typeMap[resource.type] || 'lesson'); document.getElementById('topic').value = resource.title.replace(/ (lesson plan|worksheet|assessment|differentiated activity|curriculum map|revision pack|copy)$/i, ''); document.getElementById('builderPanel').scrollIntoView({ behavior:'smooth', block:'center' }); showToast('Resource loaded into the workspace.'); return; }
+  if (button.dataset.action === 'load') { const typeMap = { 'LESSON PLAN':'lesson','WORKSHEET':'worksheet','ASSESSMENT':'quiz','DIFFERENTIATION':'differentiate','CURRICULUM':'curriculum','REVISION PACK':'revision','PRESENTATION':'presentation' }; setTool(typeMap[resource.type] || 'lesson'); document.getElementById('topic').value = resource.title.replace(/ (lesson plan|worksheet|assessment|differentiated activity|curriculum map|revision pack|copy)$/i, ''); document.getElementById('builderPanel').scrollIntoView({ behavior:'smooth', block:'center' }); showToast('Resource loaded into the workspace.'); return; }
   localStorage.setItem(RESOURCE_KEY, JSON.stringify(resources)); renderLibrary(); updateStats(); showToast(button.dataset.action === 'delete' ? 'Resource deleted.' : 'Resource duplicated.');
 });
 els.clearLibrary.addEventListener('click', () => { if (!getResources().length) return; if (confirm('Clear all saved resources from this browser?')) { localStorage.removeItem(RESOURCE_KEY); renderLibrary(); updateStats(); showToast('Library cleared.'); } });
