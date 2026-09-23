@@ -57,7 +57,7 @@
     })
   });
 
-  const generatingTools = Object.freeze(['lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision']);
+  const generatingTools = Object.freeze(['lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision', 'presentation']);
   const unlimitedRoles = Object.freeze(['admin', 'superadmin']);
   const chatFreeLifetimeMessages = 10;
 
