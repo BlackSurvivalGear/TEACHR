@@ -43,4 +43,32 @@ function recordGenerationSuccess_(uid) {
     }
   }
 }
-function generateResource_(body) { const isChat=body.tool==='chat'; if(!isChat&&!TEACHR_CREDIT_USAGE.GENERATING_TOOL_IDS.includes(body.tool))throw generationError_(400,'INVALID_TOOL','A valid generating tool is required.'); if(typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>12000)throw generationError_(400,'INVALID_PROMPT','Enter a prompt of at most 12,000 characters.'); const uid=verifyGenerationIdentity_(body.idToken); if(isChat)chatUsageAccess_(uid);else creditAccess_(uid); const properties=PropertiesService.getScriptProperties(); const apiKey=properties.getProperty('AI_API_KEY'),model=properties.getProperty('AI_MODEL'); if(!apiKey||!model)throw generationError_(503,'AI_NOT_CONFIGURED','The AI service is not configured.'); const systemPrompt=isChat?'You are TEACHR AI, a concise teacher-first conversational assistant. Answer the teacher directly and help with explanations, classroom ideas, questions and adaptations. Do not invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. If the teacher asks for something that depends on missing classroom context, say what is missing rather than inventing it. AI assists. The teacher teaches.':'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material with clear headings. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. AI assists. The teacher teaches.'; let response,payload; try{response=UrlFetchApp.fetch('https://api.openai.com/v1/chat/completions',{method:'post',contentType:'application/json',headers:{Authorization:'Bearer '+apiKey},muteHttpExceptions:true,payload:JSON.stringify({model,messages:[{role:'system',content:systemPrompt},{role:'user',content:body.prompt}]})});if(response.getResponseCode()!==200)throw new Error('Provider failure');payload=JSON.parse(response.getContentText());}catch(_){throw generationError_(502,'AI_PROVIDER_FAILED','The AI provider could not complete this request. Please try again.');} const content=payload?.choices?.[0]?.message?.content;if(typeof content!=='string'||!content.trim())throw generationError_(502,'AI_EMPTY_RESPONSE','The AI provider returned no content.'); const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid); return{ok:true,status:200,content,model,usage}; }
+
+function presentationSlides_(content, fallbackTitle) {
+  const lines=String(content||'').split(/\n+/).map(line=>line.trim()).filter(Boolean);
+  const slides=[]; let current=null;
+  lines.forEach(line=>{
+    const heading=line.match(/^#{1,4}\s+(.+)|^\*\*(.+?)\*\*:?$/);
+    if(heading){current={title:(heading[1]||heading[2]).trim(),body:''};slides.push(current);}
+    else if(current) current.body+=(current.body?'\n':'')+line.replace(/^[-*]\s+/,'');
+  });
+  if(!slides.length)slides.push({title:fallbackTitle||'TEACHR Presentation',body:String(content||'').trim()});
+  return slides.slice(0,15);
+}
+function createPresentationCopy_(content, fallbackTitle) {
+  const slides=presentationSlides_(content,fallbackTitle);
+  const deck=SlidesApp.create(fallbackTitle||'TEACHR Presentation');
+  const first=deck.getSlides()[0];
+  first.getPlaceholder(SlidesApp.PlaceholderType.CENTERED_TITLE)?.asShape().getText().setText(fallbackTitle||'TEACHR Presentation');
+  first.getPlaceholder(SlidesApp.PlaceholderType.SUBTITLE)?.asShape().getText().setText('Created with TEACHR · AI assists. The teacher teaches.');
+  slides.forEach(item=>{
+    const slide=deck.appendSlide(SlidesApp.PredefinedLayout.TITLE_AND_BODY);
+    slide.getPlaceholder(SlidesApp.PlaceholderType.TITLE)?.asShape().getText().setText(item.title.slice(0,120));
+    slide.getPlaceholder(SlidesApp.PlaceholderType.BODY)?.asShape().getText().setText(item.body.slice(0,1800));
+  });
+  const file=DriveApp.getFileById(deck.getId());
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);
+  return 'https://docs.google.com/presentation/d/'+deck.getId()+'/copy';
+}
+
+function generateResource_(body) { const isChat=body.tool==='chat'; if(!isChat&&!TEACHR_CREDIT_USAGE.GENERATING_TOOL_IDS.includes(body.tool))throw generationError_(400,'INVALID_TOOL','A valid generating tool is required.'); if(typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>12000)throw generationError_(400,'INVALID_PROMPT','Enter a prompt of at most 12,000 characters.'); const uid=verifyGenerationIdentity_(body.idToken); if(isChat)chatUsageAccess_(uid);else creditAccess_(uid); const properties=PropertiesService.getScriptProperties(); const apiKey=properties.getProperty('AI_API_KEY'),model=properties.getProperty('AI_MODEL'); if(!apiKey||!model)throw generationError_(503,'AI_NOT_CONFIGURED','The AI service is not configured.'); const systemPrompt=isChat?'You are TEACHR AI, a concise teacher-first conversational assistant. Answer the teacher directly and help with explanations, classroom ideas, questions and adaptations. Do not invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. If the teacher asks for something that depends on missing classroom context, say what is missing rather than inventing it. AI assists. The teacher teaches.':'You are TEACHR, a teacher-first educational planning assistant. Produce accurate, age-appropriate, teacher-ready material with clear headings. Never invent student personal data, school policy, safeguarding decisions, grades or curriculum requirements. AI assists. The teacher teaches.'; let response,payload; try{response=UrlFetchApp.fetch('https://api.openai.com/v1/chat/completions',{method:'post',contentType:'application/json',headers:{Authorization:'Bearer '+apiKey},muteHttpExceptions:true,payload:JSON.stringify({model,messages:[{role:'system',content:systemPrompt},{role:'user',content:body.prompt}]})});if(response.getResponseCode()!==200)throw new Error('Provider failure');payload=JSON.parse(response.getContentText());}catch(_){throw generationError_(502,'AI_PROVIDER_FAILED','The AI provider could not complete this request. Please try again.');} const content=payload?.choices?.[0]?.message?.content;if(typeof content!=='string'||!content.trim())throw generationError_(502,'AI_EMPTY_RESPONSE','The AI provider returned no content.'); const usage=isChat?recordChatSuccess_(uid):recordGenerationSuccess_(uid); const slidesCopyUrl=body.tool==='presentation'?createPresentationCopy_(content,'TEACHR · '+clean_((body.prompt.match(/on ([^.]+)/)||[])[1]||'Presentation')):null; return{ok:true,status:200,content,model,usage,slidesCopyUrl}; }
