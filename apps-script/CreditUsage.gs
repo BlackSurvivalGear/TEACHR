@@ -6,7 +6,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createCreditUsageModel() {
   const INITIAL_FREE_CREDITS = 18;
   const CREDIT_SCHEMA_VERSION = 2;
-  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision']);
+  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision','presentation']);
   const UNLIMITED_ROLES = Object.freeze(['admin','superadmin']);
   const MONTHLY_PLAN_CREDITS = Object.freeze({ standard: 25, pro: 55, premium: 135 });
   const CONSUMPTION_ORDER = Object.freeze(['monthly', 'starter', 'purchased']);
