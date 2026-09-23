@@ -17,7 +17,7 @@ assert(generation.includes('const usage=isChat?recordChatSuccess_(uid):recordGen
 const toolIdsMatch = creditModel.match(/const\s+GENERATING_TOOL_IDS\s*=\s*Object\.freeze\(\[([^\]]+)\]\)/);
 assert(toolIdsMatch, 'universal Credit model must define the generating tool IDs');
 const creditToolIds = [...toolIdsMatch[1].matchAll(/['"]([^'"]+)['"]/g)].map(match => match[1]);
-assert.deepStrictEqual(creditToolIds, ['lesson','worksheet','quiz','differentiate','curriculum','revision'], 'only the six primary generators may consume universal Credits');
-assert(!creditToolIds.includes('chat'), 'chat must remain outside the six Credit-consuming tools');
+assert.deepStrictEqual(creditToolIds, ['lesson','worksheet','quiz','differentiate','curriculum','revision','presentation'], 'only the seven primary generators may consume universal Credits');
+assert(!creditToolIds.includes('chat'), 'chat must remain outside the seven Credit-consuming tools');
 
 console.log('AI chat Stage 4 independent usage-control tests passed');
