@@ -2,7 +2,7 @@ const assert = require('assert');
 const pricing = require('../pricing-config.js');
 
 assert.strictEqual(pricing.currency, 'GBP');
-assert.deepStrictEqual(pricing.generatingTools, ['lesson','worksheet','quiz','differentiate','curriculum','revision']);
+assert.deepStrictEqual(pricing.generatingTools, ['lesson','worksheet','quiz','differentiate','curriculum','revision','presentation']);
 assert.deepStrictEqual(pricing.unlimitedRoles, ['admin','superadmin']);
 assert.strictEqual(pricing.chatFreeLifetimeMessages, 10);
 assert.deepStrictEqual(pricing.consumptionOrder, ['monthly','starter','purchased']);

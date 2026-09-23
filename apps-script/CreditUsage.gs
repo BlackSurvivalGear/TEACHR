@@ -6,7 +6,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createCreditUsageModel() {
   const INITIAL_FREE_CREDITS = 18;
   const CREDIT_SCHEMA_VERSION = 2;
-  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision']);
+  const GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision','presentation']);
+  const LEGACY_GENERATING_TOOL_IDS = Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision']);
   const UNLIMITED_ROLES = Object.freeze(['admin','superadmin']);
   const MONTHLY_PLAN_CREDITS = Object.freeze({ standard: 25, pro: 55, premium: 135 });
   const CONSUMPTION_ORDER = Object.freeze(['monthly', 'starter', 'purchased']);
@@ -63,7 +64,7 @@
     const byTool = new Map((Array.isArray(records) ? records : [])
       .filter(record => GENERATING_TOOL_IDS.includes(record?.toolId))
       .map(record => [record.toolId, record]));
-    return GENERATING_TOOL_IDS.reduce((total, toolId) => {
+    return LEGACY_GENERATING_TOOL_IDS.reduce((total, toolId) => {
       const record = byTool.get(toolId) || {};
       const used = nonNegativeInteger(record.successfulGenerations);
       const allowance = nonNegativeInteger(record.allowance, 3);

@@ -7,7 +7,7 @@ const logic = fs.readFileSync(new URL('../vle.js', import.meta.url), 'utf8');
 
 assert.match(index, /href="vle\.html"/);
 assert.match(index, /TEACHR VLE/);
-assert.match(index, /<strong>6<\/strong><small>Generating workflows<\/small>/);
+assert.match(index, /<strong>7<\/strong><small>Generating workflows<\/small>/);
 
 for (const label of ['England — National Curriculum','Wales — Coming soon','Scotland — Coming soon','Northern Ireland — Coming soon']) assert.ok(vle.includes(label));
 for (const stage of ['Early Years / Reception','Key Stage 1','Key Stage 2','Key Stage 3','Key Stage 4']) assert.ok(vle.includes(stage));

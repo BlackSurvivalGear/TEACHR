@@ -4,7 +4,7 @@ const assert = require('assert');
 const app = fs.readFileSync('app.js', 'utf8');
 const legacyLesson = fs.readFileSync('lesson-builder-v3.js', 'utf8');
 
-const tools = ['lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision'];
+const tools = ['lesson', 'worksheet', 'quiz', 'differentiate', 'curriculum', 'revision', 'presentation'];
 for (const tool of tools) {
   assert(app.includes(`${tool}: {`), `toolConfig must contain ${tool}`);
   assert(app.includes(`${tool}: '`), `buildPrompt descriptions must contain ${tool}`);

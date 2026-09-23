@@ -1,7 +1,7 @@
 /* Browser universal TEACHR Credit model. Keep in sync with apps-script/CreditUsage.gs. */
 (function initialiseCreditUsage(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.TEACHR_CREDIT_USAGE=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
   const INITIAL_FREE_CREDITS=18,CREDIT_SCHEMA_VERSION=1;
-  const GENERATING_TOOL_IDS=Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision']);
+  const GENERATING_TOOL_IDS=Object.freeze(['lesson','worksheet','quiz','differentiate','curriculum','revision','presentation']);
   const UNLIMITED_ROLES=Object.freeze(['pro','admin','superadmin']);
   const nonNegativeInteger=(value,fallback=0)=>{const n=Number(value);return Number.isInteger(n)&&n>=0?n:fallback;};
   function hasUnlimitedCredits(profile={}){return profile.plan==='pro'||UNLIMITED_ROLES.includes(profile.role);}
